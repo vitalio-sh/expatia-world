@@ -528,3 +528,15 @@ test('explicit east and named shop changes supersede home continuation while est
     assert.equal(game.routeTargetId,sample.selected==='continue'?'home-south':sample.selected==='go:bar-llevant'?'bar-llevant':'walk:east');
   }
 });
+test('an actual bar reveal supplies delivery subject even when generated speech has no question', async () => {
+  for(const followup of ['Tal esta en la de sur.','Tal está en la de sur.']){
+    const game=active();await decide(game,'¿Cómo se llama el bar?',undefined,offline);recordSpeech(game,'Estoy enfrente de Bar Llevant.','real-reveal-no-question',SATURDAY_NOON);
+    assert.equal(game.facts.signDisclosed,true);assert.equal(game.facts.lastClarification,null);
+    const result=await decide(game,followup,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{assert.deepEqual(Object.keys(criteria),['home:south']);return 'home:south';})});
+    assert.equal(result?.source,'jev');assert.equal(result?.selected,'home:south');assert.equal(game.facts.homeSide,'south');assert.equal(game.routeTargetId,'home-south');
+    tickGame(game,SATURDAY_NOON+4_000,4);assert.deepEqual({x:game.courier.x,y:game.courier.y},{x:270,y:550});assert.equal(game.awaitingGuidance,true);
+  }
+  for(const text of ['Ve al sur.','sur','La peluquería está al sur.','Tal no está en la de sur.']){
+    const game=active();await decide(game,'¿Cómo se llama el bar?',undefined,offline);recordSpeech(game,'Estoy enfrente de Bar Llevant.','real-reveal',SATURDAY_NOON);await decide(game,text,undefined,offline);assert.equal(game.facts.homeSide,null);
+  }
+});

@@ -195,8 +195,12 @@ function contextualEntranceStatement(game: Game, text: string) {
   const statement = navigationText(text);
   // A broken declarative answer can retain the delivery subject from an actual
   // “where next?” question. An explicit walking instruction remains a street step.
-  return /\?/.test(lastCourier) && /\b(donde|where|which way|which direction)\b/.test(lastCourier)
-    && /\b(continue|go|head|walk|sigo|voy|follow)\b/.test(lastCourier)
+  const nextWayQuestion = /\?/.test(lastCourier) && /\b(donde|where|which way|which direction)\b/.test(lastCourier) && /\b(continue|go|head|walk|sigo|voy|follow)\b/.test(lastCourier);
+  const identifiedBar = game.facts.signDisclosed || game.decision?.action.type === 'reveal' || Object.values(game.knowledge).some(b => b.category === 'bar' && lastCourier.includes(navigationText(b.name)) && !/\bnot\b/.test(lastCourier));
+  // Facts are learned before selecting the action for this same turn, so an
+  // entrance route (not the freshly learned side flag) marks assigned routing.
+  const unassignedDeliverySubject = identifiedBar && !game.routeTargetId?.startsWith('home-');
+  return (nextWayQuestion || unassignedDeliverySubject)
     && /\b(is|located|faces)\b/.test(statement)
     && !/\b(not|go|walk|head|come|reach|approach|navigate|move|turn|look|face|cross|stop|wait|bar|shop|bakery|fruit|supermarket|hairdresser|peluqueria|perruqueria|mercat|forn|intersection|junction|street|road|corner|crossing|tree|fountain|crate)\b/.test(statement)
     && !Object.values(game.knowledge).some(b => statement.includes(navigationText(b.name)))

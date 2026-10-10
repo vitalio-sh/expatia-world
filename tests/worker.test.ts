@@ -338,14 +338,14 @@ test('Worker handoff resolves the parcel before farewell, disables microphone an
   } finally { session.dispose(); }
 });
 
-test('Worker retains the entrance objective across the exact truncated side reply and hesitant continue transcript', async () => {
+test('Worker retains the entrance objective after a bar reply without a question across the exact truncated and hesitant transcript', async () => {
   const socket = new Socket(); let now = NOW;
   const session = createWorkerSession(socket, SESSION_ID, {}, DEFAULT_WEATHER, {
     clock: () => now, timers: false, decisionOptions: { key: '', telemetry: false },
     voice: { async prepare() { return true; }, async createTurn() { return { sendPhrase() {}, async finish() {}, cancel() {} }; }, handle() {}, dispose() {} },
     dialogue: async (_context, action: any, signal, onPhrase) => {
       signal?.throwIfAborted();
-      const text = action?.type === 'reveal' ? 'Estoy junto a Bar Llevant. ¿Por dónde sigo?' : '¿Por dónde sigo?';
+      const text = action?.type === 'reveal' ? 'Estoy enfrente de Bar Llevant.' : '¿Por dónde sigo?';
       onPhrase?.(text); return { text, model: 'test-fixture', live: false };
     },
   });
