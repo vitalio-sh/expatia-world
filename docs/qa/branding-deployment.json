@@ -1,0 +1,14 @@
+{
+  "url": "https://expatia.world/",
+  "version": 13,
+  "sourceCommit": "da54eb7b7f291580cd0e6036421acdc120f7f976",
+  "deploymentId": "appgdep_6aca30922c2c81919fe1ec31bd7f5709",
+  "status": "succeeded",
+  "publishedAt": "2026-10-10T12:33:38.730329+00:00",
+  "checks": [
+    "TypeScript passed",
+    "Production build passed",
+    "360px mobile and 1366px desktop checked",
+    "Live custom domain shows author and event links"
+  ]
+}
