@@ -142,7 +142,7 @@ export class WorkerVoice {
     const state: Stt = { socket: null, turnId, bytes: 0, started: performance.now(), committed: false, ready: false, queue: [], timeout: setTimeout(() => this.failStt('Recording timed out. Please type instead.'), 18_000) };
     this.stt = state;
     try {
-      const socket = await this.connect('/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&language_code=en&commit_strategy=manual');
+      const socket = await this.connect('/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual');
       if (this.stt !== state || this.disposed) { socket.close(); return; }
       state.socket = socket;
       socket.addEventListener('message', event => {

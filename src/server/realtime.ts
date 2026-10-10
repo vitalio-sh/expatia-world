@@ -28,7 +28,7 @@ export function attachRealtime(server: Server, options: RealtimeOptions) {
       if (!sessionId || !process.env.ELEVENLABS_API_KEY) { failStt(turnId, 'Microphone transcription is unavailable. Please type instead.'); return; }
       stopStt(); cancelSpeech(sessionId); options.onInterrupt?.(sessionId, turnId);
       const started = performance.now();
-      const socket = new WebSocket('wss://api.elevenlabs.io/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&language_code=en&commit_strategy=manual', { headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }, handshakeTimeout: 8_000, maxPayload: 1024 * 1024 });
+      const socket = new WebSocket('wss://api.elevenlabs.io/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual', { headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }, handshakeTimeout: 8_000, maxPayload: 1024 * 1024 });
       const state: SttState = { socket, turnId, bytes: 0, started, queue: [], ready: false, committed: false, timeout: setTimeout(() => failStt(turnId, 'Recording timed out. Please try a shorter message.'), 18_000) };
       stt = state;
       socket.on('message', frame => {

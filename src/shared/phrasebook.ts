@@ -19,9 +19,9 @@ export const deliveryPhrasebook = {
     returned: { spanish: '¿Dónde estás?', translation: 'Where are you?', note: 'The door and the parcel missed each other. Another call, another chance.' },
   },
   courier: {
-    clarify: 'One clear landmark beats my guesswork.',
-    move: 'Let’s spare this parcel a city tour.',
-    received: 'This parcel can retire from sightseeing.',
+    clarify: 'Una referencia clara me ahorra adivinanzas.',
+    move: 'A ver si le ahorramos al paquete una visita turística.',
+    received: 'Este paquete ya puede jubilarse de hacer turismo.',
   },
 } as const satisfies {
   onboarding: DeliveryFlavor;

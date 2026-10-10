@@ -269,3 +269,25 @@ test('explicit south entrance route wins over intermediate corners while facing 
   assert.deepEqual(game.route.at(-1),HOME_ENTRANCE);
   tickGame(game,SATURDAY_NOON+10_000,10);assert.ok(canHandoff(game,SATURDAY_NOON+10_000));
 });
+
+test('Spanish demo commands map to grounded intents and preserve original conversation words', async () => {
+  const game=active();
+  assert.equal((await decide(game,'¿Qué bar? ¿Cómo se llama?',undefined,offline))?.selected,'reveal:bar-llevant');
+  assert.equal((await decide(game,'¿Qué ves?',undefined,offline))?.selected,'describe-surroundings');
+  assert.equal((await decide(game,'Mira hacia el sur.',undefined,offline))?.selected,'look:south');
+  assert.equal((await decide(game,'Ve a la frutería.',undefined,offline))?.selected,'go:fruita');
+  assert.equal((await decide(game,'Cruza la calle por el paso de peatones.',undefined,offline))?.selected,'cross:crossing-nw');
+  const phrase='Rodea el edificio y ven a mi portal, en el lado sur.';
+  const result=await decide(game,phrase,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{assert.ok(criteria['home:south']);assert.ok(!criteria['landmark:home-corner-nw']);return 'home:south';})});
+  assert.equal(result?.source,'jev');assert.equal(result?.selected,'home:south');assert.equal(game.facts.homeSide,'south');
+  assert.ok(game.history.some(h=>h.role==='player' && h.text===phrase));
+  assert.deepEqual(game.route.at(-1),HOME_ENTRANCE);
+});
+test('Spanish entrance-side beliefs, negation and short answers remain conversational hypotheses', async () => {
+  const game=active();
+  await decide(game,'Estoy en casa; la entrada está al sur.',undefined,offline);assert.equal(game.facts.homeSide,'south');
+  await decide(game,'La entrada no está al norte. Está en el lado sur.',undefined,offline);assert.equal(game.facts.homeSide,'south');
+  recordSpeech(game,'¿En qué lado está tu portal?','side-question',SATURDAY_NOON);
+  await decide(game,'Norte.',undefined,offline);assert.equal(game.facts.homeSide,'north');
+  assert.deepEqual(game.route.at(-1),{x:480,y:200});
+});

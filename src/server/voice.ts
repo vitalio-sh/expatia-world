@@ -123,7 +123,7 @@ export async function transcribe(buffer: Buffer, mimeType: string, signal?: Abor
   if (!process.env.ELEVENLABS_API_KEY) throw new Error('transcription_not_configured');
   if (buffer.length > 2 * 1024 * 1024) throw new Error('audio_too_large');
   const form = new FormData();
-  form.set('model_id', 'scribe_v2'); form.set('language_code', 'eng'); form.set('tag_audio_events', 'false');
+  form.set('model_id', 'scribe_v2'); form.set('tag_audio_events', 'false');
   form.set('file', new Blob([new Uint8Array(buffer)], { type: mimeType }), mimeType.includes('wav') ? 'turn.wav' : 'turn.webm');
   const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', { method: 'POST', headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }, body: form, signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(12_000)]) : AbortSignal.timeout(12_000) });
   if (!response.ok) throw new Error(`transcription_http_${response.status}`);

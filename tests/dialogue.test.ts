@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { actionCandidates, answerCall, createGame, npcContext, recordSpeech } from '../src/server/game';
-import { courierGrounding, dialogueMessages, fallbackLine, speechIsGrounded } from '../src/server/dialogue';
+import { courierGrounding, dialogueMessages, fallbackLine, spanishLandmarkLabel, speechIsGrounded } from '../src/server/dialogue';
 import { deliveryCoachFlavor, deliveryOutcomeFlavor, deliveryPhrasebook } from '../src/shared/phrasebook';
 
 test('opening speech guard withholds sign, invented visual details and the hidden entrance', () => {
@@ -71,9 +71,9 @@ test('fruit, corners and crossings use visible semantic facts instead of denying
   assert.equal(speechIsGrounded('There are no corners nearby.', richerContext, describe), false);
   assert.equal(speechIsGrounded("I can't see a crosswalk.", richerContext, describe), false);
   assert.equal(speechIsGrounded('I can see Fruita Fresca to the south.', richerContext, describe), true);
-  assert.match(fallbackLine(richerContext, describe), /Fruita Fresca to the south/);
-  assert.match(fallbackLine({ ...richerContext, history: [{ role: 'player', text: 'Which corner do you see?' }] }, describe), /West building corner/);
-  assert.match(fallbackLine({ ...richerContext, history: [{ role: 'player', text: 'What street are you on?' }] }, describe), /the north street/);
+  assert.match(fallbackLine(richerContext, describe), /Fruita Fresca al sur/);
+  assert.match(fallbackLine({ ...richerContext, history: [{ role: 'player', text: 'Which corner do you see?' }] }, describe), /esquina oeste/);
+  assert.match(fallbackLine({ ...richerContext, history: [{ role: 'player', text: 'What street are you on?' }] }, describe), /calle norte/);
 });
 
 test('building corners, street junctions and crossings remain distinct; look and arrival reflect selected actions', () => {
@@ -83,8 +83,8 @@ test('building corners, street junctions and crossings remain distinct; look and
   const looking = { ...richerContext, history: [{ role: 'player', text: 'Turn to look at the fruit shop.' }] };
   const line = fallbackLine(looking, { type: 'look', facing: 'west', label: 'Look west' });
   assert.match(line, /Fruita Fresca/); assert.doesNotMatch(line, /walking|heading/);
-  assert.match(fallbackLine(richerContext, { id: 'arrival', type: 'wait', label: 'Wait at the home entrance' }), /at the entrance.*accept it now/);
-  assert.doesNotMatch(fallbackLine(richerContext, { id: 'wait', type: 'wait', label: 'Stop and wait' }), /entrance|accept/);
+  assert.match(fallbackLine(richerContext, { id: 'arrival', type: 'wait', label: 'Wait at the home entrance' }), /Estoy abajo.*entrada.*recogerlo/);
+  assert.doesNotMatch(fallbackLine(richerContext, { id: 'wait', type: 'wait', label: 'Stop and wait' }), /entrada|recogerlo/);
 });
 
 test('memory-only facts remain known without being described as currently visible or given live distances', () => {
@@ -99,7 +99,7 @@ test('memory-only facts remain known without being described as currently visibl
   assert.equal(speechIsGrounded('I cannot see the fruit shop now.', outOfView, describe), true);
   assert.equal(speechIsGrounded('I can see the produce shop.', outOfView, describe), false);
   assert.equal(speechIsGrounded('I do not know any fruit shop.', outOfView, describe), false);
-  assert.match(fallbackLine(outOfView, describe), /remember Fruita Fresca.*out of view/);
+  assert.match(fallbackLine(outOfView, describe), /Recuerdo Fruita Fresca.*no lo veo/);
 });
 
 test('furthest answers compare actual visible facts and never borrow remembered distance or invent metre conversions', () => {
@@ -107,10 +107,50 @@ test('furthest answers compare actual visible facts and never borrow remembered 
   assert.equal(facts.nearestVisible?.id, 'corner');
   assert.equal(facts.furthestVisible?.id, 'crossing');
   const question = { ...richerContext, history: [{ role: 'player', text: 'What is the furthest thing you can see?' }] };
-  assert.match(fallbackLine(question, describe), /furthest thing.*North crossing to the north/);
+  assert.match(fallbackLine(question, describe), /m[aá]s lejano.*paso de peatones del norte al norte/);
   assert.equal(speechIsGrounded('The fruit shop is about 210 units south.', richerContext, describe), true);
   assert.equal(speechIsGrounded('The fruit shop is 900 units away.', richerContext, describe), false);
   assert.equal(speechIsGrounded('The fruit shop is 213 metres away.', richerContext, describe), false);
+});
+
+test('every courier fallback is Spanish and proper storefront names survive translation', () => {
+  const prompt = dialogueMessages(richerContext, describe)[0].content;
+  assert.match(prompt, /Castilian Spanish \(es-ES\)/);
+  assert.match(prompt, /Output ONLY spoken Spanish/);
+  assert.doesNotMatch(prompt, /Output ONLY spoken English/);
+  assert.equal(spanishLandmarkLabel('northwest corner of Fruita Fresca'), 'la esquina noroeste de Fruita Fresca');
+  assert.equal(spanishLandmarkLabel('northwest corner of a fruit shop'), 'la esquina noroeste de una frutería');
+  const variants = [
+    fallbackLine({ factsLearned: { firstClueSpoken: false } }, { type: 'describe' }),
+    ...['wait', 'look', 'clarify', 'move', 'return', 'drop'].map(type => fallbackLine({}, { type })),
+    fallbackLine({ parcel: 'resident' }, { type: 'wait' }),
+    fallbackLine({ parcel: 'drop' }, { type: 'drop' }),
+    fallbackLine(richerContext, { type: 'reveal', label: 'Read the visible Fruita Fresca sign' }),
+  ];
+  assert.ok(variants.every(line => !/\b(I|your|parcel|which|here|the sign|point)\b/.test(line)));
+  assert.match(variants[0], /Hola, buenas, tengo tu paquete/);
+  assert.equal(variants[0].split(/[.!?]/).filter(sentence => sentence.trim()).length, 2);
+  assert.match(variants.at(-1)!, /El cartel pone Fruita Fresca/);
+  assert.match(fallbackLine({ ...richerContext, history: [{ role: 'player', text: '¿Ves la frutería?' }] }, describe), /Veo Fruita Fresca al sur/);
+});
+
+test('Spanish speech preserves current sight, colors, truthful arrival and physical parcel outcomes', () => {
+  assert.equal(speechIsGrounded('No veo ninguna frutería.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('No conozco ninguna frutería.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('Veo Fruita Fresca al sur.', richerContext, describe), true);
+  assert.equal(speechIsGrounded('Veo Bar Ponent.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('Recuerdo Bar Ponent, pero ahora no lo veo.', richerContext, describe), true);
+  assert.equal(speechIsGrounded('Estoy caminando hacia el norte.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('Ya tienes tu paquete.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('He dejado el paquete en el bar.', richerContext, { type: 'drop' }), false);
+  assert.equal(speechIsGrounded('Voy a dejarlo en un punto de recogida.', richerContext, { type: 'drop' }), true);
+  assert.equal(speechIsGrounded('Ya tienes tu paquete.', { ...richerContext, parcel: 'resident' }, describe), true);
+  assert.equal(speechIsGrounded('Estoy abajo.', richerContext, { type: 'wait', id: 'wait' }), false);
+  assert.equal(speechIsGrounded('Estoy abajo.', richerContext, { type: 'wait', id: 'arrival', label: 'Wait at the home entrance' }), true);
+  const awning = { ...richerContext, visibleLandmarks: [{ id: 'awning', type: 'awning', label: 'red bar awning', description: 'A red awning' }] };
+  assert.equal(speechIsGrounded('Veo un toldo rojo.', awning, describe), true);
+  assert.equal(speechIsGrounded('Veo un toldo azul.', awning, describe), false);
+  assert.equal(speechIsGrounded('La frutería está a 213 metros.', richerContext, describe), false);
 });
 
 test('first clue still hides all rich landmarks and urgent dialogue skips optional humor', () => {

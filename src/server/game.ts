@@ -131,14 +131,24 @@ export function tickGame(game: Game, now = Date.now(), dt = Math.max(0, (now - g
   if (game.phase === 'timeout' && game.timeoutStartedAt !== null && now - game.timeoutStartedAt > 20_000) returnParcel(game, now, 'The courier could not complete a suitable collection drop-off. The parcel is returning to the depot; arrange another delivery.');
 }
 
+/** Deterministic navigation vocabulary only. Original player quotes stay in history. */
+export function navigationText(text: string) {
+  const vocabulary: Record<string,string> = { no:'not', que:'what', cual:'which', como:'how', llama:'called', ves:'see', ve:'go', ven:'come', mira:'look', cruza:'cross', rodea:'go around', edificio:'building', fruteria:'fruit shop', frutas:'fruit', fruta:'fruit', calle:'street', interseccion:'intersection', cruce:'intersection', esquina:'corner', entrada:'entrance', portal:'door', puerta:'door', casa:'home', apartamento:'apartment', piso:'flat', lado:'side', sur:'south', norte:'north', este:'east', oeste:'west', abajo:'bottom', arriba:'top', derecha:'right', izquierda:'left', recto:'straight', delante:'forward', atras:'back', espera:'wait', para:'stop', detente:'stop', hacia:'toward', esta:'is', en:'on', al:'on the', el:'the', la:'the', mi:'my', tu:'your' };
+  return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\bpaso de peatones\b/g,'pedestrian crossing')
+    .replace(/\b[a-z]+\b/g, word=>vocabulary[word]??word)
+    .replace(/\bside\s+(north|south|east|west)\b/g,'$1 side')
+    .replace(/\b(entrance|door)\s*,\s*((?:on|at)\s+(?:the\s+)?(?:north|south|east|west)\s+side)/g,'$1 $2');
+}
 export function learnPlayerFacts(game: Game, text: string) {
   // Learn an explicit side claim, rather than treating every direction elsewhere
   // in a multi-step instruction as an entrance coordinate. It remains a belief.
   const mapping: Record<string, NonNullable<Game['facts']['homeSide']>> = { south: 'south', bottom: 'south', lower: 'south', back: 'south', north: 'north', top: 'north', upper: 'north', east: 'east', right: 'east', west: 'west', left: 'west' };
-  const lastCourier = game.history.filter(entry => entry.role === 'courier').at(-1)?.text ?? '';
-  const shortAnswer = text.trim().toLowerCase().replace(/[.!?]/g, '');
+  const lastCourier = navigationText(game.history.filter(entry => entry.role === 'courier').at(-1)?.text ?? '');
+  const normalized = navigationText(text);
+  const shortAnswer = normalized.trim().replace(/[.!?¿¡]/g, '');
   if (mapping[shortAnswer] && /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier.toLowerCase())) game.facts.homeSide = mapping[shortAnswer];
-  for (const clause of text.toLowerCase().split(/[.!?;,]/)) {
+  for (const clause of normalized.split(/[.!?;,]/)) {
     if (!/\b(entrance|door|home|house|flat|apartment)\b/.test(clause)) continue;
     const positions: { side: string; index: number }[] = [];
     for (const match of clause.matchAll(/\b(south|bottom|lower|back|north|top|upper|east|right|west|left)\b/g)) {
@@ -157,7 +167,7 @@ export function npcContext(game: Game, now = game.updatedAt) {
   const road = ROADS.find(r => insidePolygon(game.courier, r.footprint));
   const scopedBuilding = (b: typeof view.buildings[number] | Game['knowledge'][string]) => opening ? { category: b.category, direction: directionBetween(game.courier, b.entrance), distance: Math.round(distance(game.courier, b.entrance)), visible: view.buildings.some(v => v.id === b.id) } : { ...b, open: isOpen(b, now), visible: view.buildings.some(v => v.id === b.id) };
   return {
-    premise: 'You are a human parcel courier helping an expat resident in Barcelona. The shops and hours are authored scenario facts. Respond in concise conversational English.',
+    premise: 'You are a human parcel courier helping an expat resident in Barcelona. The shops and hours are authored scenario facts. Respond in concise conversational Spanish.',
     phase: game.phase, remainingMs: remainingMs(game, now), parcel: game.parcel,
     position: { x: Math.round(game.courier.x), y: Math.round(game.courier.y), facing: game.courier.direction },
     orientation: { facing: game.courier.direction, viewAngleDegrees: VIEW_ANGLE_DEGREES, sightRange: SIGHT_RANGE },
@@ -238,7 +248,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   }
   // An explicitly requested entrance is one destination. Intermediate corners
   // cannot replace it merely because the sentence also says 'go around'.
-  if (side && /\b(entrance|door)\b/i.test(playerText) && /\b(go|walk|head|come|reach|approach|bring|navigate|around)\b/i.test(playerText)) {
+  if (side && /\b(entrance|door)\b/i.test(navigationText(playerText)) && /\b(go|walk|head|come|reach|approach|bring|navigate|around)\b/i.test(navigationText(playerText))) {
     const destination = candidates.find(c => c.id === `home:${side}`);
     if (destination) return candidates.filter(c => c === destination || ['clarify','wait','continue'].includes(c.id));
   }

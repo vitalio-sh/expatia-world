@@ -26,7 +26,11 @@ export function World({game,compact=false}:{game?:any;compact?:boolean}){
      if(key!==coneKey){coneKey=key;cone=[];const heading={north:-Math.PI/2,east:0,south:Math.PI/2,west:Math.PI}[a.direction as Actor['direction']];
       for(let ray=0;ray<=36;ray++){const angle=heading-VIEW_ANGLE_DEGREES*Math.PI/360+ray/36*VIEW_ANGLE_DEGREES*Math.PI/180;let point={x:a.x,y:a.y};for(let d=6;d<=SIGHT_RANGE;d+=6){const next={x:a.x+Math.cos(angle)*d,y:a.y+Math.sin(angle)*d};if(insidePolygon(next,WORLD_MAP.home.footprint)||WORLD_MAP.buildings.some(b=>insidePolygon(next,b.footprint)))break;point=next;}cone.push(point);}
      }
-     polygon([a,...cone]);ctx.fillStyle='rgba(247,200,111,.17)';ctx.fill();ctx.strokeStyle='rgba(174,117,45,.35)';ctx.lineWidth=2;ctx.stroke();
+     // A projector needs a saturated field and a boundary that survives washed-out colours.
+     ctx.save();polygon([a,...cone]);ctx.fillStyle='rgba(0,91,255,.43)';ctx.fill();ctx.lineJoin='round';
+     ctx.strokeStyle='#07327f';ctx.lineWidth=15;ctx.stroke();
+     ctx.strokeStyle='#00ddff';ctx.lineWidth=9;ctx.stroke();
+     ctx.strokeStyle='#edffff';ctx.lineWidth=2.5;ctx.stroke();ctx.restore();
     }
    }
    for(const env of manifest.environment??[]){const asset=env.asset??env.animation??env;if(!asset.src)continue;const im=getImage(asset.src);if(!im.complete||!im.naturalWidth)continue;const fw=asset.frameWidth??im.naturalWidth,fh=asset.frameHeight??im.naturalHeight,cols=asset.columns??Math.floor(im.naturalWidth/fw),idx=reduced?0:Math.floor(time/1000*(asset.fps??12))%(asset.frames??1),w=env.width??82,h=env.height??100;ctx.drawImage(im,(idx%cols)*fw,Math.floor(idx/cols)*fh,fw,fh,(env.x??100)-w/2,(env.y??785)-h*(asset.anchorY??.95),w,h);}
