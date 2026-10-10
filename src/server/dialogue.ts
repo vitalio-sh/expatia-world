@@ -36,6 +36,9 @@ function dialogueConflict(text: string, context: unknown, decision: unknown): bo
   if (partialStep && /\b(?:estoy abajo|(?:he|ya he) llegado|estoy (?:en|junto a).{0,15}(?:tu portal|tu entrada|la entrada)|i (?:have arrived|am at your))\b/.test(value)) return true;
   if (partialStep && movementTypes.includes(action?.type) && /\b(?:voy|camino|sigo|me dirijo)\b.{0,45}\b(?:tu portal|tu entrada|la entrada|your entrance|your door)\b/.test(value)) return true;
   const asserted = value.replace(/¿[^?]*\?/g, '');
+  const stoppedForGuidance = (action?.id === 'visibility-stop' || c.navigation?.awaitingGuidance === true) && c.navigation?.moving !== true;
+  const affirmative = asserted.replace(/\bno\s+(?:me\s+)?(?:avanzo|camino|sigo|dirijo|voy)\b/g, '');
+  if (stoppedForGuidance && /\b(?:avanzo|camino|sigo|me dirijo|voy)\b/.test(affirmative)) return true;
   const assertedHomeSide = asserted.match(/\b(?:tu|your)\s+(?:portal|entrada|puerta|entrance|door)\b[^.!?]{0,40}\b(sur|norte|este|oeste|north|south|east|west)\b/)?.[1];
   if (assertedHomeSide) {
     const translated: Record<string, string> = { sur: 'south', norte: 'north', este: 'east', oeste: 'west' };

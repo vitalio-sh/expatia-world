@@ -347,3 +347,17 @@ test('a final physical leg and actual doorway arrival retain truthful entrance w
   assert.match(fallbackLine(context, { id: 'home:south', type: 'move', targetId: 'home-south' }), /voy hacia tu portal en el lado sur/);
   assert.match(fallbackLine(context, { id: 'arrival', type: 'wait', label: 'Wait at home entrance' }), /Estoy abajo/);
 });
+
+test('stationary visibility-stop rejects the exact live false walking line but permits its next-step question', async () => {
+  const context = { ...richerContext, navigation: { moving: false, awaitingGuidance: true, segmentReachesDestination: false } };
+  const stop = { id: 'visibility-stop', type: 'describe' };
+  const failed = 'Avanzo hacia el sur solo hasta donde veo y me detengo. Veo el cruce. ¿Por dónde sigo?';
+  assert.equal(speechIsGrounded(failed, context, stop), false);
+  assert.equal(speechIsGrounded('¿Por dónde sigo?', context, stop), true);
+  const phrases: string[] = [];
+  const streamer = (async (_messages, onText) => { onText(failed); return { text: failed, model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, stop, undefined, phrase => { phrases.push(phrase); }, streamer);
+  assert.deepEqual(phrases, [fallbackLine(context, stop)]);
+  assert.match(result.text, /^Veo .*¿Por dónde sigo\?$/);
+  assert.doesNotMatch(result.text, /Avanzo|camino|me dirijo|voy/);
+});
