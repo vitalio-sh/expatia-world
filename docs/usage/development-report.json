@@ -11,22 +11,22 @@
         "total_tokens": 0
       },
       "end": {
-        "input_tokens": 62464693,
-        "cached_input_tokens": 61524480,
+        "input_tokens": 66087402,
+        "cached_input_tokens": 65113728,
         "cache_write_input_tokens": 0,
-        "output_tokens": 163740,
-        "reasoning_output_tokens": 62666,
-        "total_tokens": 62628433
+        "output_tokens": 171460,
+        "reasoning_output_tokens": 64439,
+        "total_tokens": 66258862
       },
       "delta": {
-        "input_tokens": 62464693,
-        "cached_input_tokens": 61524480,
+        "input_tokens": 66087402,
+        "cached_input_tokens": 65113728,
         "cache_write_input_tokens": 0,
-        "output_tokens": 163740,
-        "reasoning_output_tokens": 62666,
-        "total_tokens": 62628433
+        "output_tokens": 171460,
+        "reasoning_output_tokens": 64439,
+        "total_tokens": 66258862
       },
-      "measuredThrough": "2026-10-10T12:20:23.875Z"
+      "measuredThrough": "2026-10-10T12:25:09.842Z"
     },
     {
       "threadId": "01a12543-908a-7910-b9a6-c7231806eff9",
@@ -39,22 +39,22 @@
         "total_tokens": 0
       },
       "end": {
-        "input_tokens": 18475113,
-        "cached_input_tokens": 17988736,
+        "input_tokens": 19091489,
+        "cached_input_tokens": 18598528,
         "cache_write_input_tokens": 0,
-        "output_tokens": 119942,
-        "reasoning_output_tokens": 38172,
-        "total_tokens": 18595055
+        "output_tokens": 122886,
+        "reasoning_output_tokens": 39125,
+        "total_tokens": 19214375
       },
       "delta": {
-        "input_tokens": 18475113,
-        "cached_input_tokens": 17988736,
+        "input_tokens": 19091489,
+        "cached_input_tokens": 18598528,
         "cache_write_input_tokens": 0,
-        "output_tokens": 119942,
-        "reasoning_output_tokens": 38172,
-        "total_tokens": 18595055
+        "output_tokens": 122886,
+        "reasoning_output_tokens": 39125,
+        "total_tokens": 19214375
       },
-      "measuredThrough": "2026-10-10T12:17:01.009Z"
+      "measuredThrough": "2026-10-10T12:24:04.498Z"
     },
     {
       "threadId": "01a12543-b845-7e63-b24d-94c7c3e68fe0",
@@ -67,22 +67,22 @@
         "total_tokens": 0
       },
       "end": {
-        "input_tokens": 21681451,
-        "cached_input_tokens": 21271040,
+        "input_tokens": 23292709,
+        "cached_input_tokens": 22873216,
         "cache_write_input_tokens": 0,
-        "output_tokens": 95795,
-        "reasoning_output_tokens": 23743,
-        "total_tokens": 21777246
+        "output_tokens": 99245,
+        "reasoning_output_tokens": 24576,
+        "total_tokens": 23391954
       },
       "delta": {
-        "input_tokens": 21681451,
-        "cached_input_tokens": 21271040,
+        "input_tokens": 23292709,
+        "cached_input_tokens": 22873216,
         "cache_write_input_tokens": 0,
-        "output_tokens": 95795,
-        "reasoning_output_tokens": 23743,
-        "total_tokens": 21777246
+        "output_tokens": 99245,
+        "reasoning_output_tokens": 24576,
+        "total_tokens": 23391954
       },
-      "measuredThrough": "2026-10-10T12:17:17.244Z"
+      "measuredThrough": "2026-10-10T12:23:51.736Z"
     },
     {
       "threadId": "01a12543-e1d9-7c70-a19f-15b9b82dc507",
@@ -114,12 +114,12 @@
     }
   ],
   "sumDeltas": {
-    "input_tokens": 110816774,
-    "cached_input_tokens": 108690048,
+    "input_tokens": 116667117,
+    "cached_input_tokens": 114491264,
     "cache_write_input_tokens": 0,
-    "output_tokens": 431976,
-    "reasoning_output_tokens": 140934,
-    "total_tokens": 111248750
+    "output_tokens": 446090,
+    "reasoning_output_tokens": 144493,
+    "total_tokens": 117113207
   },
   "notes": [
     "Each cumulative counter contributes only its last minus start delta.",
