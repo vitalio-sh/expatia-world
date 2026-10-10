@@ -1,0 +1,232 @@
+{
+  "model": "seedance-2-5-260628",
+  "org_id": "byteplus",
+  "display_name": "seedance-2-5-260628",
+  "brief_description": "BytePlus Dreamina Seedance 2.5. Latest-generation T2V and I2V generation with richer reference control and native audio synthesis.",
+  "detailed_description": "# seedance-2-5-260628 API Usage Guide\n\n## Overview\n\n**seedance-2-5-260628** is the latest-generation Dreamina Seedance video generation model, supporting text-to-video and image-to-video workflows with rich reference inputs including images, videos, audios, and pre-uploaded avatar assets.\n\n### Key Features\n- **Text-to-Video & Image-to-Video**: Supports pure text prompts with optional first/last frame anchoring\n- **Flexible Duration**: 4-15 seconds of generated video\n- **Resolutions**: 480p and 720p outputs\n- **Flexible Aspect Ratios**: Standard, cinematic, and adaptive ratios\n- **Audio Generation**: Optional audio synthesis alongside video\n- **Web Search**: Grounded generation using live web search\n- **Rich References**: Reference images, videos, audios, and avatar asset IDs\n- **Reproducibility**: Seed parameter ensures deterministic output\n- **Watermark Control**: Choose whether to embed a watermark\n\n---\n\n## Authentication\n\nAll API requests require authentication using an API key. Include it in the `Authorization` header:\n\n```bash\nAuthorization: Bearer YOUR_API_KEY\n```\n\n## Submit Video Generation Request\n\n### Base URL\n```\nhttps://console.gmicloud.ai\n```\n\n### Endpoint\n```\nPOST /api/v1/ie/requestqueue/apikey/requests\n```\n\n### Request Format\n\n```bash\ncurl -X POST \"https://console.gmicloud.ai/api/v1/ie/requestqueue/apikey/requests\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"model\": \"seedance-2-5-260628\",\n    \"payload\": {\n      \"prompt\": \"A lone astronaut walks across a crimson Martian landscape at sunset.\",\n      \"first_frame\": \"https://example.com/frame.jpg\",\n      \"duration\": 8,\n      \"resolution\": \"720p\",\n      \"ratio\": \"16:9\",\n      \"seed\": 42,\n      \"watermark\": false,\n      \"generate_audio\": true,\n      \"web_search\": false\n    }\n  }'\n```\n\n### Request Parameters\n\n| Parameter | Type | Required | Description | Default | Constraints |\n|---|---|---|---|---|---|\n| `prompt` | string | Yes | Text description of the video | `\"\"` | Required |\n| `duration` | integer | No | Duration in seconds | `5` | 4-15 |\n| `resolution` | enum | No | Output resolution | `\"720p\"` | `\"480p\"`, `\"720p\"` |\n| `ratio` | enum | No | Aspect ratio | `\"16:9\"` | `\"16:9\"`, `\"4:3\"`, `\"1:1\"`, `\"3:4\"`, `\"9:16\"`, `\"21:9\"`, `\"adaptive\"` |\n| `seed` | integer | No | Random seed for reproducibility | `null` | 0-4294967295 |\n| `watermark` | boolean | No | Whether to embed a watermark | `false` | true / false |\n| `generate_audio` | boolean | No | Whether to synthesize audio | `true` | true / false |\n| `web_search` | boolean | No | Whether to enable web search grounding | `false` | true / false |\n| `first_frame` | image | No | First frame image for I2V | `\"\"` | Publicly accessible URL |\n| `last_frame` | image | No | Last frame image for I2V | `\"\"` | Publicly accessible URL |\n| `reference_images` | array | No | Reference images (URLs) | `[]` | Up to 9 publicly accessible URLs |\n| `reference_videos` | array | No | Reference videos (URLs) | `[]` | Up to 3 publicly accessible URLs |\n| `reference_audios` | array | No | Reference audio files (URLs) | `[]` | Up to 3 publicly accessible URLs |\n| `avatar_asset_ids` | array | No | Pre-uploaded avatar asset IDs | `[]` | Array of asset ID strings |\n\n### Response\n\n```json\n{\n  \"request_id\": \"c1c5a812-3c44-4c77-b02c-91c934abcd12\",\n  \"model\": \"seedance-2-5-260628\",\n  \"status\": \"queued\",\n  \"created_at\": 1750442925,\n  \"updated_at\": 1750442925,\n  \"queued_at\": 1750442925\n}\n```\n\n## Check Request Status\n\n### Endpoint\n```\nGET /api/v1/ie/requestqueue/apikey/requests/{request_id}\n```\n\n### Example\n\n```bash\ncurl -X GET \"https://console.gmicloud.ai/api/v1/ie/requestqueue/apikey/requests/c1c5a812-3c44-4c77-b02c-91c934abcd12\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n```\n\n### Response\n```json\n{\n  \"request_id\": \"c1c5a812-3c44-4c77-b02c-91c934abcd12\",\n  \"org_id\": \"your-org-id\",\n  \"model\": \"seedance-2-5-260628\",\n  \"status\": \"success\",\n  \"payload\": {\n    \"prompt\": \"A lone astronaut walks across a crimson Martian landscape at sunset.\",\n    \"duration\": 8,\n    \"resolution\": \"720p\",\n    \"ratio\": \"16:9\",\n    \"seed\": 42,\n    \"watermark\": false,\n    \"generate_audio\": true\n  },\n  \"outcome\": {\n    \"video_url\": \"https://storage.googleapis.com/bucket/generated-video.mp4\",\n    \"thumbnail_image_url\": \"https://storage.googleapis.com/bucket/thumbnail.jpg\"\n  },\n  \"created_at\": 1750442925,\n  \"updated_at\": 1750442930,\n  \"queued_at\": 1750442925\n}\n```\n\n## Request Status Values\n\n| Status | Description |\n|--------|-------------|\n| `queued` | Request is waiting to be processed |\n| `processing` | Video generation is in progress |\n| `success` | Video generation completed successfully |\n| `failed` | Video generation failed |\n| `cancelled` | Request was cancelled |\n\n## List Your Requests\n\n### Endpoint\n```\nGET /api/v1/ie/requestqueue/apikey/requests?model_id=seedance-2-5-260628\n```\n\n## Get Model Information\n\n### Endpoint\n```\nGET /api/v1/ie/requestqueue/apikey/models/seedance-2-5-260628\n```\n\n## Tips for Better Results\n\n1. **Detailed Prompts**: More descriptive text yields better visuals\n2. **Use First/Last Frame**: Anchor the start and end for tighter I2V consistency\n3. **Adaptive Ratio**: Use `adaptive` to let the model choose the best ratio for your content\n4. **Seeds for Control**: Use a fixed seed for reproducible outputs\n5. **Audio Sync**: Enable `generate_audio` for immersive, sound-matched videos\n6. **Reference Videos**: Supplying a reference video guides motion and timbre, and is priced differently from a text-only generation\n\n## Examples\n\n### Text-to-Video\n```bash\ncurl -X POST \"https://console.gmicloud.ai/api/v1/ie/requestqueue/apikey/requests\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"model\": \"seedance-2-5-260628\",\n    \"payload\": {\n      \"prompt\": \"A thunderstorm rolls over a medieval castle at night, lightning illuminating stone towers\",\n      \"duration\": 12,\n      \"resolution\": \"720p\",\n      \"ratio\": \"21:9\",\n      \"generate_audio\": true\n    }\n  }'\n```\n\n### Image-to-Video with First and Last Frame\n```bash\ncurl -X POST \"https://console.gmicloud.ai/api/v1/ie/requestqueue/apikey/requests\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"model\": \"seedance-2-5-260628\",\n    \"payload\": {\n      \"prompt\": \"The flower slowly blooms, petals unfurling in morning light\",\n      \"first_frame\": \"https://example.com/bud.jpg\",\n      \"last_frame\": \"https://example.com/bloom.jpg\",\n      \"duration\": 6,\n      \"resolution\": \"720p\",\n      \"ratio\": \"1:1\",\n      \"generate_audio\": false\n    }\n  }'\n```\n\n### With Reference Assets\n```bash\ncurl -X POST \"https://console.gmicloud.ai/api/v1/ie/requestqueue/apikey/requests\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"model\": \"seedance-2-5-260628\",\n    \"payload\": {\n      \"prompt\": \"The character walks through a neon-lit alley\",\n      \"avatar_asset_ids\": [\"asset-id-abc123\"],\n      \"reference_images\": [\"https://example.com/style-ref.jpg\"],\n      \"duration\": 10,\n      \"resolution\": \"720p\",\n      \"ratio\": \"adaptive\"\n    }\n  }'\n```",
+  "icon_link": "https://storage.googleapis.com/gmi-artifact-metadata/shared_icons/seedance-logo.png",
+  "background_image_url": "https://storage.googleapis.com/gmi-artifact-metadata/shared_video_card/seedance-2-5-260628-demo.mp4",
+  "model_type": "video",
+  "host_type": "external",
+  "external_api_url": "https://ark.cn-beijing.volces.com",
+  "external_provider": "byteplus",
+  "external_api_endpoint": "/api/v3/contents/generations/tasks",
+  "tags": [
+    "Seedance",
+    "Text-to-Video",
+    "Image-to-Video"
+  ],
+  "price_info": {
+    "pricing_type": "video length based pricing",
+    "price": 231000,
+    "unit": "second"
+  },
+  "pricing_details": "",
+  "percentage_discount": 0,
+  "modalities": {
+    "input": [
+      {
+        "type": "text",
+        "required": false
+      },
+      {
+        "type": "image",
+        "required": false
+      },
+      {
+        "type": "video",
+        "required": false
+      },
+      {
+        "type": "audio",
+        "required": false
+      }
+    ],
+    "output": [
+      {
+        "type": "video",
+        "required": true
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "name": "prompt",
+      "display_name": "Text Prompt",
+      "description": "Text description of the video to generate",
+      "type": "string",
+      "required": true,
+      "default_value": "",
+      "order": 1
+    },
+    {
+      "name": "duration",
+      "display_name": "Duration",
+      "description": "Duration in seconds",
+      "type": "integer",
+      "required": false,
+      "default_value": 5,
+      "min_value": 4,
+      "max_value": 30,
+      "order": 2
+    },
+    {
+      "name": "resolution",
+      "display_name": "Resolution",
+      "description": "Output resolution",
+      "type": "enum",
+      "required": false,
+      "default_value": "720p",
+      "options": [
+        {
+          "value": "480p",
+          "display_name": "480p"
+        },
+        {
+          "value": "720p",
+          "display_name": "720p"
+        },
+        {
+          "value": "1080p",
+          "display_name": "1080p"
+        }
+      ],
+      "order": 3
+    },
+    {
+      "name": "ratio",
+      "display_name": "Aspect Ratio",
+      "description": "Aspect ratio of the output video",
+      "type": "enum",
+      "required": false,
+      "default_value": "16:9",
+      "options": [
+        {
+          "value": "16:9",
+          "display_name": "16:9"
+        },
+        {
+          "value": "4:3",
+          "display_name": "4:3"
+        },
+        {
+          "value": "1:1",
+          "display_name": "1:1"
+        },
+        {
+          "value": "3:4",
+          "display_name": "3:4"
+        },
+        {
+          "value": "9:16",
+          "display_name": "9:16"
+        },
+        {
+          "value": "21:9",
+          "display_name": "21:9"
+        },
+        {
+          "value": "adaptive",
+          "display_name": "Adaptive"
+        }
+      ],
+      "order": 4
+    },
+    {
+      "name": "seed",
+      "display_name": "Seed",
+      "description": "Random seed for reproducibility",
+      "type": "integer",
+      "required": false,
+      "default_value": null,
+      "order": 5
+    },
+    {
+      "name": "watermark",
+      "display_name": "Watermark",
+      "description": "Whether to embed a watermark in the output",
+      "type": "boolean",
+      "required": false,
+      "default_value": false,
+      "order": 6
+    },
+    {
+      "name": "generate_audio",
+      "display_name": "Generate Audio",
+      "description": "Whether to synthesize audio alongside the video",
+      "type": "boolean",
+      "required": false,
+      "default_value": true,
+      "order": 7
+    },
+    {
+      "name": "web_search",
+      "display_name": "Web Search",
+      "description": "Whether to enable web search grounding during generation",
+      "type": "boolean",
+      "required": false,
+      "default_value": false,
+      "order": 8
+    },
+    {
+      "name": "first_frame",
+      "display_name": "First Frame",
+      "description": "First frame image for Image-to-Video generation",
+      "type": "first_frame_image",
+      "required": false,
+      "default_value": "",
+      "max_value": 1,
+      "order": 9
+    },
+    {
+      "name": "last_frame",
+      "display_name": "Last Frame",
+      "description": "Last frame image for Image-to-Video generation",
+      "type": "last_frame_image",
+      "required": false,
+      "default_value": "",
+      "max_value": 1,
+      "order": 10
+    },
+    {
+      "name": "reference_images",
+      "display_name": "Reference Images",
+      "description": "Reference images to guide visual style or subject",
+      "type": "image",
+      "required": false,
+      "default_value": [],
+      "max_value": 9,
+      "order": 11
+    },
+    {
+      "name": "reference_videos",
+      "display_name": "Reference Videos",
+      "description": "Reference videos to guide motion or style",
+      "type": "video",
+      "required": false,
+      "default_value": [],
+      "max_value": 3,
+      "order": 12
+    },
+    {
+      "name": "reference_audios",
+      "display_name": "Reference Audios",
+      "description": "Reference audio files to guide audio synthesis",
+      "type": "audio",
+      "required": false,
+      "default_value": [],
+      "max_value": 3,
+      "order": 13
+    }
+  ],
+  "internal_parameters": {},
+  "model_metadata": {
+    "visibility": "visible",
+    "delivery_mode": "async"
+  },
+  "status": "active",
+  "qworkers": 0,
+  "is_feature": false,
+  "created_at": 1786140642,
+  "updated_at": 1791420028
+}

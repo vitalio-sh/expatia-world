@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-10T01:31:59.697Z",
+  "endpoint": "https://api.typesafe.ai/v1/systemone",
+  "source": "jev",
+  "effect": "steady",
+  "lineId": "silence",
+  "objective": {
+    "targetId": "lamp",
+    "label": "Inspect the floor lamp",
+    "reason": "Log the condition of the service lighting.",
+    "radius": 76
+  },
+  "trace": {
+    "model": "jev-1.13.0",
+    "ms": 300,
+    "confidence": 0.6,
+    "reason": "live",
+    "inputTokens": 912,
+    "estimatedUsd": 0.000038304000000000005
+  }
+}

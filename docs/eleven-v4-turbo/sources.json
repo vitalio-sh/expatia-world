@@ -1,0 +1,363 @@
+{
+  "reviewed_at": "2026-10-10",
+  "scope": "Eleven v4 Turbo and surrounding NPC voice integration",
+  "source_count": 45,
+  "sources": [
+    {
+      "title": "Models",
+      "url": "https://elevenlabs.io/docs/overview/models",
+      "markdown_url": "https://elevenlabs.io/docs/overview/models.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "909d056512cda87bba62d6d3fcd3a31d59e13def1983d2581eaff7d62645e923"
+    },
+    {
+      "title": "Eleven v4",
+      "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/eleven-v4",
+      "markdown_url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/eleven-v4.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "cee59b4818449abc0d701f5275fc93d5919c74c331c7cd8fc2d7918ffab9f2c5"
+    },
+    {
+      "title": "Best practices",
+      "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices",
+      "markdown_url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "5fd7cf3beab230b45a0ac4702d4331c20889ef3e5e6f89194c9087ee407ca0a1"
+    },
+    {
+      "title": "Text to Dialogue",
+      "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-dialogue",
+      "markdown_url": "https://elevenlabs.io/docs/overview/capabilities/text-to-dialogue.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "49e53f0385243a1363eccd7598b99c2715cbf96822d216a6e18b78804d6c76dc"
+    },
+    {
+      "title": "Stream dialogue in real-time",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/websockets/realtime-tdd",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/websockets/realtime-tdd.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "7495b8f18d366dc16c0495109d3ff571f5c42b8e9c22538bb95d8b5ea91cd9c0"
+    },
+    {
+      "title": "Text to Speech vs Text to Dialogue WebSockets",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/websockets/tts-vs-ttd-websockets",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/websockets/tts-vs-ttd-websockets.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "b73cf174c43bfd8175daf5032c20b86386145c84d807c8936e8502ad15102adb"
+    },
+    {
+      "title": "WebSocket",
+      "url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/ttd-websocket",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/ttd-websocket.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "a0923821357e73be2522827aa805d319ce4109604d35da32dff0ee3aad871486"
+    },
+    {
+      "title": "Multi-Context WebSocket",
+      "url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/ttd-multi-websocket",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/ttd-multi-websocket.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "916339c1b9bb558ef6e77cfd3cc8d9485dce47e0541eba7e3d6fb276a4814bbb"
+    },
+    {
+      "title": "Create dialogue",
+      "url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/convert",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/convert.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "ac231016fd5f351d6ec7a7d5265b6b9676e96d4fb371f7369c2a0551f061c32a"
+    },
+    {
+      "title": "Stream dialogue",
+      "url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/stream",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/stream.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "51dd0fabfe9b298deaee7bbd8d484d1f0074cc4bb7864f94222058f1c3313405"
+    },
+    {
+      "title": "Create dialogue with timestamps",
+      "url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/convert-with-timestamps",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/convert-with-timestamps.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "870c669081a909084d1733a8f82c47e06cfe4bbd70489d98210d80ed71aafd26"
+    },
+    {
+      "title": "Stream dialogue with timestamps",
+      "url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/stream-with-timestamps",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/text-to-dialogue/stream-with-timestamps.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "83f79de98194d9fa266652c4820038f7b0607feff0823e26d9cef128fb9ba46a"
+    },
+    {
+      "title": "API Authentication",
+      "url": "https://elevenlabs.io/docs/api-reference/authentication",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/authentication.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "860bf55203820ae604841cd34c5c0b44a4dd9a2a6699650aa917f6ff4d9c36d1"
+    },
+    {
+      "title": "Secure by design",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/best-practices/security",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/best-practices/security.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "23d22c95104885eb77035715b3358e95ea2f004b08eae5ed60a7446d6d161f11"
+    },
+    {
+      "title": "Understanding latency",
+      "url": "https://elevenlabs.io/docs/eleven-api/concepts/latency",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/concepts/latency.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "8be1137c6f6e4b19cb5a7a3b578b7cf9c492c36747697609c2e878042c707bd1"
+    },
+    {
+      "title": "Understanding audio streaming",
+      "url": "https://elevenlabs.io/docs/eleven-api/concepts/audio-streaming",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/concepts/audio-streaming.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "0686e61ae88fb1543fa2f4cf02f6fe59e96eda0ecb5103f63ac1e1d1e25e588c"
+    },
+    {
+      "title": "Streaming",
+      "url": "https://elevenlabs.io/docs/api-reference/streaming",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/streaming.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "aa48ab452ce24a4ed3a6bd0c3633577530b99dee53b0597dfbc7e114a47427e5"
+    },
+    {
+      "title": "Using pronunciation dictionaries",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/text-to-speech/pronunciation-dictionaries",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/text-to-speech/pronunciation-dictionaries.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "b61747321aadf0d9c754b0c799bb23a5f40a965e2e89069c9f010e30d1a7bdf3"
+    },
+    {
+      "title": "Voice cloning: how it works",
+      "url": "https://elevenlabs.io/docs/eleven-api/concepts/voice-cloning",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/concepts/voice-cloning.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "b550d80f63fa8323038223dce491c28fe5909f85cb922675e3fffdad3dda5df1"
+    },
+    {
+      "title": "Libraries & SDKs",
+      "url": "https://elevenlabs.io/docs/eleven-api/resources/libraries",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/resources/libraries.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "f0863ad898ec41c4f904c34b52839f0fadd080b3faecdb08794403cf57d5cc15"
+    },
+    {
+      "title": "List voices",
+      "url": "https://elevenlabs.io/docs/api-reference/voices/search",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/voices/search.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "aa5c0495bb2207d64477922f317141966a2746b207214ef0c1034f50122054a3"
+    },
+    {
+      "title": "Get voice settings",
+      "url": "https://elevenlabs.io/docs/api-reference/voices/settings/get",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/voices/settings/get.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "37c1ed738324838563775bc1a92199687a9ae51efbe333bb91ded6319b127aa8"
+    },
+    {
+      "title": "List models",
+      "url": "https://elevenlabs.io/docs/api-reference/models/list",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/models/list.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "c2cb4c9fbfd64e50a884b10f33bf0553de8d096285f5275a47048e8afaf92a7b"
+    },
+    {
+      "title": "Create Single Use Token",
+      "url": "https://elevenlabs.io/docs/api-reference/tokens/create",
+      "markdown_url": "https://elevenlabs.io/docs/api-reference/tokens/create.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "02457ccbc1aa23df4c64d0a0a4ed7e6441a22726d477ab75ef8c7d428c774c62"
+    },
+    {
+      "title": "How do audio tags work with Eleven v3 and v4?",
+      "url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/how-do-audio-tags-work-with-eleven-v3-and-v4",
+      "markdown_url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/how-do-audio-tags-work-with-eleven-v3-and-v4.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "8c1db076325a4d9ef44ac531d87cc1ae0c844893a35dc35eab4fe56605ae4eaa"
+    },
+    {
+      "title": "How can I add pauses?",
+      "url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/how-can-i-add-pauses",
+      "markdown_url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/how-can-i-add-pauses.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "396864d4d24563e4ed249e26bfa99f992b9186bc40753132469b2f57b5759c52"
+    },
+    {
+      "title": "How do I select the language and accent?",
+      "url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/how-do-i-select-the-language-and-accent",
+      "markdown_url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/how-do-i-select-the-language-and-accent.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "dfecc4b38f38fa0a58717f5b1b9b84f84040461cf841b7247e7aa8e2064cb028"
+    },
+    {
+      "title": "What is Eleven v4?",
+      "url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/what-is-eleven-v4",
+      "markdown_url": "https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/what-is-eleven-v4.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "8a57357b24f847cc17ea55cd18ba1f08cf500cb428a6405475125cbebc50f084"
+    },
+    {
+      "title": "Instant Voice Cloning",
+      "url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning/instant-voice-cloning",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning/instant-voice-cloning.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "1d42fc6476bb0a054de3761612f139b9c9e558f0329dca94a49bf33e216b918d"
+    },
+    {
+      "title": "Professional Voice Cloning",
+      "url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning/professional-voice-cloning",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning/professional-voice-cloning.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "ce5bfb05c62d150e44c72747be60413940b0cf1a25293319783aa899dd4cda9a"
+    },
+    {
+      "title": "Voice Design",
+      "url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-design",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-design.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "72537368c5fdf8efcd4f4d9a86f4e80c65d9818d655aefd9d872898d466506d9"
+    },
+    {
+      "title": "Speech Engine",
+      "url": "https://elevenlabs.io/docs/overview/capabilities/speech-engine",
+      "markdown_url": "https://elevenlabs.io/docs/overview/capabilities/speech-engine.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "6843d13f7aade4e81a8eaf086d6fd8d864f81920245f6a96c301d313c788cc25"
+    },
+    {
+      "title": "Speech Engine quickstart",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/cookbooks/speech-engine",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/cookbooks/speech-engine.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "b8be894e67b3262b8935d9e4f25e15a5b01b5b9d0d149443baca2676ff9936b2"
+    },
+    {
+      "title": "Transcripts and commit strategies",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/speech-to-text/realtime/transcripts-and-commit-strategies",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/speech-to-text/realtime/transcripts-and-commit-strategies.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "6259a93b9f4012ad9be14cca7ff127b89875001884e98ee4574eaff1f0809669"
+    },
+    {
+      "title": "Client-side streaming",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/speech-to-text/realtime/client-side-streaming",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/speech-to-text/realtime/client-side-streaming.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "e079f34b0b6fa6ce6c143e3d0f918a702ca7125149c1a6d426da0e3179485ee9"
+    },
+    {
+      "title": "Zero Retention Mode (Enterprise)",
+      "url": "https://elevenlabs.io/docs/eleven-api/resources/zero-retention-mode",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/resources/zero-retention-mode.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "cc8b2148ee59d6140aabbf72dfac01f549532e5ae0956a093cca4a6993b8e42c"
+    },
+    {
+      "title": "Data residency",
+      "url": "https://elevenlabs.io/docs/overview/administration/data-residency",
+      "markdown_url": "https://elevenlabs.io/docs/overview/administration/data-residency.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "30c053bb1c3b38ea61fdffec3d5dcf120ea3579b20f62bd062fb874da785fd76"
+    },
+    {
+      "title": "Voice Library",
+      "url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-library",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-creative/voices/voice-library.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "9759fd5cc93a7d3dc93a7635aaa46f60cb481b689679654b783c20a2f298edb3"
+    },
+    {
+      "title": "API - Error Code 400 or 401",
+      "url": "https://elevenlabs.io/docs/help-center/technical/api-error-code-400-or-401",
+      "markdown_url": "https://elevenlabs.io/docs/help-center/technical/api-error-code-400-or-401.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "3d5e6630b38382b2d67f5a2876d29f3bf070d8f3618660d9cbd437dd7857b320"
+    },
+    {
+      "title": "API - Error Code 422",
+      "url": "https://elevenlabs.io/docs/help-center/technical/api-error-code-422",
+      "markdown_url": "https://elevenlabs.io/docs/help-center/technical/api-error-code-422.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "22cd18330154e54fbb1585fd39f550e18308ee68a4ce5f9f4dc9b3aee938958b"
+    },
+    {
+      "title": "API - Error Code 429",
+      "url": "https://elevenlabs.io/docs/help-center/technical/api-error-code-429",
+      "markdown_url": "https://elevenlabs.io/docs/help-center/technical/api-error-code-429.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "6ed9909bc7429e82d0b38f83427cef050e355fa0198ae74d65397fc8b4254b15"
+    },
+    {
+      "title": "Latency optimization",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/best-practices/latency-optimization",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/how-to/best-practices/latency-optimization.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "422f52ca4c8b94504747d96c4f2aa1b6cae46c07d8e8978a2e3c1e3a99aaf8ee"
+    },
+    {
+      "title": "Text to Dialogue quickstart",
+      "url": "https://elevenlabs.io/docs/eleven-api/guides/cookbooks/text-to-dialogue",
+      "markdown_url": "https://elevenlabs.io/docs/eleven-api/guides/cookbooks/text-to-dialogue.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs",
+      "research_text_sha256": "11ac45900eef0c0690c3118b4fdbcff4fe88bdcc9a781f499a184b4806f0a1e3"
+    },
+    {
+      "title": "ElevenLabs API pricing",
+      "url": "https://elevenlabs.io/pricing/api",
+      "reviewed_at": "2026-10-10",
+      "provider": "ElevenLabs"
+    },
+    {
+      "title": "websockets 14.0 asyncio client reference",
+      "url": "https://github.com/python-websockets/websockets/blob/14.0/docs/reference/asyncio/client.md",
+      "reviewed_at": "2026-10-10",
+      "provider": "python-websockets"
+    }
+  ]
+}
