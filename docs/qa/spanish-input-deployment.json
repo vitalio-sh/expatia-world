@@ -1,0 +1,16 @@
+{
+  "url": "https://expatia.world/",
+  "version": 14,
+  "sourceCommit": "c2f0f23c8f8c79b04c407b33fbd927c7782393b4",
+  "deploymentId": "appgdep_6aca32fb374c8191af19fa26a697fe0f",
+  "status": "succeeded",
+  "publishedAt": "2026-10-10T12:43:55.512275+00:00",
+  "testsPassed": 99,
+  "checks": [
+    "TypeScript passed",
+    "Production build passed",
+    "Mobile UI delivery completed through contextual suggestions with 37 seconds left at the entrance",
+    "Production Spanish/English selector verified, final selection Spanish",
+    "Real production STT explicitly defaulted to es and recognized synthetic Spanish verbatim, 540ms commit to final"
+  ]
+}
