@@ -10,3 +10,27 @@
 @media(max-width:760px){.header-tools{gap:4px}.demo-toggle{padding:6px 7px;font-size:9px;gap:4px}.demo-toggle i{width:20px}.demo-toggle[aria-checked=true] i:after{left:9px}.demo-coach{padding:8px 10px}.incoming .demo-coach{margin:0 -12px}.demo-coach-heading{font-size:8px}.demo-coach .demo-spanish{font-size:16px;line-height:1.25;margin:5px 0 3px}.demo-coach .demo-translation{font-size:10px}.demo-coach-controls{margin-top:5px;gap:5px}.demo-coach button{font-size:9px;min-height:34px;padding:4px 6px}.demo-steps button{min-width:30px}.demo-mode .transcript{min-height:62px;max-height:78px}.demo-mode .incoming-copy{display:none}.demo-mode .incoming{gap:8px}.demo-mode .incoming-notes{display:none}}
 /* Keep the complete district and compass visible on short projector screens. */
 @media(min-width:761px){.game-shell .play-area .world{max-width:calc(100dvh - 186px);margin-inline:auto}}
+
+/* Authorship follows the lab's cream paper, red seal and condensed type. */
+@font-face{font-family:'JSL Oswald';font-style:normal;font-weight:200 700;font-display:swap;src:url('/assets/oswald-latin.woff2') format('woff2')}
+.brand-lockup{display:flex;align-items:center;gap:24px;min-width:0}
+.maker-credit{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;color:#272922;text-decoration:none;min-height:28px}
+.maker-credit:focus-visible,.hackathon-wordmark:focus-visible{outline:3px solid #c32c25;outline-offset:4px}
+.lab-stamp{display:grid;place-items:center;width:27px;height:27px;border:1.5px solid #c32c25;border-radius:50%;color:#c32c25;font:bold 10px/1 Georgia,serif;transform:rotate(-12deg);flex:none;background:#f1eedf}
+.maker-by{font:italic 12px Georgia,serif;color:#595d51}
+.lab-name{font:600 13px/1.2 'JSL Oswald','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.25px}
+.lab-name em{color:#c32c25;font-style:normal}
+.credit-arrow{font-size:14px;color:#c32c25}
+.maker-credit:hover .lab-name{text-decoration:underline;text-underline-offset:3px}
+.welcome header{flex-wrap:wrap;gap:12px}
+.welcome .brand-lockup{display:contents}
+.welcome .brand{order:0}.welcome .city-chip{order:1}.welcome .maker-credit{order:2;flex-basis:100%}
+.event-credit{display:flex;align-items:center;justify-content:center;gap:22px;border-top:1px solid #c9c9b8;margin-top:18px;padding:18px 0 6px;color:#242720}
+.event-dedication{display:flex;flex-direction:column;gap:5px;font:700 10px/1.4 'Courier New',monospace;letter-spacing:1px}
+.event-dedication small{font-size:9px;font-weight:400;letter-spacing:.2px;color:#535b4e;white-space:nowrap}
+.hackathon-wordmark{display:flex;flex-direction:column;gap:0;color:inherit;text-decoration:none;font:900 20px/.95 Arial,Helvetica,sans-serif;letter-spacing:-.8px;white-space:nowrap}
+.hackathon-wordmark i{font:400 15px Arial,sans-serif;margin-left:5px}
+.hackathon-wordmark:hover{color:#294c36}
+.welcome .event-credit{margin-top:0;padding-bottom:24px;gap:16px}
+@media(max-width:760px){.game-header{display:grid;grid-template-columns:1fr auto;gap:3px 8px;padding-bottom:5px}.game-header .brand-lockup{display:contents}.game-header .brand{grid-column:1;grid-row:1}.game-header .header-tools{grid-column:2;grid-row:1}.game-header .maker-credit{grid-column:1/-1;grid-row:2}.lab-stamp{width:22px;height:22px;font-size:9px}.maker-credit{min-height:25px;gap:5px}.lab-name{font-size:12px}.event-credit{gap:15px;margin-top:12px;padding-top:15px}.hackathon-wordmark{font-size:18px}.event-dedication{font-size:9px}.event-dedication small{font-size:8px}}
+@media(max-width:760px){.welcome .city-chip{font-size:8px;letter-spacing:.4px;padding:6px 8px}}
