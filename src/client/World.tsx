@@ -35,5 +35,5 @@ export function World({game,compact=false}:{game?:any;compact?:boolean}){
   }
   frame=requestAnimationFrame(draw);return()=>{live=false;cancelAnimationFrame(frame);};
  },[manifest,compact]);
- return <div className={`world ${compact?'compact':''}`}><canvas ref={canvas} width={960} height={960} aria-label="Barcelona block: your home is in the centre, its entrance is south. The courier begins northwest. Two bars are along the north street."/><div className="map-compass"><b>N</b><span>↑</span></div>{!compact&&<div className="map-caption">Eixample · Barcelona <span>Tap the arrows to move</span></div>}</div>;
+ return <div className={`world ${compact?'compact':''}`}><canvas ref={canvas} width={960} height={960} aria-label="Barcelona block: your home is in the centre, its entrance is south. The courier begins northwest. Two bars are along the north street."/><div className="map-compass"><b>N</b><span>↑</span></div>{!compact&&<div className="map-caption">Eixample · Barcelona <span>Tap or hold arrows to walk</span></div>}</div>;
 }

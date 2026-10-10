@@ -82,6 +82,15 @@ test('actual JEV probabilities choose a real route and raw instructions cannot c
   assert.equal(game.routeTargetId, 'bar-ponent'); assert.ok(game.route.length > 0); assert.equal(game.parcel, 'courier');
   await assert.rejects(() => queryJev(buildJevRequest(game, actionCandidates(game, 'directions'), 'directions', 'teleport', SATURDAY_NOON), 'fixture', undefined, mockJev(() => 'teleport:480:645')));
 });
+test('JEV transport uses Worker-compatible manual redirects and never follows a provider redirect', async () => {
+  const game = active(); let requests = 0;
+  const fetcher = (async (_url: unknown, init: RequestInit) => {
+    requests++; assert.equal(init.redirect, 'manual');
+    return new Response(null, { status: 302, headers: { Location: 'https://untrusted.invalid/collect' } });
+  }) as typeof fetch;
+  await assert.rejects(() => queryJev(buildJevRequest(game, actionCandidates(game, 'directions'), 'directions', 'Go south', SATURDAY_NOON), 'fixture-private-key', undefined, fetcher), /provider_http_302/);
+  assert.equal(requests, 1);
+});
 test('vague wrong turn is recoverable with south entrance clarification', async () => {
   const game = active();
   const wrong = await decide(game, 'Walk to the bar', undefined, offline); assert.equal(wrong?.selected, 'go:bar-llevant');

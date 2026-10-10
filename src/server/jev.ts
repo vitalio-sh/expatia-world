@@ -35,7 +35,9 @@ export async function queryJev(body: ReturnType<typeof buildJevRequest>, key: st
   let data: unknown;
   try {
     const response = await fetcher(JEV_ENDPOINT, {
-      method: 'POST', redirect: 'error', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      // Workerd rejects redirect:'error'. Manual never forwards the key, and
+      // the !ok gate rejects any redirect response without a second request.
+      method: 'POST', redirect: 'manual', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body), signal: AbortSignal.any([AbortSignal.timeout(3_500), ...(signal ? [signal] : [])]),
     });
     if (!response.ok) throw new JevProviderError(`provider_http_${response.status}`);

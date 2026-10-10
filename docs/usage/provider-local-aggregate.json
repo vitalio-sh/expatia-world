@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-10T10:37:55.491Z",
+  "scope": "All persisted local Node/probe provider entries at this checkpoint. Native Worker isolate-local sessions are excluded unless separately captured. Development chat tokens are excluded. Every entry represents one request, not cumulative counters.",
+  "groups": {
+    "openrouter": {
+      "calls": 22,
+      "live": 22,
+      "cancelledOrUnavailable": 0,
+      "inputTokens": 24409,
+      "outputTokens": 581,
+      "reasoningTokensIncludedInOutput": 90,
+      "returnedCostUsd": 0.0079091,
+      "estimatedCostUsd": 0,
+      "characters": 0,
+      "audioSeconds": 0,
+      "unreturnedTokenCalls": 0
+    },
+    "elevenlabs": {
+      "calls": 12,
+      "live": 9,
+      "cancelledOrUnavailable": 3,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokensIncludedInOutput": 0,
+      "returnedCostUsd": 0,
+      "estimatedCostUsd": 0.029199500000000003,
+      "characters": 723,
+      "audioSeconds": 33.580875,
+      "unreturnedTokenCalls": 0
+    },
+    "jev": {
+      "calls": 15,
+      "live": 15,
+      "cancelledOrUnavailable": 0,
+      "inputTokens": 36572,
+      "outputTokens": 1251,
+      "reasoningTokensIncludedInOutput": 0,
+      "returnedCostUsd": 0,
+      "estimatedCostUsd": 0.0015360240000000004,
+      "characters": 0,
+      "audioSeconds": 0,
+      "unreturnedTokenCalls": 0
+    }
+  },
+  "limitations": [
+    "No invoice or Eleven billed-credit balance access; API key lacks user_read.",
+    "JEV and voice/STT cost fields are estimates; OpenRouter cost fields were returned by completed requests.",
+    "Cancelled requests with no returned usage are counted but their tokens/billing unavailable.",
+    "Synthetic STT duration includes submitted silence; audio duration is not token usage."
+  ]
+}

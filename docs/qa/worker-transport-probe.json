@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-10-10T10:37:00Z",
+  "environment": "Actual local Workerd through installed Miniflare, compatibility_date 2026-10-10, nodejs_compat",
+  "credentialUsage": "No credentials used. Failure occurs before any request is issued.",
+  "abortSignalAny": "supported",
+  "requestRedirectError": {
+    "name": "TypeError",
+    "message": "Invalid redirect value, must be one of follow or manual (error won't be implemented since it does not make sense at the edge; use manual and check the response status code)."
+  },
+  "boundAndUnboundFetch": "Both reject redirect:error with the same TypeError.",
+  "fix": "queryJev sends redirect:manual. Existing !response.ok rejects 3xx and does not forward credentials to Location.",
+  "regression": "world.test.ts verifies manual transport and one request only for a 302 response. Full authenticated Worker round is measured separately."
+}
