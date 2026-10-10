@@ -1,4 +1,6 @@
 {
+  "at": "2026-10-10T12:11:42.851Z",
+  "version": 9,
   "url": "https://expatia.world",
   "health": {
     "ok": true,
@@ -7,6 +9,6 @@
     "deployment": "connection-owned-worker",
     "build": "2026-10-10-city-polish"
   },
-  "clientAsset": "/assets/index-6M2aK9gS.js",
+  "clientAsset": "/assets/index-nkayEZj6.js",
   "clientMatchesBuild": true
 }

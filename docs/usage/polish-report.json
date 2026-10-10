@@ -1,0 +1,135 @@
+{
+  "scope": "25-minute polish pass. Development cumulative deltas are summed once per registered thread. Runtime cohorts are separate and disjoint.",
+  "development": {
+    "baseline": {
+      "input_tokens": 75305922,
+      "cached_input_tokens": 73911936,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 313801,
+      "reasoning_output_tokens": 106237,
+      "total_tokens": 75619723
+    },
+    "checkpoint": {
+      "input_tokens": 98569154,
+      "cached_input_tokens": 96568320,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 396851,
+      "reasoning_output_tokens": 132110,
+      "total_tokens": 98966005
+    },
+    "polishDelta": {
+      "input_tokens": 23263232,
+      "cached_input_tokens": 22656384,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 83050,
+      "reasoning_output_tokens": 25873,
+      "total_tokens": 23346282
+    },
+    "costUsd": null,
+    "notes": [
+      "Cached input is a subset of input; reasoning is a subset of output.",
+      "Development price/billed amount was not returned. Latest log checkpoint excludes later reporting messages."
+    ]
+  },
+  "runtimeCapturedCohorts": [
+    {
+      "source": "docs/qa/polish-worker-local.json",
+      "scope": "Actual provider-backed typed input and returned PCM transport. This script does not play audio or use a physical microphone; first audible and human STT latency are unavailable.",
+      "usage": {
+        "calls": 19,
+        "inputTokens": 45131,
+        "outputTokens": 1223,
+        "returnedCostUsd": 0.0059257,
+        "estimatedCostUsd": 0.017026154,
+        "voiceCharacters": 398
+      }
+    },
+    {
+      "source": "docs/qa/polish-domain.json",
+      "scope": "Actual provider-backed typed input and returned PCM transport. This script does not play audio or use a physical microphone; first audible and human STT latency are unavailable.",
+      "usage": {
+        "calls": 20,
+        "inputTokens": 48010,
+        "outputTokens": 1196,
+        "returnedCostUsd": 0.0066295,
+        "estimatedCostUsd": 0.02008329,
+        "voiceCharacters": 474
+      }
+    },
+    {
+      "source": "docs/usage/polish-browser-v8.json",
+      "sessionId": "45d8e11d-5381-4e89-8002-bb5883052ef5",
+      "usage": {
+        "calls": 23,
+        "liveCalls": 23,
+        "inputTokens": 57872,
+        "outputTokens": 1299,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 59171,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0089932,
+        "estimatedCostUsd": 0.024737076,
+        "voiceCharacters": 588,
+        "audioSeconds": 33.599999999999994,
+        "providers": {
+          "jev": 5,
+          "openrouter": 6,
+          "browser": 6,
+          "elevenlabs": 6
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "source": "docs/usage/polish-browser-v9.json",
+      "sessionId": "99e89e0c-4b3f-4de4-8a29-b373a367b38d",
+      "usage": {
+        "audioSeconds": 16.32,
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ],
+        "cachedInputTokens": 0,
+        "calls": 14,
+        "estimatedCostUsd": 0.011070032,
+        "inputTokens": 24287,
+        "liveCalls": 12,
+        "outputTokens": 424,
+        "providers": {
+          "browser": 3,
+          "elevenlabs": 4,
+          "jev": 3,
+          "openrouter": 4
+        },
+        "reasoningTokens": 0,
+        "returnedCostUsd": 0.0035297999999999996,
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "totalTokens": 24711,
+        "unreportedTokenCalls": 1,
+        "voiceCharacters": 263
+      }
+    },
+    {
+      "source": "docs/qa/city-semantics-live.json",
+      "usage": {
+        "calls": 16,
+        "liveCalls": 16,
+        "inputTokens": 79132,
+        "outputTokens": 2466,
+        "totalTokens": 81598,
+        "returnedCostUsd": 0.010298799999999999,
+        "estimatedCostUsd": 0.001925112,
+        "voiceCharacters": 0,
+        "audioSeconds": 0
+      }
+    }
+  ],
+  "runtimeLimits": [
+    "Captured cohorts are a lower bound; earlier semantic probe runs were overwritten and are excluded.",
+    "Returned provider costs and estimated costs remain separate; estimates are not invoices.",
+    "ElevenLabs billed credits unavailable; no unreturned development dollar amount is invented."
+  ]
+}

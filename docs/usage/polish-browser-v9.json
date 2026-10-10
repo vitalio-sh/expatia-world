@@ -1,0 +1,66 @@
+{
+  "at": "2026-10-10T12:12:25.434Z",
+  "version": 9,
+  "url": "https://expatia.world/",
+  "scope": "Actual mobile browser: look south then complete around-building south-entrance instruction; Receive parcel clicked, visible Parcel received result.",
+  "confidence": 0.94,
+  "evidence": [
+    "Currently visible: northeast corner of Fruita Fresca (corner), south, 57 units.",
+    "Currently visible: southeast corner of Fruita Fresca (corner), south, 277 units.",
+    "Currently visible: northwest chamfered corner (corner), east, 61 units.",
+    "Currently visible: west apartment wall (wall), south, 193 units.",
+    "Currently visible: fruit crates (fruit-display), south, 247 units.",
+    "Currently visible: striped fruit-shop awning (awning), south, 193 units.",
+    "Facing south; finite forward sight, solid walls occlude.",
+    "Currently visible: Fruita Fresca (fruit shop), south, 213 units; closed.",
+    "Barcelona Sat, 14:12; weather: Clear sky (live).",
+    "Resident reported a south entrance; this remains a belief until observed."
+  ],
+  "selected": "home:south",
+  "sessionId": "99e89e0c-4b3f-4de4-8a29-b373a367b38d",
+  "sessionUsage": {
+    "audioSeconds": 16.32,
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ],
+    "cachedInputTokens": 0,
+    "calls": 14,
+    "estimatedCostUsd": 0.011070032,
+    "inputTokens": 24287,
+    "liveCalls": 12,
+    "outputTokens": 424,
+    "providers": {
+      "browser": 3,
+      "elevenlabs": 4,
+      "jev": 3,
+      "openrouter": 4
+    },
+    "reasoningTokens": 0,
+    "returnedCostUsd": 0.0035297999999999996,
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "totalTokens": 24711,
+    "unreportedTokenCalls": 1,
+    "voiceCharacters": 263
+  },
+  "usage": {
+    "estimatedUsd": 0.00023646,
+    "inputTokens": 5630,
+    "outputTokens": 43
+  },
+  "world": {
+    "canHandoff": false,
+    "courier": {
+      "direction": "east",
+      "moving": false,
+      "x": 480,
+      "y": 645
+    },
+    "parcel": "resident",
+    "resident": {
+      "direction": "south",
+      "moving": false,
+      "x": 480,
+      "y": 440
+    }
+  }
+}

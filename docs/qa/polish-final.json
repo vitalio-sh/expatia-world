@@ -1,0 +1,50 @@
+{
+  "deployment": {
+    "project_id": "appgprj_6aca0f9dbe04819182b0bdf910ad8cf4",
+    "version": 9,
+    "versionId": "appgprj_6aca0f9dbe04819182b0bdf910ad8cf4~appgver_b0ff12ef743881919c9bf85f39a027ed",
+    "commitSha": "a8bebe4e15de0b0ae4f7e1f760fb2f3e644d512a",
+    "deploymentId": "appgdep_6aca2b58a90c819193adbc9f7115ec43",
+    "status": "succeeded",
+    "updatedAt": "2026-10-10T12:11:23.360100+00:00",
+    "generatedUrl": "https://expatia-world.iviviv.chatgpt.site",
+    "customUrls": [
+      "https://expatia.world/",
+      "https://www.expatia.world/"
+    ],
+    "domains": [
+      {
+        "hostname": "expatia.world",
+        "id": "appgdom_6aca179459dc8191aa0e8830a12e9535",
+        "status": "active",
+        "sslStatus": "active",
+        "providerStatus": "active"
+      },
+      {
+        "hostname": "www.expatia.world",
+        "id": "appgdom_6aca182d89fc8191b0ede5b8923b84c6",
+        "status": "active",
+        "sslStatus": "active",
+        "providerStatus": "active"
+      }
+    ]
+  },
+  "validation": {
+    "tests": 61,
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "realJevSemanticCases": 8,
+    "semanticReport": "city-semantics-live.json",
+    "v8PublicOutcomes": "polish-domain.json",
+    "v9PublicBrowser": "../usage/polish-browser-v9.json",
+    "mobileViewport": "360x800",
+    "mapWidthPx": 334,
+    "residentStationary": true,
+    "aroundBuildingSouthEntranceAndReceive": "passed",
+    "productionClientByteMatch": "polish-domain-build.json"
+  },
+  "limits": [
+    "Real hardware microphone and speaker not verified.",
+    "LLM directions remain probabilistic; tests cover the authored city and listed intents."
+  ]
+}
