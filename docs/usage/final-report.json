@@ -205,6 +205,34 @@
           "voiceCharacters": 301
         },
         "unreportedTokenCalls": 1
+      },
+      {
+        "name": "Version6 browser movement/cancellation round",
+        "file": "docs/usage/browser-session-v6.json",
+        "totals": {
+          "calls": 13,
+          "liveCalls": 10,
+          "inputTokens": 12633,
+          "outputTokens": 375,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 13008,
+          "unreportedTokenCalls": 1,
+          "returnedCostUsd": 0.0017716,
+          "estimatedCostUsd": 0.007024962,
+          "voiceCharacters": 168,
+          "audioSeconds": 9.600000000000001,
+          "providers": {
+            "jev": 3,
+            "elevenlabs": 4,
+            "openrouter": 4,
+            "browser": 2
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        }
       }
     ],
     "capturedLowerBounds": {

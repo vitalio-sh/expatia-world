@@ -121,5 +121,8 @@
     "Microphone permission request was pending in IAB; typed fallback worked. Real-device denial and human capture were unavailable.",
     "Late success, late denial and STT cancellation are covered by focused fake-device regression tests.",
     "No human microphone or hardware audibility claim."
-  ]
+  ],
+  "version6Followup": {
+    "result": "Parcel received, resident.moving=false after release; late canceled typed response showed a transient error. Fixed by invalidating pending turn ownership at handoff and scoping async UI updates."
+  }
 }
