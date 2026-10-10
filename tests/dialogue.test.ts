@@ -193,3 +193,25 @@ test('streaming emits short acknowledgements promptly and retains the essential 
   assert.equal(phrases.length,3);assert.equal(phrases.at(-1),'¿En qué lado está tu portal?');
   assert.ok(result.text.includes('¿En qué lado está tu portal?'));assert.equal(result.live,true);
 });
+
+test('service prose is rejected before phrase callback and uses a grounded courier fallback', async () => {
+  for (const payload of ['Connection closed. Start another call.', '{"error":"provider unavailable"}', 'openrouter_http_503']) {
+    const phrases: string[] = [];
+    const streamer = (async (_messages, onText) => { onText(payload); return { text: payload, model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+    const result = await generateDialogue(richerContext, { type: 'clarify' }, undefined, phrase => { phrases.push(phrase); }, streamer);
+    assert.equal(result.live, false);
+    assert.equal(phrases.length, 1);
+    assert.doesNotMatch(phrases[0], /Connection|provider|openrouter|error/);
+    assert.equal(speechIsGrounded(payload, richerContext, { type: 'clarify' }), false);
+  }
+  assert.equal(speechIsGrounded('No entiendo. ¿En qué lado está tu portal?', richerContext, { type: 'clarify' }), true);
+});
+
+test('service failure after valid speech keeps only the useful spoken phrase', async () => {
+  const phrases: string[] = [];
+  const streamer = (async (_messages, onText) => { onText('Vale. '); onText('Connection closed. '); throw new Error('provider_timeout'); }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(richerContext, { type: 'clarify' }, undefined, phrase => { phrases.push(phrase); }, streamer);
+  assert.deepEqual(phrases, ['Vale.']);
+  assert.equal(result.text, 'Vale.');
+  assert.equal(result.error, 'stream_interrupted');
+});

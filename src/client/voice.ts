@@ -10,6 +10,12 @@ export interface VoiceCallbacks {
 }
 export interface Transcript { text: string; model: string; live: boolean; elapsedMs: number; turnId: TurnId }
 
+/** Protocol diagnostics are status, never recognised speech or courier captions. */
+export function isServiceErrorText(value: unknown): boolean {
+  if (typeof value !== 'string') return true;
+  return /^(?:\{\s*"(?:error|status|statusCode)"\s*:|\[\s*\{\s*"error"\s*:|(?:openrouter|elevenlabs|provider|upstream|websocket|stt)[_:-](?:error|http|stream|timeout|not_configured)|(?:call |voice |microphone |game |the game )?connection (?:closed|failed|lost|timed out|interrupted|unavailable)|(?:live voice|voice transcription|speech|transcription|microphone transcription) (?:unavailable|failed|timed out)|game request (?:failed|timed out)|error:\s*(?:connection|provider|service|upstream|network|HTTP))/i.test(value.trim());
+}
+
 /** One clock, mono PCM16LE at 24 kHz; sources are stopped and late turns rejected. */
 export class PcmPlayer {
   private context: AudioContext | null = null;
@@ -113,7 +119,7 @@ export class RealtimeVoice {
         if (this.socket !== socket) return;
         let message: any; try { message = JSON.parse(event.data); } catch { return; }
         if (message.sessionId && message.sessionId !== this.sessionId) return;
-        if (message.type === 'ready') { clearTimeout(timer); this.realtimeRpc = Boolean(message.realtimeRpc); this.connectionPromise = null; this.callbacks.onStatus?.('ready'); resolve(); return; }
+        if (message.type === 'ready' && !message.error) { clearTimeout(timer); this.realtimeRpc = Boolean(message.realtimeRpc); this.connectionPromise = null; this.callbacks.onStatus?.('ready'); resolve(); return; }
         this.receive(message);
       };
       socket.onerror = () => { clearTimeout(timer); this.callbacks.onStatus?.('offline', 'Voice unavailable. You can still type.'); reject(new Error('Voice connection failed.')); };
@@ -248,23 +254,39 @@ export class RealtimeVoice {
     }
     if (message.type === 'game.state') { this.callbacks.onState?.(message.state ?? message.game); return; }
     if (message.type === 'voice.prepared') { this.callbacks.onStatus?.(message.live ? 'prepared' : 'voice-unavailable'); return; }
+    if ((message.type === 'error' || message.type === 'service.error') && message.turnId == null) { this.callbacks.onStatus?.('voice-unavailable', 'Voice unavailable. Please type instead.'); return; }
     if (message.type === 'npc.audio_begin' && this.currentTurn === null && !this.recording && !this.awaitingMic && !this.cancelledTurns.has(message.turnId)) this.beginTurn(message.turnId);
     if (message.turnId !== this.currentTurn) return;
     if (message.type === 'npc.audio_begin') this.callbacks.onStatus?.('synthesizing');
-    else if (message.type === 'npc.caption') this.callbacks.onCaption?.(message.text, message.turnId);
+    else if (message.type === 'npc.caption') {
+      if (message.error || isServiceErrorText(message.text)) { this.callbacks.onStatus?.('dialogue-fallback', 'Courier reply unavailable. Please try a short direction.'); return; }
+      if (message.text.trim()) this.callbacks.onCaption?.(message.text, message.turnId);
+    }
     else if (message.type === 'npc.audio') { this.firstAudioReceived ||= performance.now(); this.player.enqueueBase64(message.audio, message.turnId); }
     else if (message.type === 'npc.audio_end') { this.currentTurn = null; this.prepare(); this.callbacks.onStatus?.('audio-complete'); }
     else if (message.type === 'npc.cancel') { this.cancelledTurns.add(message.turnId); this.player.stop(); this.currentTurn = null; this.callbacks.onStatus?.('ready'); }
     else if (message.type === 'npc.audio_error') { this.player.stop(); this.callbacks.onStatus?.('voice-unavailable', 'Speech unavailable. Read the courier transcript.'); }
-    else if (message.type === 'stt.partial') this.callbacks.onTranscript?.(message.text, false, message.turnId);
+    else if (message.type === 'stt.partial') {
+      if (!this.resolveTranscript) return;
+      if (message.error || isServiceErrorText(message.text)) { this.failTranscription(); return; }
+      this.callbacks.onTranscript?.(message.text, false, message.turnId);
+    }
     else if (message.type === 'stt.final') {
+      // Ignore duplicate or unsolicited finals: only the pending microphone request can fill input.
+      if (!this.resolveTranscript) return;
+      if (message.error || isServiceErrorText(message.text)) { this.failTranscription(); return; }
       if (this.transcriptTimer) clearTimeout(this.transcriptTimer); this.transcriptTimer = null;
       this.callbacks.onTranscript?.(message.text, true, message.turnId); this.resolveTranscript?.({ text: message.text, turnId: message.turnId, model: message.model, live: message.live, elapsedMs: message.elapsedMs });
       this.resolveTranscript = null; this.rejectTranscript = null; this.callbacks.onStatus?.('ready');
     } else if (message.type === 'stt.error') {
-      this.stopCapture(); if (this.transcriptTimer) clearTimeout(this.transcriptTimer); this.transcriptTimer = null;
-      this.rejectTranscript?.(new Error(message.error)); this.resolveTranscript = null; this.rejectTranscript = null; this.callbacks.onStatus?.('transcription-error', message.error);
+      this.failTranscription();
     }
+  }
+  private failTranscription() {
+    const detail = 'Transcription unavailable. Please try again or type your directions.';
+    if (this.currentTurn !== null) this.cancelledTurns.add(this.currentTurn);
+    this.cancelMicrophone(new Error(detail)); this.currentTurn = null; this.send({ type: 'stt.cancel' });
+    this.callbacks.onStatus?.('transcription-error', detail);
   }
   private send(message: Record<string, unknown>) { if (this.socket?.readyState === WebSocket.OPEN) this.socket.send(JSON.stringify({ ...message, sessionId: this.sessionId })); }
   disconnect() {

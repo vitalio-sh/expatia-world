@@ -21,6 +21,18 @@ export function accountModelUsage(usage?: ModelUsage): Partial<UsageEntry> {
   return usage ? { inputTokens: usage.prompt_tokens, outputTokens: usage.completion_tokens, totalTokens: usage.total_tokens, cachedInputTokens: usage.prompt_tokens_details?.cached_tokens, reasoningTokens: usage.completion_tokens_details?.reasoning_tokens, costUsd: usage.cost } : {};
 }
 
+/** Match service diagnostics, never ordinary in-world uncertainty such as “no entiendo”. */
+export function isServiceErrorText(value: unknown): boolean {
+  if (typeof value !== 'string') return true;
+  const text = value.trim();
+  return /^(?:\{\s*"(?:error|status|statusCode)"\s*:|\[\s*\{\s*"error"\s*:|(?:openrouter|elevenlabs|provider|upstream|websocket|stt)[_:-](?:error|http|stream|timeout|not_configured)|(?:call |voice |microphone |game |the game )?connection (?:closed|failed|lost|timed out|interrupted|unavailable)|(?:live voice|voice transcription|speech|transcription|microphone transcription) (?:unavailable|failed|timed out)|game request (?:failed|timed out)|error:\s*(?:connection|provider|service|upstream|network|HTTP))/i.test(text);
+}
+
+function streamFrameError(chunk: any, eventType: string): boolean {
+  const choice = chunk?.choices?.[0];
+  return eventType === 'error' || !!chunk?.error || chunk?.type === 'error' || chunk?.object === 'error' || Number(chunk?.status ?? chunk?.status_code) >= 400 || !!choice?.error || !!choice?.delta?.error || choice?.finish_reason === 'error';
+}
+
 /** Node transport: IPv4 avoids intermittent local dual-stack connection failures.
  * A Worker adapter can replace this function with fetch without changing prompts. */
 export async function providerRequest(url: string, body: unknown, headers: Record<string, string>, signal?: AbortSignal): Promise<Response> {
@@ -54,7 +66,7 @@ export async function openRouterStream(messages: { role: string; content: string
   if (!providerKey('OPENROUTER_API_KEY')) throw new Error('openrouter_not_configured');
   let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
   const decoder = new TextDecoder();
-  let pending = '', text = '', usage: ModelUsage | undefined, firstTextMs: number | undefined, requestId: string | undefined;
+  let pending = '', text = '', eventType = '', usage: ModelUsage | undefined, firstTextMs: number | undefined, requestId: string | undefined;
   try {
     const response = await providerRequest('https://openrouter.ai/api/v1/chat/completions', {
       model: DIALOGUE_MODEL, messages, stream: true, max_tokens: 110, temperature: 0.5,
@@ -62,6 +74,21 @@ export async function openRouterStream(messages: { role: string; content: string
     if (!response.ok) throw new Error(`openrouter_http_${response.status}`);
     if (!response.body) throw new Error('openrouter_empty_stream');
     reader = response.body.getReader();
+    const consume = (raw: string) => {
+      const line = raw.trim();
+      if (!line) { eventType = ''; return; }
+      if (line.startsWith('event:')) { eventType = line.slice(6).trim(); return; }
+      if (!line.startsWith('data:') || line.slice(5).trim() === '[DONE]') return;
+      const chunk = JSON.parse(line.slice(5).trim());
+      if (streamFrameError(chunk, eventType)) throw new Error('openrouter_stream_error');
+      requestId ||= typeof chunk.id === 'string' ? chunk.id : undefined;
+      if (chunk.usage) usage = chunk.usage;
+      const delta = chunk.choices?.[0]?.delta?.content;
+      if (typeof delta === 'string' && delta) {
+        if (isServiceErrorText(delta)) throw new Error('openrouter_service_payload');
+        firstTextMs ??= performance.now() - started; text += delta; onText(delta);
+      }
+    };
     while (true) {
       signal?.throwIfAborted();
       const { value, done } = await reader.read();
@@ -69,21 +96,16 @@ export async function openRouterStream(messages: { role: string; content: string
       pending += decoder.decode(value, { stream: true });
       let newline;
       while ((newline = pending.indexOf('\n')) >= 0) {
-        const line = pending.slice(0, newline).trim(); pending = pending.slice(newline + 1);
-        if (!line.startsWith('data:') || line.slice(5).trim() === '[DONE]') continue;
-        const chunk = JSON.parse(line.slice(5).trim());
-        if (chunk.error) throw new Error(`openrouter_stream_${chunk.error.code || 'error'}`);
-        requestId ||= chunk.id;
-        if (chunk.usage) usage = chunk.usage;
-        const delta = chunk.choices?.[0]?.delta?.content;
-        if (typeof delta === 'string' && delta) { firstTextMs ??= performance.now() - started; text += delta; onText(delta); }
+        const line = pending.slice(0, newline); pending = pending.slice(newline + 1); consume(line);
       }
     }
+    pending += decoder.decode();
+    if (pending.trim()) consume(pending);
     const elapsedMs = performance.now() - started;
     recordUsage({ provider: 'openrouter', operation: metadata.operation || 'dialogue', model: DIALOGUE_MODEL, ...metadata, ...accountModelUsage(usage), requestId, elapsedMs, firstTextMs, live: true, outcome: 'complete' });
     return { text, usage, timings: { firstTextMs, elapsedMs }, model: DIALOGUE_MODEL, live: true };
   } catch (error) {
     recordUsage({ provider: 'openrouter', operation: metadata.operation || 'dialogue', model: DIALOGUE_MODEL, ...metadata, ...accountModelUsage(usage), requestId, elapsedMs: performance.now() - started, firstTextMs, live: false, outcome: signal?.aborted ? 'cancelled' : 'error', error: error instanceof Error ? error.name : 'error' });
     throw error;
-  } finally { reader?.releaseLock(); }
+  } finally { if (reader) { try { await reader.cancel(); } catch { /* already failed */ } reader.releaseLock(); } }
 }

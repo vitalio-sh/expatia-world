@@ -208,7 +208,7 @@ export default {
       headers.set('X-Content-Type-Options', 'nosniff'); headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
       return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
     }
-    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-spanish-input-context' });
+    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-bilingual-arrival' });
     if (url.pathname === '/api/weather') return json(await getWeather());
     if (url.pathname === '/api/session' && request.method === 'POST') {
       if (!env.EXPATIA_SESSION_SECRET || env.EXPATIA_SESSION_SECRET.length < 32) return json({ error: 'Game session signing is not configured.' }, 503);

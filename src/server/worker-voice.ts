@@ -1,5 +1,6 @@
 import { cleanSpeech } from './dialogue';
 import { recordUsage } from './usage';
+import { isServiceErrorText } from './providers';
 
 type TurnId = string | number;
 interface NativeSocket { readyState: number; send(data: string): void; close(code?: number, reason?: string): void; accept(): void; addEventListener(type: string, handler: (event: any) => void): void }
@@ -150,14 +151,17 @@ export class WorkerVoice {
     const state: Stt = { socket: null, turnId, language, bytes: 0, started: performance.now(), committed: false, commitSent: false, ready: false, queue: [], segments: [], timeout: setTimeout(() => { if (this.stt === state) this.failStt('Recording timed out. Please type instead.'); }, 18_000) };
     this.stt = state;
     try {
-      const socket = await this.connect(`/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual&language_code=${language}`);
+      const socket = await this.connect(`/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual&language_code=${language}&secondary_languages=${language === 'es' ? 'en' : 'es'}`);
       if (this.stt !== state || this.disposed) { socket.close(); return; }
       state.socket = socket;
       socket.addEventListener('message', event => {
         if (this.stt !== state) return;
         try {
           const message = JSON.parse(String(event.data)), type = message.message_type;
-          if (type === 'session_started') { state.ready = true; this.flushStt(); this.send({ type: 'stt.ready', turnId, language }); }
+          if (String(type || '').includes('error') || message.error || Number(message.status ?? message.status_code) >= 400 || ['auth_error', 'quota_exceeded', 'unaccepted_terms', 'resource_exhausted', 'rate_limited'].includes(type) || (['partial_transcript', 'committed_transcript', 'committed_transcript_with_timestamps'].includes(type) && isServiceErrorText(message.text))) {
+            this.failStt('Transcription unavailable. Please try again or type instead.'); return;
+          }
+          if (type === 'session_started') { state.ready = true; this.flushStt(); this.send({ type: 'stt.ready', turnId, language, languages: ['es', 'en'] }); }
           else if (type === 'partial_transcript') this.send({ type: 'stt.partial', turnId, text: [...state.segments, String(message.text || '').trim()].filter(Boolean).join(' ') });
           else if (type === 'committed_transcript' || type === 'committed_transcript_with_timestamps') {
             const segment = String(message.text || '').trim();
@@ -166,9 +170,9 @@ export class WorkerVoice {
             if (!state.commitSent) { this.send({ type: 'stt.partial', turnId, text }); return; }
             const elapsedMs = performance.now() - (state.endedAt || state.started);
             recordUsage({ provider: 'elevenlabs', operation: 'stt-worker-realtime', model: 'scribe_v2_realtime', sessionId: this.sessionId, turnId, audioSeconds: state.bytes / 32_000, elapsedMs, live: true, outcome: text ? 'complete' : 'empty', estimatedCostUsd: state.bytes / 32_000 / 3600 * .39 });
-            this.send({ type: 'stt.final', turnId, text, language, elapsedMs, live: true, model: 'scribe_v2_realtime' });
+            this.send({ type: 'stt.final', turnId, text, language, languages: ['es', 'en'], elapsedMs, live: true, model: 'scribe_v2_realtime' });
             if (text) this.callbacks.onTranscript?.(turnId, text); this.stopStt();
-          } else if (String(type || '').includes('error') || message.error || ['auth_error', 'quota_exceeded', 'unaccepted_terms', 'resource_exhausted', 'rate_limited'].includes(type)) this.failStt(`Transcription unavailable (${String(type || 'provider_error').slice(0, 40)}). Please type instead.`);
+          }
         } catch { this.failStt('Invalid transcription event. Please type instead.'); }
       });
       socket.addEventListener('error', () => { if (this.stt === state) this.failStt('Microphone connection failed. Please type instead.'); });

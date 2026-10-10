@@ -3,6 +3,7 @@ import type { IncomingMessage } from 'node:http';
 import WebSocket, { WebSocketServer } from 'ws';
 import { cancelSpeech, closeSpeech, prewarmSpeech, relay, type TurnId } from './voice';
 import { recordUsage } from './usage';
+import { isServiceErrorText } from './providers';
 
 export interface RealtimeOptions {
   verifySession(sessionId: string, request?: IncomingMessage): boolean;
@@ -33,7 +34,8 @@ export function attachRealtime(server: Server, options: RealtimeOptions) {
       if (!sessionId || !process.env.ELEVENLABS_API_KEY) { failStt(turnId, 'Microphone transcription is unavailable. Please type instead.'); return; }
       stopStt(); cancelSpeech(sessionId); options.onInterrupt?.(sessionId, turnId);
       const started = performance.now();
-      const url = `wss://api.elevenlabs.io/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual&language_code=${language}`;
+      // SDK serializes expected additional languages as repeated query parameters.
+      const url = `wss://api.elevenlabs.io/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual&language_code=${language}&secondary_languages=${language === 'es' ? 'en' : 'es'}`;
       const socketOptions = { headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }, handshakeTimeout: 8_000, maxPayload: 1024 * 1024 };
       const socket = options.connectTranscription ? options.connectTranscription(url, socketOptions) : new WebSocket(url, socketOptions);
       const state: SttState = { socket, turnId, language, bytes: 0, started, queue: [], segments: [], ready: false, committed: false, commitSent: false, timeout: setTimeout(() => { if (stt === state) failStt(turnId, 'Recording timed out. Please try a shorter message.'); }, 18_000) };
@@ -43,7 +45,10 @@ export function attachRealtime(server: Server, options: RealtimeOptions) {
         try {
           const message = JSON.parse(frame.toString());
           const type = message.message_type;
-          if (type === 'session_started') { state.ready = true; flushStt(); relay(client, { type: 'stt.ready', sessionId, turnId, language }); }
+          if (String(type || '').includes('error') || message.error || Number(message.status ?? message.status_code) >= 400 || ['auth_error', 'quota_exceeded', 'unaccepted_terms', 'resource_exhausted', 'rate_limited'].includes(type) || (['partial_transcript', 'committed_transcript', 'committed_transcript_with_timestamps'].includes(type) && isServiceErrorText(message.text))) {
+            failStt(turnId, 'Transcription unavailable. Please try again or type instead.'); return;
+          }
+          if (type === 'session_started') { state.ready = true; flushStt(); relay(client, { type: 'stt.ready', sessionId, turnId, language, languages: ['es', 'en'] }); }
           else if (type === 'partial_transcript') relay(client, { type: 'stt.partial', sessionId, turnId, text: [...state.segments, String(message.text || '').trim()].filter(Boolean).join(' ') });
           else if (type === 'committed_transcript' || type === 'committed_transcript_with_timestamps') {
             const segment = String(message.text || '').trim();
@@ -53,11 +58,9 @@ export function attachRealtime(server: Server, options: RealtimeOptions) {
             if (!state.commitSent) { relay(client, { type: 'stt.partial', sessionId, turnId, text }); return; }
             const elapsedMs = performance.now() - (state.endedAt || state.started);
             recordUsage({ provider: 'elevenlabs', operation: 'stt-realtime', model: 'scribe_v2_realtime', sessionId, turnId, audioSeconds: state.bytes / 32000, elapsedMs, live: true, outcome: text ? 'complete' : 'empty', estimatedCostUsd: state.bytes / 32000 / 3600 * .39 });
-            relay(client, { type: 'stt.final', sessionId, turnId, text, language, elapsedMs, live: true, model: 'scribe_v2_realtime' });
+            relay(client, { type: 'stt.final', sessionId, turnId, text, language, languages: ['es', 'en'], elapsedMs, live: true, model: 'scribe_v2_realtime' });
             if (text) options.onTranscript?.(sessionId!, turnId, text);
             stopStt();
-          } else if (String(type || '').includes('error') || message.error || ['auth_error', 'quota_exceeded', 'unaccepted_terms', 'resource_exhausted', 'rate_limited'].includes(type)) {
-            failStt(turnId, `Transcription unavailable (${String(type || 'provider_error').slice(0, 40)}). Please type instead.`);
           }
         } catch { failStt(turnId, 'Invalid transcription event. Please type instead.'); }
       });

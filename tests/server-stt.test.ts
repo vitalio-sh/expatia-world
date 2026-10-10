@@ -40,13 +40,16 @@ test('Worker STT defaults to Spanish, explicitly selects English, and rejects un
       f.voice.handle({ type: 'stt.start', turnId: 'mic', ...(language ? { language } : {}) }); await settle();
       assert.equal(f.requests.length, 1);
       assert.equal(f.requests[0].searchParams.get('language_code'), expected);
+      assert.deepEqual(f.requests[0].searchParams.getAll('secondary_languages'), [expected === 'es' ? 'en' : 'es']);
       assert.equal(f.requests[0].searchParams.get('commit_strategy'), 'manual');
       f.provider.native({ message_type: 'session_started' });
       assert.equal(f.messages.find(packet => packet.type === 'stt.ready')?.language, expected);
+      assert.deepEqual(f.messages.find(packet => packet.type === 'stt.ready')?.languages, ['es', 'en']);
       f.voice.handle({ type: 'stt.audio', turnId: 'mic', audio: Buffer.alloc(6400).toString('base64') });
       f.voice.handle({ type: 'stt.commit', turnId: 'mic' });
       f.provider.native({ message_type: 'committed_transcript', text: expected === 'es' ? 'Estoy en casa.' : 'I am at home.' });
       assert.equal(f.messages.find(packet => packet.type === 'stt.final')?.language, expected);
+      assert.deepEqual(f.messages.find(packet => packet.type === 'stt.final')?.languages, ['es', 'en']);
     } finally { f.close(); }
   }
   for (const language of ['ar', 'hi', 'spa', 'EN', null, { language: 'es' }]) {
@@ -148,6 +151,27 @@ test('cancelling Worker STT closes transcription without cancelling a courier ac
   } finally { f.close(); }
 });
 
+test('error-bearing committed transcripts and service-error text never become player speech', async () => {
+  for (const event of [
+    { message_type: 'committed_transcript', text: 'plausible text', error: 'private upstream error' },
+    { message_type: 'committed_transcript', text: 'Transcription unavailable: upstream failed' },
+    { message_type: 'committed_transcript', text: 'plausible text', status_code: 502 },
+    { message_type: 'partial_transcript', text: 'plausible partial', error: { code: 500 } },
+  ]) {
+    const f = workerFixture();
+    try {
+      f.voice.handle({ type: 'stt.start', turnId: 'error-payload' }); await settle();
+      f.provider.native({ message_type: 'session_started' });
+      f.voice.handle({ type: 'stt.commit', turnId: 'error-payload' });
+      f.provider.native(event);
+      assert.deepEqual(f.transcripts, []);
+      assert.equal(f.messages.some(packet => ['stt.final', 'stt.partial'].includes(packet.type)), false);
+      assert.equal(f.messages.at(-1)?.type, 'stt.error');
+      assert.equal(JSON.stringify(f.messages).includes('private upstream error'), false);
+    } finally { f.close(); }
+  }
+});
+
 test('Node realtime applies the same Spanish/English contract and keeps audio until manual release', async () => {
   const previousKey = process.env.ELEVENLABS_API_KEY, restoreAccounting = memoryAccounting();
   // The hello prewarm is deliberately unconfigured; no test may contact a provider.
@@ -168,6 +192,7 @@ test('Node realtime applies the same Spanish/English contract and keeps audio un
     client.send(JSON.stringify({ type: 'stt.start', turnId: 'node' }));
     while (!providers.length) await settle();
     assert.equal(requests[0].searchParams.get('language_code'), 'es');
+    assert.deepEqual(requests[0].searchParams.getAll('secondary_languages'), ['en']);
     providers[0].node({ message_type: 'session_started' });
     assert.equal((await waitFor('stt.ready')).language, 'es');
     providers[0].node({ message_type: 'committed_transcript', text: 'Estoy' });
@@ -177,11 +202,13 @@ test('Node realtime applies the same Spanish/English contract and keeps audio un
     while (!providers[0].frames.some(frame => frame.commit)) await settle();
     providers[0].node({ message_type: 'committed_transcript', text: 'en casa.' });
     const final = await waitFor('stt.final'); assert.equal(final.language, 'es'); assert.equal(final.text, 'Estoy en casa.');
+    assert.deepEqual(final.languages, ['es', 'en']);
     assert.deepEqual(transcripts, ['Estoy en casa.']);
     await new Promise(resolve => setTimeout(resolve, 810));
     client.send(JSON.stringify({ type: 'stt.start', turnId: 'english', language: 'en' }));
     while (providers.length < 2) await settle();
     assert.equal(requests[1].searchParams.get('language_code'), 'en');
+    assert.deepEqual(requests[1].searchParams.getAll('secondary_languages'), ['es']);
     providers[0].emit('unexpected-response', {}, { statusCode: 401 });
     providers[1].node({ message_type: 'session_started' });
     assert.equal((await waitFor('stt.ready', 'english')).language, 'en');

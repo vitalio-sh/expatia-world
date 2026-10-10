@@ -1,4 +1,4 @@
-import { openRouterStream, type ModelUsage } from './providers';
+import { isServiceErrorText, openRouterStream, type ModelUsage } from './providers';
 import { recordUsage } from './usage';
 import { deliveryPhrasebook } from '../shared/phrasebook';
 
@@ -123,6 +123,7 @@ export function fallbackLine(context: unknown, decision: unknown): string {
 
 /** Fail closed on distinctive invented facts and false outcomes before forwarding a phrase. */
 export function speechIsGrounded(text: string, context: unknown, decision: unknown): boolean {
+  if (isServiceErrorText(text)) return false;
   const c = (context || {}) as Record<string, any>;
   const d = (decision || {}) as Record<string, any>;
   const action = d.action || (d.type ? d : null);
@@ -198,6 +199,7 @@ export async function generateDialogue(context: unknown, decision: unknown, sign
   let pending = '', spoken = '', count = 0, guardFailed = false;
   const emits: Promise<void>[] = [];
   const emit = (raw: string) => {
+    if (isServiceErrorText(raw)) { guardFailed = true; return; }
     const phrase = cleanSpeech(raw);
     if (!phrase || signal?.aborted || guardFailed) return;
     // A later clarification question must survive a short acknowledgement and detail.

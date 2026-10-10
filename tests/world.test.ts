@@ -222,10 +222,10 @@ test('street crossing follows actual stripes and real JEV selects only observed 
   let start={x:game.courier.x,y:game.courier.y}; for(const end of game.route){assert.ok(segmentClear(start,end));start=end;}
   tickGame(game,SATURDAY_NOON+2_000,2); assert.equal(game.courier.x,180); assert.equal(game.courier.y,175);
 });
-test('relative turns use actual courier heading and description requests do not move', async () => {
+test('left uses map west independently of heading and description requests do not move', async () => {
   const game=active(); Object.assign(game.courier,{x:230,y:400,direction:'east'}); rememberObservations(game);
   const result=await decide(game,'Walk left',undefined,offline);
-  assert.equal(result?.selected,'walk:north');
+  assert.equal(result?.selected,'walk:west');
   const before={x:game.courier.x,y:game.courier.y};
   const description=await decide(game,'What is the furthest thing you can see?',undefined,offline);
   assert.equal(description?.selected,'describe-surroundings'); assert.deepEqual({x:game.courier.x,y:game.courier.y},before);
@@ -345,4 +345,34 @@ test('explicit retraction clears the wrong entrance hypothesis and pauses that r
   recordSpeech(game,'¿En qué lado está tu portal?', 'correction-question',SATURDAY_NOON);
   assert.equal((await decide(game,'Por el sur.',undefined,offline))?.selected,'home:south');
   assert.equal(game.facts.homeSide,'south');
+});
+
+test('English and Spanish left/right commands use map west/east for all four courier headings', async () => {
+  for(const facing of ['north','east','south','west'] as const) for(const sample of [{text:'Walk left',direction:'west'},{text:'Walk right',direction:'east'},{text:'Ve a la izquierda',direction:'west'},{text:'Ve a la derecha',direction:'east'}]){
+    const game=active();Object.assign(game.courier,{x:480,y:680,direction:facing});
+    const decision=await decide(game,sample.text,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{
+      const target=`walk:${sample.direction}`,opposite=`walk:${sample.direction==='west'?'east':'west'}`;
+      assert.ok(criteria[target]);assert.ok(!criteria[opposite]);return target;
+    })});
+    assert.equal(decision?.source,'jev');assert.equal(decision?.selected,`walk:${sample.direction}`);
+    assert.equal(game.courier.direction,facing); // Selection does not rotate sight before actual movement.
+    const initialX=game.courier.x;tickGame(game,SATURDAY_NOON+1_000,1);
+    assert.ok(sample.direction==='west'?game.courier.x<initialX:game.courier.x>initialX);
+    assert.equal(game.courier.y,680);assert.equal(game.courier.direction,sample.direction);
+  }
+});
+test('map-relative left/right fallback and looking preserve the same map frame for all headings', async () => {
+  for(const facing of ['north','east','south','west'] as const) for(const sample of [{text:'left',id:'walk:west'},{text:'right',id:'walk:east'},{text:'izquierda',id:'walk:west'},{text:'derecha',id:'walk:east'},{text:'Mira a la izquierda',id:'look:west'},{text:'Look right',id:'look:east'}]){
+    const game=active();Object.assign(game.courier,{x:480,y:680,direction:facing});
+    const result=await decide(game,sample.text,undefined,offline);assert.equal(result?.selected,sample.id);
+    if(sample.id.startsWith('look:')){assert.equal(game.courier.x,480);assert.equal(game.courier.y,680);assert.equal(game.courier.direction,sample.id.slice(5));}
+  }
+});
+test('compass movement and finite facing-based perception remain distinct from map-relative commands', async () => {
+  const game=active();const before=perception(game).buildings.map(b=>b.id);
+  const context=npcContext(game);assert.equal(context.orientation.left,'west');assert.equal(context.orientation.right,'east');
+  assert.ok(before.includes('bar-llevant'));
+  await decide(game,'Mira hacia el sur',undefined,offline);assert.ok(!perception(game).buildings.some(b=>b.id==='bar-llevant'));
+  Object.assign(game.courier,{x:480,y:680,direction:'east'});
+  const explicit=await decide(game,'Walk west',undefined,offline);assert.equal(explicit?.selected,'walk:west');
 });

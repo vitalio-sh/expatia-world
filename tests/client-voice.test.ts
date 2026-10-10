@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RealtimeVoice } from '../src/client/voice';
+import { RealtimeVoice, isServiceErrorText } from '../src/client/voice';
 
 function deferred<T>() {
   let resolve!: (value: T) => void, reject!: (error: Error) => void;
@@ -193,4 +193,49 @@ test('deadline cancels microphone work without cancelling spontaneous courier sp
     f.socket.emit({type:'npc.caption',turnId:'timeout-drop',text:'Dejaré el paquete en el punto de recogida.'});
     assert.deepEqual(f.captions,['Dejaré el paquete en el punto de recogida.']);
   }finally{f.cleanup();}
+});
+
+test('service payloads and error-bearing captions stay out of courier captions', async () => {
+  const f = await fixture(async () => microphone().stream);
+  try {
+    f.voice.beginTurn('caption-errors');
+    for (const text of ['Call connection closed. Start another call.', '{"error":{"message":"provider failed"}}', { error: 'provider failed' }]) f.socket.emit({ type: 'npc.caption', turnId: 'caption-errors', text });
+    f.socket.emit({ type: 'npc.caption', turnId: 'caption-errors', text: 'Internal provider message', error: { code: 503 } });
+    f.socket.emit({ type: 'npc.caption', turnId: 'caption-errors', text: 'No entiendo. ¿En qué lado está tu portal?' });
+    assert.deepEqual(f.captions, ['No entiendo. ¿En qué lado está tu portal?']);
+    assert.ok(f.statuses.includes('dialogue-fallback'));
+  } finally { f.cleanup(); }
+});
+
+test('error-bearing STT final rejects instead of becoming typed or auto-sent speech', async () => {
+  const f = await fixture(async () => microphone().stream);
+  try {
+    await f.voice.startRecording('stt-errors');
+    const final = f.voice.stopRecording();
+    f.socket.emit({ type: 'stt.final', turnId: 'stt-errors', text: 'Connection closed. Please type.', error: { message: 'quota' } });
+    await assert.rejects(final, /Transcription unavailable/);
+    assert.deepEqual(f.transcripts, []);
+    assert.equal(f.voice.isRecording, false);
+    assert.ok(f.statuses.includes('transcription-error'));
+    f.socket.emit({ type: 'stt.final', turnId: 'stt-errors', text: 'Late diagnostic', live: true });
+    assert.deepEqual(f.transcripts, []);
+  } finally { f.cleanup(); }
+});
+
+test('partial diagnostics cannot fill input; valid uncertainty is preserved and final is delivered once', async () => {
+  const f = await fixture(async () => microphone().stream);
+  try {
+    await f.voice.startRecording('bad-partial');
+    const rejected = f.voice.stopRecording();
+    f.socket.emit({ type: 'stt.partial', turnId: 'bad-partial', text: '{"error":"service failure"}' });
+    await assert.rejects(rejected, /Transcription unavailable/);
+    assert.deepEqual(f.transcripts, []);
+    await f.voice.startRecording('valid-spanish');
+    const final = f.voice.stopRecording();
+    f.socket.emit({ type: 'stt.final', turnId: 'valid-spanish', text: 'No entiendo, ¿puedes repetir?', live: true });
+    assert.equal((await final).text, 'No entiendo, ¿puedes repetir?');
+    f.socket.emit({ type: 'stt.final', turnId: 'valid-spanish', text: 'Duplicate text', live: true });
+    assert.deepEqual(f.transcripts, ['No entiendo, ¿puedes repetir?']);
+    assert.equal(isServiceErrorText('No entiendo, ¿puedes repetir?'), false);
+  } finally { f.cleanup(); }
 });

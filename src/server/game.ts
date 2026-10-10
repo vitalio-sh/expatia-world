@@ -195,7 +195,7 @@ export function npcContext(game: Game, now = game.updatedAt) {
     premise: 'You are a human parcel courier helping an expat resident in Barcelona. The shops and hours are authored scenario facts. Respond in concise conversational Spanish.',
     phase: game.phase, remainingMs: remainingMs(game, now), parcel: game.parcel,
     position: { x: Math.round(game.courier.x), y: Math.round(game.courier.y), facing: game.courier.direction },
-    orientation: { facing: game.courier.direction, viewAngleDegrees: VIEW_ANGLE_DEGREES, sightRange: SIGHT_RANGE },
+    orientation: { facing: game.courier.direction, viewAngleDegrees: VIEW_ANGLE_DEGREES, sightRange: SIGHT_RANGE, navigationFrame: 'map', left: 'west', right: 'east' },
     visibleLandmarks: opening ? [] : view.landmarks.map(({ approach: _approach, crossTo: _crossTo, ...landmark }) => landmark),
     rememberedLandmarks: opening ? [] : Object.values(game.landmarkKnowledge).map(({ approach: _approach, crossTo: _crossTo, ...landmark }) => landmark),
     surroundings: { currentRoad: opening || !road ? null : { id: road.id, label: road.label, type: road.type }, nearestVisible: opening ? null : visibleFacts[0] ?? null, furthestVisible: opening ? null : visibleFacts.at(-1) ?? null },
@@ -209,7 +209,7 @@ export function npcContext(game: Game, now = game.updatedAt) {
     activeDestination: game.routeTargetId, lastClarification: actualQuestion,
     policy: opening
       ? 'FIRST CLUE: describe your position near a BAR using category only. Do not say a shop name, sign, colour, left-versus-right distinguishing detail or the hidden home entrance. Ask for directions. No names have been exposed to you.'
-      : 'Describe current visible landmarks and their relative distances separately from remembered places. Solid walls block sight; looking changes facing, walking changes position. Read a visible distinguishing sign when a clarifying question/selected reveal action calls for it. Follow the selected grounded decision; do not invent movement, handoff, unseen shops, or delivery success. A dropped parcel requires collection.',
+      : 'Describe current visible landmarks and their relative distances separately from remembered places. Navigation left/izquierda means map west and right/derecha means map east, regardless of facing. Forward/straight follows the current heading. Solid walls block sight; looking changes facing, walking changes position. Read a visible distinguishing sign when a clarifying question/selected reveal action calls for it. Follow the selected grounded decision; do not invent movement, handoff, unseen shops, or delivery success. A dropped parcel requires collection.',
     decision: game.decision ? { selected: game.decision.selected, action: { type: game.decision.action.type, label: game.decision.action.label, reason: game.decision.action.reason }, source: game.decision.source } : null,
   };
 }
@@ -268,7 +268,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   for (const [direction, vector] of Object.entries({ north: { x: 0, y: -1 }, south: { x: 0, y: 1 }, east: { x: 1, y: 0 }, west: { x: -1, y: 0 } })) {
     let target = { x: game.courier.x, y: game.courier.y };
     for (let step = 20; step <= 220; step += 20) { const q = { x: game.courier.x + vector.x * step, y: game.courier.y + vector.y * step }; if (!segmentClear(game.courier, q)) break; target = q; }
-    if (distance(game.courier, target) > 15) candidates.push({ id: `walk:${direction}`, type: 'move', target, route: [target], label: `Walk ${direction} along the clear street`, reason: `Grounded cardinal movement; currently facing ${game.courier.direction}. Relative left/right/forward are relative to that heading. Stop before solid buildings.` });
+    if (distance(game.courier, target) > 15) candidates.push({ id: `walk:${direction}`, type: 'move', target, route: [target], label: `Walk ${direction} along the clear street`, reason: `Grounded cardinal movement; currently facing ${game.courier.direction}. Map-relative left/izquierda is always west and right/derecha always east, regardless of heading. Forward/straight follows the current heading. Stop before solid buildings.` });
   }
   if (game.previousDestination && distance(game.courier, game.previousDestination) > 20) {
     const route = findRoute(game.courier, game.previousDestination);
@@ -279,6 +279,15 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   if (side && /\b(entrance|door)\b/i.test(navigationText(playerText)) && /\b(go|walk|head|come|reach|approach|bring|navigate|around)\b/i.test(navigationText(playerText))) {
     const destination = candidates.find(c => c.id === `home:${side}`);
     if (destination) return candidates.filter(c => c === destination || ['clarify','wait','continue'].includes(c.id));
+  }
+  const instruction = navigationText(playerText);
+  const horizontal = /\bleft\b/.test(instruction) && !/\bright\b/.test(instruction) ? 'west' : /\bright\b/.test(instruction) && !/\bleft\b/.test(instruction) ? 'east' : null;
+  // Simple left/right commands use the map frame. Do not offer the opposite
+  // movement merely because the courier is facing a different direction.
+  const simpleHorizontal = horizontal && !/\b(north|south|east|west|up|down|top|bottom|entrance|door|home|house|flat|apartment|building|bar|fruit|shop|bakery|supermarket|corner|intersection|crossing|crate|what|which|see|called|name|sign)\b/.test(instruction);
+  if (simpleHorizontal) {
+    const actionId = /\b(look|face)\b/.test(instruction) ? `look:${horizontal}` : `walk:${horizontal}`;
+    return candidates.filter(c => c.id === actionId || ['clarify','wait'].includes(c.id));
   }
   return candidates;
 }

@@ -1,0 +1,80 @@
+{
+  "at": "2026-10-10T12:47:17.326Z",
+  "url": "http://localhost:3318",
+  "scope": "Live generated synthetic Spanish and English PCM sent over the same authenticated native Worker connection. Both stt.start messages omitted language, proving default Spanish primary with English secondary. Node-client timings; no human microphone, browser audio or audibility claim.",
+  "querySerialization": "language_code=es&secondary_languages=en; official SDK repeated query parameter",
+  "passed": true,
+  "cases": [
+    {
+      "spokenLanguage": "es",
+      "expectedSyntheticWords": "Estoy dentro de casa. La entrada está en el lado sur.",
+      "transcript": "Estoy dentro de casa. La entrada está en el lado sur.",
+      "primaryPreference": "es",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "readyPreference": "es",
+      "readyLanguages": [
+        "es",
+        "en"
+      ],
+      "match": true,
+      "live": true,
+      "commitToFinalMs": 750,
+      "transmittedSeconds": 4,
+      "generatedSpeech": {
+        "model": "eleven_v4_turbo",
+        "characters": 53,
+        "audioSeconds": 4
+      }
+    },
+    {
+      "spokenLanguage": "en",
+      "expectedSyntheticWords": "I am inside my home. The entrance is on the south side.",
+      "transcript": "I am inside my home. The entrance is on the south side.",
+      "primaryPreference": "es",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "readyPreference": "es",
+      "readyLanguages": [
+        "es",
+        "en"
+      ],
+      "match": true,
+      "live": true,
+      "commitToFinalMs": 371,
+      "transmittedSeconds": 3.84,
+      "generatedSpeech": {
+        "model": "eleven_v4_turbo",
+        "characters": 55,
+        "audioSeconds": 3.84
+      }
+    }
+  ],
+  "workerUsage": {
+    "calls": 5,
+    "liveCalls": 5,
+    "inputTokens": 3534,
+    "outputTokens": 43,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 3577,
+    "unreportedTokenCalls": 0,
+    "returnedCostUsd": 0.0005269,
+    "estimatedCostUsd": 0.003741478666666667,
+    "voiceCharacters": 70,
+    "audioSeconds": 12.9,
+    "providers": {
+      "jev": 1,
+      "openrouter": 1,
+      "elevenlabs": 3
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  }
+}

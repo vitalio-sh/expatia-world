@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-10T12:48:30.053Z",
+  "scope": "Real JEV requests; south-facing authored fixture at south street, frozen clock explicitly advanced1s to verify physical map-west movement.",
+  "pass": true,
+  "rows": [
+    {
+      "input": "Walk left.",
+      "initialFacing": "south",
+      "source": "jev",
+      "selected": "walk:west",
+      "probabilities": {
+        "clarify": 0.02,
+        "wait": 0,
+        "walk:west": 0.98
+      },
+      "finalX": 362,
+      "finalY": 680,
+      "pass": true,
+      "usage": {
+        "calls": 1,
+        "liveCalls": 1,
+        "inputTokens": 3339,
+        "outputTokens": 43,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 3382,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0,
+        "estimatedCostUsd": 0.000140238,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "input": "Ve a la izquierda.",
+      "initialFacing": "south",
+      "source": "jev",
+      "selected": "walk:west",
+      "probabilities": {
+        "clarify": 0.02,
+        "wait": 0,
+        "walk:west": 0.98
+      },
+      "finalX": 362,
+      "finalY": 680,
+      "pass": true,
+      "usage": {
+        "calls": 1,
+        "liveCalls": 1,
+        "inputTokens": 3343,
+        "outputTokens": 43,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 3386,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0,
+        "estimatedCostUsd": 0.000140406,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    }
+  ]
+}
