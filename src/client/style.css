@@ -6,3 +6,7 @@
 @media(max-height:740px) and (max-width:640px){.world{max-height:26dvh}.conversation{min-height:230px}.game-shell .transcript{max-height:13dvh}}
 
 @media(max-width:640px){.game-shell .world{width:100%}}
+
+@media(max-width:640px){.game-shell .world{width:min(100%,32dvh);max-height:none;aspect-ratio:1;margin-inline:auto}.game-shell .world canvas{height:auto;aspect-ratio:1;object-fit:contain}}
+@media(max-width:380px){.game-shell .world{width:min(100%,30dvh)}}
+@media(max-height:740px) and (max-width:640px){.game-shell .world{width:min(100%,26dvh)}}

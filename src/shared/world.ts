@@ -5,6 +5,8 @@ export interface Actor extends Point { direction: Direction; moving: boolean }
 export interface Weather {
   temperature: number | null; description: string; code: number | null; isRain: boolean;
   retrievedAt: string; status: 'live' | 'stale' | 'offline'; timeZone: 'Europe/Madrid';
+  source?: 'Open-Meteo' | 'MET Norway'; validAt?: string; checkedAt?: string;
+  diagnostics?: { source: string; outcome: 'live' | 'http_error' | 'invalid_data' | 'network_error'; status?: number; error?: string; elapsedMs: number }[];
 }
 export interface OpeningInterval { days: number[]; from: string; to: string }
 export interface Building {

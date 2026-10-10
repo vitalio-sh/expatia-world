@@ -235,6 +235,15 @@ export default {
     }
     if (url.pathname.startsWith('/api/session/')) return json({ error: 'Use the call realtime connection for this action.', realtimeRpc: true }, 409);
     if (url.pathname.startsWith('/api/')) return json({ error: 'Unknown game endpoint.' }, 404);
-    return env.ASSETS ? env.ASSETS.fetch(request) : new Response('Expatia World assets are not configured.', { status: 503, headers: securityHeaders });
+    if (!env.ASSETS) return new Response('Expatia World assets are not configured.', { status: 503, headers: securityHeaders });
+    const asset = await env.ASSETS.fetch(request);
+    if (url.pathname.startsWith('/art/')) {
+      if (asset.headers.get('Content-Type')?.includes('text/html')) return new Response('Art asset not found.', { status: 404 });
+      const headers = new Headers(asset.headers);
+      if (url.pathname.endsWith('.webp')) headers.set('Content-Type', 'image/webp');
+      headers.set('X-Content-Type-Options', 'nosniff');
+      return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
+    }
+    return asset;
   },
 };
