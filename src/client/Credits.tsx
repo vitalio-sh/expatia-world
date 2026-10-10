@@ -3,7 +3,7 @@ import React from 'react';
 /** The laboratory's own wordmark, palette and typeface: https://jslab.pink/ */
 export function MakerCredit() {
  return <a className="maker-credit" href="https://jslab.pink/?lang=en" target="_blank" rel="noreferrer" aria-label="Made by Japanese Sausage Laboratory — visit the laboratory">
-  <span className="lab-stamp" aria-hidden="true">J·S·L</span>
+  <svg className="lab-stamp" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#f1eedf" stroke="currentColor" strokeWidth="1.8"/><text x="20" y="24" textAnchor="middle" textLength="25" lengthAdjust="spacingAndGlyphs" fill="currentColor" fontFamily="Georgia,serif" fontSize="11" fontWeight="bold">J·S·L</text></svg>
   <span className="maker-by">Made by</span>
   <span className="lab-name">Japanese <em>Sausage</em> Laboratory</span>
   <span className="credit-arrow" aria-hidden="true">↗</span>

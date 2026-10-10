@@ -1,0 +1,25 @@
+.qr-dialog{width:min(560px,calc(100vw - 24px));max-width:none;max-height:calc(100dvh - 24px);margin:auto;padding:0;border:2px solid #294c36;border-radius:20px;background:#fffdf7;color:#263b2e;box-shadow:0 24px 90px #122b3266;overflow:auto;overscroll-behavior:contain}
+.qr-dialog::backdrop{background:#142a24c9;backdrop-filter:blur(4px)}
+.qr-dialog-content{padding:22px 30px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qr-dialog-top{display:flex;align-items:center;justify-content:space-between;gap:12px;align-self:stretch}
+.qr-dialog-brand{display:flex;align-items:center;gap:9px;font-size:26px;font-weight:700;letter-spacing:-1px;white-space:nowrap}
+.qr-dialog-world{font-weight:400;color:#566a51}
+.qr-dialog-compass{display:grid;place-items:center;width:42px;height:42px;background:#294c36;color:#fff8dc;border-radius:50%;flex:none}
+.qr-dialog-close{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:1px solid #9cac93;border-radius:50%;background:#edf0e3;color:#294c36;font-size:30px;line-height:1}
+.qr-dialog-close:hover{background:#dfe8d6}
+.qr-dialog :is(button,a):focus-visible{outline:3px solid #b46b33;outline-offset:4px}
+.qr-dialog-heading{margin-top:3px}
+.qr-dialog-heading h2{font:400 36px/1.08 'DM Serif Display',Georgia,serif;letter-spacing:-.7px;color:#294c36}
+.qr-dialog-heading p{margin-top:8px;font-size:14px;line-height:1.4;color:#53664a}
+.qr-dialog-scan{display:block;width:min(300px,100%);line-height:0;background:#fff;text-decoration:none;margin-top:2px;flex:none}
+.qr-dialog-scan img{display:block;width:100%;height:auto;aspect-ratio:1;background:#fff}
+.qr-dialog-address{font-size:25px;line-height:1.3;font-weight:700;letter-spacing:-.5px;color:#294c36;text-decoration:none}
+.qr-dialog-address:hover{text-decoration:underline;text-underline-offset:4px}
+.qr-dialog-page{font-size:11px;line-height:1.4;color:#52674b;text-underline-offset:3px}
+.qr-dialog-credits{align-self:stretch;width:100%;margin-top:2px}
+.qr-dialog-credits .event-credit{margin-top:0;padding:12px 0 5px;gap:20px;border-color:#a3ad93}
+.qr-dialog-credits .maker-credit{margin:8px auto 0}
+.qr-dialog-credits .event-dedication{color:#425137}
+.qr-dialog-credits .lab-name{color:#272922}
+@media(max-width:420px){.qr-dialog{border-radius:14px}.qr-dialog-content{padding:16px 17px 17px;gap:9px}.qr-dialog-brand{font-size:21px;gap:7px;letter-spacing:-.8px}.qr-dialog-compass{width:34px;height:34px}.qr-dialog-compass svg{width:24px;height:24px}.qr-dialog-close{width:40px;height:40px;font-size:28px}.qr-dialog-heading h2{font-size:30px}.qr-dialog-heading p{font-size:12px}.qr-dialog-address{font-size:23px}.qr-dialog-credits .event-credit{gap:12px}.qr-dialog-credits .hackathon-wordmark{font-size:17px}.qr-dialog-credits .maker-credit{gap:5px}.qr-dialog-credits .lab-name{font-size:11px}}
+@media(max-height:740px) and (min-width:421px){.qr-dialog-content{padding-top:16px;padding-bottom:16px;gap:8px}.qr-dialog-heading h2{font-size:32px}.qr-dialog-scan{width:280px}.qr-dialog-credits .event-credit{padding-top:10px}}
