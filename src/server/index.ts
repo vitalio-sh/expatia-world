@@ -18,6 +18,7 @@ import type {Game,Decision} from '../shared/world';
 const app=express(),server=createServer(app);
 app.disable('x-powered-by');app.use(express.json({limit:'12kb'}));
 app.use((req,res,next)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','same-origin');res.setHeader('Permissions-Policy','microphone=(self), geolocation=()');if(req.path.startsWith('/api/'))res.setHeader('Cache-Control','no-store');if(req.method==='POST'&&req.headers.origin&&req.headers.origin!==`${req.headers['x-forwarded-proto']??req.protocol}://${req.headers.host}`){res.status(403).json({error:'This action requires the game origin.'});return;}next();});
+app.use('/api/art',express.static(resolve('public/art'),{maxAge:'1m'}));
 type Session={game:Game;token:string;controller?:AbortController;turnId?:string;lastActivity:number;lastMove:number;turnTimes:number[];arrival:number;timeoutRunning:boolean;dialogueLive?:boolean};
 const sessions=new Map<string,Session>();
 const limits=new Map<string,{count:number;reset:number}>();

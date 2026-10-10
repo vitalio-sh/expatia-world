@@ -10,3 +10,5 @@
 @media(max-width:640px){.game-shell .world{width:min(100%,32dvh);max-height:none;aspect-ratio:1;margin-inline:auto}.game-shell .world canvas{height:auto;aspect-ratio:1;object-fit:contain}}
 @media(max-width:380px){.game-shell .world{width:min(100%,30dvh)}}
 @media(max-height:740px) and (max-width:640px){.game-shell .world{width:min(100%,26dvh)}}
+
+.weather-meta a{color:inherit;text-underline-offset:2px}.weather-meta{line-height:1.5}

@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-10-10T11:06:17.989Z",
+  "url": "https://expatia.world/api/weather",
+  "sourceRevision": "aa45003",
+  "status": 200,
+  "weather": {
+    "temperature": null,
+    "description": "Weather unavailable",
+    "code": null,
+    "isRain": false,
+    "retrievedAt": "2026-10-10T11:06:17.923Z",
+    "checkedAt": "2026-10-10T11:06:17.923Z",
+    "status": "offline",
+    "timeZone": "Europe/Madrid",
+    "diagnostics": [
+      {
+        "source": "Open-Meteo",
+        "outcome": "http_error",
+        "elapsedMs": 124,
+        "status": 429
+      }
+    ]
+  }
+}

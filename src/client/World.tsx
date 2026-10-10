@@ -8,7 +8,7 @@ export function World({game,compact=false}:{game?:any;compact?:boolean}){
  useEffect(()=>{fetch('/art/manifest.json').then(r=>r.ok?r.json():null).then(m=>m&&setManifest(m)).catch(()=>{});},[]);
  useEffect(()=>{
   let frame=0;let live=true;
-  const getImage=(src:string)=>{let im=images.current.get(src);if(!im){im=new Image();im.src=src;images.current.set(src,im);}return im;};
+  const getImage=(src:string)=>{let im=images.current.get(src);if(!im){im=new Image();im.src=src.startsWith('/art/')?'/api'+src:src;images.current.set(src,im);}return im;};
   function draw(time:number){
    const c=canvas.current;if(!c||!live)return;const ctx=c.getContext('2d')!;ctx.clearRect(0,0,960,960);ctx.imageSmoothingEnabled=false;
    const m=getImage(manifest.map||'/art/barcelona-map.webp');

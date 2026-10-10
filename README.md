@@ -2,6 +2,8 @@
 
 A short English conversation game for everyday life abroad. The Barcelona courier scenario combines generated pixel art, limited NPC sight, actual JEV decisions, adaptive dialogue and streaming voice. Other scenarios are marked Coming soon.
 
+Live at [expatia.world](https://expatia.world/) and [www.expatia.world](https://www.expatia.world/).
+
 ## Run
 
 Node.js 22+ is supported. Install with `npm ci`. Keep provider values in ignored `.env.local`:
@@ -17,7 +19,7 @@ Production uses Sites on Cloudflare, without Vercel. The tracked `.openai/hostin
 
 ## Behavior and limits
 
-Answer starts the authoritative60-second clock once. The player can speak or type, then walk to the south entrance and explicitly receive the parcel. A missed handoff can result in a physically completed collection drop at an observed suitable open shop. Opening hours are authored; Barcelona weather/time are live with an honest offline/stale state.
+Answer starts the authoritative60-second clock once. The player can speak or type, then walk to the south entrance and explicitly receive the parcel. A missed handoff can result in a physically completed collection drop at an observed suitable open shop. Opening hours are authored; Barcelona weather uses current model/forecast data from Open-Meteo, with MET Norway as a fallback. The interface gives the source, forecast validity and retrieval time, plus attribution. Stale/offline results remain explicit. Barcelona time uses Europe/Madrid.
 
 The Worker keeps a round on its owning WebSocket connection. Disconnecting ends that connection; start another call. It does not silently resume or restart the clock. No identity, permanent session storage or user-history database is required for this demo. Per-round provider usage is visible through the decision inspector; it is not a billing invoice.
 

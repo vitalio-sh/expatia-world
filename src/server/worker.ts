@@ -198,6 +198,17 @@ export default {
   async fetch(request: Request, env: WorkerEnv): Promise<Response> {
     const url = new URL(request.url);
     if ((request.method === 'POST' || url.pathname === '/realtime') && !allowedOrigin(request)) return json({ error: 'This action requires the game origin.' }, 403);
+    if (url.pathname.startsWith('/api/art/')) {
+      if (!['GET','HEAD'].includes(request.method)) return json({ error: 'Read-only art endpoint.' }, 405);
+      if (!env.ASSETS) return new Response('Art unavailable.', { status: 503 });
+      const assetUrl = new URL(request.url); assetUrl.pathname = assetUrl.pathname.slice(4);
+      const asset = await env.ASSETS.fetch(new Request(assetUrl, request));
+      if (asset.headers.get('Content-Type')?.includes('text/html')) return new Response('Art asset not found.', { status: 404 });
+      const headers = new Headers(asset.headers);
+      if (url.pathname.endsWith('.webp')) headers.set('Content-Type', 'image/webp');
+      headers.set('X-Content-Type-Options', 'nosniff'); headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
+      return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
+    }
     if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '0.1.0' });
     if (url.pathname === '/api/weather') return json(await getWeather());
     if (url.pathname === '/api/session' && request.method === 'POST') {
