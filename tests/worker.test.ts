@@ -106,6 +106,7 @@ test('Worker valid handoff resolves world state and closes provider voice', asyn
   const f = fixture(); await f.session.rpc('answer', path('/answer')); await settle();
   Object.assign(f.session.game.courier, HOME_ENTRANCE);
   const result = await f.session.rpc('handoff', path('/handoff'));
+  await settle();
   assert.equal(result.status, 200); assert.equal(f.session.game.parcel, 'resident'); assert.equal(f.session.game.outcome?.kind, 'received'); assert.equal(f.counts().disposed, true);
   f.session.dispose();
 });
@@ -292,4 +293,47 @@ test('Worker defers visibility-stop speech until the pending player reply comple
     f.advance(1_000); await settle();
     assert.equal(f.replies.filter(reply => reply.id === 'visibility-stop').length, 1);
   } finally { f.session.dispose(); }
+});
+
+test('Worker handoff resolves the parcel before farewell, disables microphone and retains voice until farewell audio completes', async () => {
+  const socket = new Socket(); let now = NOW, disposed = false, handledVoice = 0, releaseFarewell!: () => void, releasePlayback!: () => void, releaseOlderPlayback!: () => void;
+  const order: string[] = [];
+  const session = createWorkerSession(socket, SESSION_ID, {}, DEFAULT_WEATHER, {
+    clock: () => now, timers: false, decisionOptions: { key: '', telemetry: false },
+    voice: {
+      async prepare() { return true; },
+      async createTurn(turnId) { return { sendPhrase(text) { order.push('caption:' + text); }, async finish() { await new Promise<void>(resolve => { if (turnId.startsWith('farewell-')) releasePlayback = resolve; else releaseOlderPlayback = resolve; }); }, cancel() {} }; },
+      handle() { handledVoice++; }, dispose() { disposed = true; order.push('disposed'); },
+    },
+    dialogue: async (context: any, action: any, signal, onPhrase) => {
+      if (action?.id === 'farewell') {
+        assert.equal(context.parcel, 'resident'); assert.equal(context.phase, 'resolved');
+        order.push('farewell-after-receipt');
+        await new Promise<void>(resolve => { releaseFarewell = resolve; });
+        signal?.throwIfAborted(); onPhrase?.('Perfecto, paquete entregado. ¡Hasta luego!');
+        return { text: 'Perfecto, paquete entregado. ¡Hasta luego!', model: 'test', live: false };
+      }
+      onPhrase?.('Hola, tengo tu paquete.'); return { text: 'Hola, tengo tu paquete.', model: 'test', live: false };
+    },
+  });
+  try {
+    await session.rpc('answer', path('/answer')); await settle();
+    Object.assign(session.game.courier, HOME_ENTRANCE);
+    const pending = session.rpc('handoff', path('/handoff')); await settle();
+    assert.equal(session.game.parcel, 'resident'); assert.equal(session.game.phase, 'resolved');
+    assert.ok(order.includes('farewell-after-receipt')); assert.equal(disposed, false);
+    releaseOlderPlayback(); await settle();
+    assert.equal(disposed, false, 'an older speech completion must not dispose the current farewell');
+    session.message({ type: 'stt.start', sessionId: SESSION_ID, turnId: 'after-receipt' });
+    assert.equal(handledVoice, 0); assert.equal(socket.messages.at(-1).type, 'stt.error');
+    const remaining = session.getState().remainingMs; now += 5_000; session.tick();
+    assert.equal(session.getState().remainingMs, remaining);
+    releaseFarewell(); assert.equal((await pending).status, 200); await settle();
+    assert.ok(order.includes('caption:Perfecto, paquete entregado. ¡Hasta luego!'));
+    assert.equal(disposed, false);
+    releasePlayback(); await settle();
+    assert.equal(disposed, true);
+    assert.ok(order.indexOf('caption:Perfecto, paquete entregado. ¡Hasta luego!') < order.indexOf('disposed'));
+    assert.ok(session.game.history.some(entry => entry.role === 'courier' && entry.text === 'Perfecto, paquete entregado. ¡Hasta luego!'));
+  } finally { session.dispose(); }
 });

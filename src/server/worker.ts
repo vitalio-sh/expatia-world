@@ -99,7 +99,8 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
     if (disposed || signal.aborted || currentTurn !== turnId) throw new DOMException('Turn replaced', 'AbortError');
     dialogueLive = reply.live;
     send({ type: 'dialogue.status', turnId, live: reply.live, model: reply.model });
-    if (speech) void speech.finish().then(() => { if (!disposed && game.phase === 'active') void voice.prepare(); }).catch(() => {});
+    if (speech) void speech.finish().then(() => { if (currentTurn === turnId && game.parcel === 'resident') voice.dispose(); else if (!disposed && game.phase === 'active') void voice.prepare(); }).catch(() => { if (currentTurn === turnId && game.parcel === 'resident') voice.dispose(); });
+    else if (currentTurn === turnId && game.parcel === 'resident') voice.dispose();
     return reply;
     } finally { finishReply(turnId); }
   }
@@ -168,7 +169,9 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
     }
     if (action === '/handoff') {
       if (!handoff(game, clock())) return { status: 409, error: 'Guide the courier to your entrance before the deadline, then accept the parcel.', result: { game: getState() } };
-      controller?.abort(); voice.dispose();
+      const turnId = `farewell-${crypto.randomUUID()}`, signal = beginTurn(turnId);
+      const action = { id: 'farewell', type: 'wait' as const, label: 'The parcel is received. Thank the resident and say a short warm goodbye in Spanish.', reason: 'Successful handoff is already final; the delivery clock and movement are stopped.' };
+      void speak({ action }, turnId, signal).catch(() => { voice.dispose(); });
       return { status: 200, result: { game: getState() } };
     }
     if (action === '/end') { controller?.abort(); voice.dispose(); return { status: 200, result: { ok: true } }; }
@@ -212,7 +215,7 @@ export default {
       headers.set('X-Content-Type-Options', 'nosniff'); headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
       return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
     }
-    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-visible-steps' });
+    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-route-discovery' });
     if (url.pathname === '/api/weather') return json(await getWeather());
     if (url.pathname === '/api/session' && request.method === 'POST') {
       if (!env.EXPATIA_SESSION_SECRET || env.EXPATIA_SESSION_SECRET.length < 32) return json({ error: 'Game session signing is not configured.' }, 503);

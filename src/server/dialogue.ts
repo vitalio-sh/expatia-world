@@ -119,10 +119,20 @@ export function spanishLandmarkLabel(label: string): string {
 }
 const placeLine = (item: GroundedThing) => `${spanishLandmarkLabel(item.label)}${item.direction ? ` al ${directionEs[item.direction] || item.direction}` : ''}`;
 
-function visibilityStopLine(c: Record<string, any>): string {
+function stopFocus(c: Record<string, any>): GroundedThing | null {
   const facts = courierGrounding(c);
-  const visible = facts.nearestVisible || facts.visible[0];
-  return visible ? `Veo ${placeLine(visible)}. ¿Por dónde sigo?` : 'He parado aquí. ¿Hacia dónde miro?';
+  const door = facts.visible.find(item => item.id === 'home-door');
+  if (door) return door;
+  const newIds = new Set([...(c.newlyVisibleLandmarks || []), ...(c.newlyVisibleBuildings || [])].map((item: any) => typeof item === 'string' ? item : item.id));
+  const rank = (item: GroundedThing) => ({ intersection: 0, crossing: 1, corner: 2, entrance: 3 }[item.category] ?? 5);
+  const sorted = [...facts.visible].sort((a, b) => rank(a) - rank(b) || (a.distance ?? Infinity) - (b.distance ?? Infinity));
+  return sorted.find(item => newIds.has(item.id)) || sorted.find(item => rank(item) < 5) || facts.nearestVisible || sorted[0] || null;
+}
+
+function visibilityStopLine(c: Record<string, any>): string {
+  const visible = stopFocus(c);
+  if (!visible) return 'He parado aquí. ¿Hacia dónde miro?';
+  return `Ahora veo ${placeLine(visible)}. ${visible.id === 'home-door' ? '¿Me acerco?' : '¿Sigo desde aquí?'}`;
 }
 
 function surroundingsLine(c: Record<string, any>): string | null {
@@ -148,7 +158,7 @@ export function fallbackLine(context: unknown, decision: unknown): string {
   const d = decision as Record<string, any> | null;
   const selectedAction = d?.action || (d?.type ? d : null);
   const action = String(selectedAction?.type || d?.action || d?.selected?.action?.type || d?.selected?.type || d?.choice || '').toLowerCase();
-  if (c?.parcel === 'resident' || c?.parcel?.owner === 'resident') return '¡Aquí tienes! Ya tienes tu paquete.';
+  if (c?.parcel === 'resident' || c?.parcel?.owner === 'resident') return selectedAction?.id === 'farewell' ? '¡Aquí tienes! Gracias, ¡que tengas buen día!' : '¡Aquí tienes! Ya tienes tu paquete.';
   if (selectedAction?.id === 'visibility-stop' || (selectedAction?.id === 'arrival' && c?.navigation?.awaitingGuidance)) return visibilityStopLine(c || {});
   if (selectedAction?.type === 'wait' && selectedAction?.id === 'arrival' && /entrance/.test(selectedAction.label || '') && c?.parcel === 'courier') return 'Estoy abajo, en la entrada, con tu paquete. Ya puedes recogerlo.';
   if (selectedAction?.id === 'arrival' && c?.parcel === 'drop') return 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.';
@@ -248,7 +258,8 @@ export function dialogueMessages(context: unknown, decision: unknown) {
   const projection = { ...c, history: (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'event') };
   const followup = '\nWhen move or continue is selected, acknowledge only the selected physical leg. If navigation.segmentReachesDestination is false, you will walk only to the edge of the current visible area and STOP, awaiting a new resident command. Never promise to complete the whole route or arrive at the portal in this leg. Say briefly that you advance only as far as you can see and stop. Do not ask a question while this leg is moving. On visibility-stop, describe one currently visible object and ask ONE short next-step question, such as ¿Por dónde sigo? That stop is not entrance arrival. factsLearned.homeSide remains known: never ask its side again. If clarify is selected with a known side, acknowledge that side and ask only for the missing route reference; do not claim movement.';
   const mode = isOpening(c) ? '' : '\nThis is a follow-up directions turn, even if an interrupted greeting was never emitted. The first-line/greeting restrictions do not apply. Answer the latest resident turn and selected action.';
-  return [{ role: 'system', content: instructions + followup + mode }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
+  const stopInstruction = action?.id === 'visibility-stop' ? '\nFor this stationary stop, describe stopFocus first: prefer the now-visible home entrance, otherwise a newly visible intersection, crossing or corner. Do not repeat an old wall when a new useful landmark is supplied. Start Ahora veo, then ask one contextual short question: ¿Me acerco? for the visible entrance, otherwise ¿Sigo desde aquí? No movement assertion.' : action?.id === 'farewell' ? '\nThe resident physically received the parcel. Give ONLY a short friendly Spanish goodbye: ¡Aquí tienes! Gracias, ¡que tengas buen día! No new questions or navigation.' : '';
+  return [{ role: 'system', content: instructions + followup + mode + stopInstruction }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), ...(action?.id === 'visibility-stop' ? { stopFocus: stopFocus(c) } : {}), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
 }
 
 /** Context must be npcContext(game), never the complete world or judge trace. */

@@ -468,3 +468,27 @@ test('long broken-grammar side replies and bare compass cues distinguish entranc
     await decide(denied,`Mi portal, eh, no está en el lado ${direction.es}.`,undefined,offline);assert.equal(denied.facts.homeSide,null);
   }
 });
+test('three resident commands reveal a new southwest junction then the door through a stationary look', async () => {
+  const game=active();await decide(game,'Mi portal está al sur.',undefined,offline);tickGame(game,SATURDAY_NOON+5_000,5);
+  assert.deepEqual({x:game.courier.x,y:game.courier.y},{x:270,y:550});
+  const first=npcContext(game);assert.ok(first.newlyVisibleLandmarks.some(l=>l.id==='intersection-sw'));assert.ok(first.newlyVisibleLandmarks.some(l=>l.id==='home-corner-sw'));assert.equal(first.homeEntranceVisible,false);
+  for(const landmark of first.newlyVisibleLandmarks) assert.ok(!game.departureVisibleLandmarkIds.includes(landmark.id));
+  tickGame(game,SATURDAY_NOON+7_000,2);assert.equal(game.courier.x,270);assert.equal(game.courier.y,550);
+  const second=await decide(game,'Sigue hasta la próxima esquina.',undefined,{...offline,now:()=>game.updatedAt,key:'fixture',fetcher:mockJev(criteria=>{assert.deepEqual(Object.keys(criteria),['continue']);return 'continue';})});assert.equal(second?.source,'jev');
+  tickGame(game,SATURDAY_NOON+12_000,5);assert.deepEqual({x:game.courier.x,y:game.courier.y},{x:370,y:650});assert.equal(game.courier.direction,'east');assert.equal(publicGame(game).homeEntranceVisible,true);
+  assert.ok(npcContext(game).newlyVisibleLandmarks.some(l=>l.id==='home-door'));assert.equal(game.route.length,0);assert.equal(game.awaitingGuidance,true);
+  tickGame(game,SATURDAY_NOON+14_000,2);assert.equal(game.courier.x,370);assert.equal(game.courier.y,650);
+  await decide(game,'Ven a mi portal.',undefined,{...offline,now:()=>game.updatedAt});tickGame(game,SATURDAY_NOON+19_000,5);assert.ok(canHandoff(game,game.updatedAt));assert.equal(game.route.length,0);
+});
+test('swept movement catches either-direction door overshoot and latches physical arrival once', async () => {
+  for(const fixture of [{x:350,text:'Ve al este.'},{x:600,text:'Ve al oeste.'}]){
+    const game=active();Object.assign(game.courier,{x:fixture.x,y:650});await decide(game,fixture.text,undefined,offline);
+    tickGame(game,SATURDAY_NOON+5_000,5);assert.deepEqual({x:game.courier.x,y:game.courier.y},HOME_ENTRANCE);assert.equal(game.routeTargetId,'home-south');assert.equal(game.routeComplete,true);assert.equal(game.awaitingGuidance,false);assert.equal(game.arrivalSequence,1);assert.ok(canHandoff(game,game.updatedAt));
+    for(let i=0;i<3;i++){await decide(game,'Sí, sigue.',undefined,{...offline,now:()=>game.updatedAt});tickGame(game,game.updatedAt+1_000,1);assert.equal(game.route.length,0);assert.equal(game.courier.moving,false);assert.equal(game.arrivalSequence,1);assert.deepEqual({x:game.courier.x,y:game.courier.y},HOME_ENTRANCE);}
+  }
+});
+test('remote entrance sight cannot cause arrival, and successful handoff freezes the remaining clock', () => {
+  const game=active();Object.assign(game.courier,{x:370,y:650,direction:'east'});assert.equal(publicGame(game).homeEntranceVisible,true);tickGame(game,SATURDAY_NOON+5_000,5);assert.equal(canHandoff(game,game.updatedAt),false);assert.equal(game.arrivalSequence,0);
+  Object.assign(game.courier,HOME_ENTRANCE);assert.equal(handoff(game,SATURDAY_NOON+6_000),true);assert.equal(game.resolvedAt,SATURDAY_NOON+6_000);
+  const remaining=publicGame(game,SATURDAY_NOON+6_000).remainingMs;tickGame(game,SATURDAY_NOON+30_000,24);assert.equal(publicGame(game,SATURDAY_NOON+30_000).remainingMs,remaining);assert.equal(remaining,54_000);
+});

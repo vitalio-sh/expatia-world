@@ -1,5 +1,6 @@
 export type TurnId = string | number;
 export type SpeechLanguage = 'es' | 'en';
+export const COURIER_PLAYBACK_RATE = 1.25;
 export interface VoiceCallbacks {
   onCaption?(text: string, turnId: TurnId): void;
   onTranscript?(text: string, final: boolean, turnId: TurnId): void;
@@ -53,11 +54,11 @@ export class PcmPlayer {
     const data = buffer.getChannelData(0);
     const view = new DataView(bytes.buffer, bytes.byteOffset, samples * 2);
     for (let i = 0; i < samples; i++) data[i] = view.getInt16(i * 2, true) / 32768;
-    const source = this.context.createBufferSource(); source.buffer = buffer; source.connect(this.gain!);
+    const source = this.context.createBufferSource(); source.buffer = buffer; source.playbackRate.value = COURIER_PLAYBACK_RATE; source.connect(this.gain!);
     source.onended = () => { this.sources.delete(source); source.disconnect(); };
     if (this.firstScheduled && this.nextStart < this.context.currentTime) this.underruns++;
     const start = Math.max(this.nextStart, this.context.currentTime + .025);
-    this.sources.add(source); source.start(start); this.nextStart = start + buffer.duration;
+    this.sources.add(source); source.start(start); this.nextStart = start + buffer.duration / COURIER_PLAYBACK_RATE;
     if (!this.firstScheduled) { this.firstScheduled = true; this.onFirst?.(turnId, performance.now() + Math.max(0, start - this.context.currentTime) * 1000); }
     return true;
   }

@@ -139,10 +139,10 @@ test('all core demo prompts stay short even during repeated recovery', () => {
 test('visible-edge stop suggests one short direction and keeps the learned entrance side', () => {
   const game: DemoGame = { ...base, history: [...identified, line('player', 'Mi portal está al sur.', 5)], facts: { homeSide: 'south' }, awaitingGuidance: true, routeComplete: false, courier: { x: 230, y: 500, direction: 'south', moving: false }, inspector: { selected: 'visibility-stop', action: { type: 'describe' } } };
   const cue = chooseDemoCue(game);
-  assert.equal(cue.spanish, 'Sí, sigue.');
+  assert.equal(cue.spanish, 'Sigue por el siguiente tramo.');
   assert.doesNotMatch(cue.spanish, /portal|rodea|entrada|Hola/);
   const look = chooseDemoCue({ ...game, courier: { ...game.courier!, direction: 'north' } });
-  assert.equal(look.spanish, 'Sí, sigue.');
+  assert.equal(look.spanish, 'Sigue por el siguiente tramo.');
   assert.equal(game.facts?.homeSide, 'south');
 });
 
@@ -150,5 +150,13 @@ test('demo only suggests the final portal step when the actual doorway is visibl
   const game: DemoGame = { ...base, history: identified, facts: { homeSide: 'south' }, awaitingGuidance: false, courier: { x: 230, y: 645, direction: 'east', moving: false } };
   assert.equal(chooseDemoCue(game).spanish, 'Camina un poco hacia el este.');
   assert.equal(chooseDemoCue({ ...game, visibleLandmarks: [{ id: 'home-door', label: 'south apartment entrance', type: 'entrance' }] }).spanish, 'Ven a mi portal.');
-  assert.equal(chooseDemoCue({ ...game, awaitingGuidance: true, visibleLandmarks: [{ id: 'home-door', label: 'south apartment entrance', type: 'entrance' }] }).spanish, 'Sí, sigue.');
+  assert.equal(chooseDemoCue({ ...game, awaitingGuidance: true, visibleLandmarks: [{ id: 'home-door', label: 'south apartment entrance', type: 'entrance' }] }).spanish, 'Ven a mi portal.');
+});
+
+
+test('a new visible corner gets one bounded continuation cue, while the visible entrance wins', () => {
+  const corner = { id: 'home-corner-sw', type: 'corner', label: 'Southwest corner', direction: 'south' as const, distance: 40 };
+  const game: DemoGame = { ...base, history: identified, facts: { homeSide: 'south' }, awaitingGuidance: true, newlyVisibleLandmarks: [corner], visibleLandmarks: [corner] };
+  assert.equal(chooseDemoCue(game).spanish, 'Sigue hasta la próxima esquina.');
+  assert.equal(chooseDemoCue({ ...game, visibleLandmarks: [corner, { id: 'home-door', type: 'entrance', label: 'South entrance' }] }).spanish, 'Ven a mi portal.');
 });

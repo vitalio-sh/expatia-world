@@ -31,7 +31,7 @@ export interface KnownLandmark extends Landmark { observedAt: number; source: 'o
 export interface LandmarkObservation extends KnownLandmark { distance: number; direction: Direction }
 export interface ActionCandidate {
   id: string; type: 'describe' | 'reveal' | 'clarify' | 'wait' | 'move' | 'continue' | 'drop' | 'return' | 'look';
-  label: string; reason: string; target?: Point; targetId?: string; route?: Point[]; facing?: Direction; routeComplete?: boolean;
+  label: string; reason: string; target?: Point; targetId?: string; route?: Point[]; facing?: Direction; routeComplete?: boolean; legEndsAtWaypoint?: boolean;
 }
 export interface Decision {
   id: string; sequence: number; trigger: 'opening' | 'directions' | 'timeout';
@@ -44,11 +44,12 @@ export interface Decision {
 export interface Outcome { kind: 'received' | 'collection' | 'returned'; title: string; detail: string; feedback: string }
 export interface Game {
   id: string; phase: 'incoming' | 'active' | 'timeout' | 'resolved';
-  startedAt: number | null; deadline: number | null; updatedAt: number;
+  startedAt: number | null; deadline: number | null; resolvedAt: number | null; updatedAt: number;
   courier: Actor; resident: Actor; route: Point[]; routeTargetId: string | null;
-  previousDestination: Point | null; routeDestination: Point | null; routeComplete: boolean; awaitingGuidance: boolean; parcel: 'courier' | 'resident' | 'drop' | 'returned';
+  previousDestination: Point | null; routeDestination: Point | null; routeComplete: boolean; legEndsAtWaypoint: boolean; awaitingGuidance: boolean; parcel: 'courier' | 'resident' | 'drop' | 'returned';
   dropLocationId: string | null; outcome: Outcome | null; history: HistoryEntry[];
   weather: Weather; knowledge: Record<string, KnownBuilding>; landmarkKnowledge: Record<string, KnownLandmark>;
+  departureVisibleBuildingIds: string[]; departureVisibleLandmarkIds: string[]; newlyVisibleBuildingIds: string[]; newlyVisibleLandmarkIds: string[];
   facts: { homeSide: Direction | null; signDisclosed: boolean; firstClueSpoken: boolean; lastClarification: string | null };
   decision: Decision | null; decisions: Decision[]; sequence: number;
   timeoutPending: boolean; timeoutStartedAt: number | null; arrivalSequence: number;

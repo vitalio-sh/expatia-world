@@ -330,7 +330,7 @@ test('visible-edge stop describes current sight and asks only for the next step'
   const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, history: [{ role: 'player', text: 'Mi portal está al sur.' }], navigation: { segmentReachesDestination: false, awaitingGuidance: true, arrived: false } };
   const stop = { id: 'visibility-stop', type: 'describe', label: 'Describe current stopping point' };
   const line = fallbackLine(context, stop);
-  assert.match(line, /Veo la esquina oeste.*¿Por dónde sigo\?/);
+  assert.match(line, /Ahora veo el cruce de calles del este.*¿Sigo desde aquí\?/);
   assert.equal(line.split('?').length - 1, 1);
   assert.doesNotMatch(line, /portal|entrada|Estoy abajo|he llegado/);
   assert.equal(speechIsGrounded('Estoy abajo, en la entrada.', context, stop), false);
@@ -358,6 +358,35 @@ test('stationary visibility-stop rejects the exact live false walking line but p
   const streamer = (async (_messages, onText) => { onText(failed); return { text: failed, model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
   const result = await generateDialogue(context, stop, undefined, phrase => { phrases.push(phrase); }, streamer);
   assert.deepEqual(phrases, [fallbackLine(context, stop)]);
-  assert.match(result.text, /^Veo .*¿Por dónde sigo\?$/);
+  assert.match(result.text, /^Ahora veo .*¿Sigo desde aquí\?$/);
   assert.doesNotMatch(result.text, /Avanzo|camino|me dirijo|voy/);
+});
+
+
+test('stop discovery prefers a newly visible junction over a remembered nearby wall', () => {
+  const context = { ...richerContext, navigation: { moving: false, awaitingGuidance: true }, newlyVisibleLandmarks: [{ id: 'junction' }], visibleLandmarks: [...richerContext.visibleLandmarks, { id: 'wall', type: 'wall', label: 'Old wall', distance: 2, direction: 'west' }] };
+  const line = fallbackLine(context, { id: 'visibility-stop', type: 'describe' });
+  assert.match(line, /Ahora veo el cruce de calles del este/);
+  assert.doesNotMatch(line, /Old wall/);
+});
+
+test('stop discovery prioritizes the actual visible doorway and ignores stale discovery IDs', () => {
+  const context = { ...richerContext, navigation: { moving: false, awaitingGuidance: true }, newlyVisibleLandmarks: [{ id: 'home-door' }, { id: 'junction' }] };
+  const stop = { id: 'visibility-stop', type: 'describe' };
+  assert.doesNotMatch(fallbackLine(context, stop), /entrada|portal/);
+  const actual = { ...context, visibleLandmarks: [...context.visibleLandmarks, { id: 'home-door', type: 'entrance', label: 'South apartment entrance', distance: 110, direction: 'east' }] };
+  assert.match(fallbackLine(actual, stop), /Ahora veo .*entrada.*¿Me acerco/);
+  assert.doesNotMatch(fallbackLine(actual, stop), /Estoy abajo|he llegado/);
+});
+
+test('a received parcel farewell remains short and plays through fallback generation', async () => {
+  const context = { ...richerContext, parcel: 'resident', phase: 'resolved' };
+  const action = { id: 'farewell', type: 'wait' };
+  const expected = '¡Aquí tienes! Gracias, ¡que tengas buen día!';
+  assert.equal(fallbackLine(context, action), expected);
+  const phrases: string[] = [];
+  const offline = (async () => { throw new Error('fixture_offline'); }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, action, undefined, phrase => { phrases.push(phrase); }, offline);
+  assert.equal(result.text, expected);
+  assert.deepEqual(phrases, [expected]);
 });

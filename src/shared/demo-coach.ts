@@ -7,6 +7,8 @@ export interface DemoGame {
   routeDestination?: Point | null; routeComplete?: boolean; awaitingGuidance?: boolean;
   parcel?: string; outcome?: { kind: string } | null; arrivalSequence?: number;
   visibleBuildings?: string[];
+  newlyVisibleLandmarks?: { id: string; type: string; label: string; direction?: Direction; distance?: number }[];
+  newlyVisibleBuildings?: string[]; homeEntranceVisible?: boolean;
   visibleLandmarks?: { id: string; type: string; label: string; direction?: Direction; distance?: number }[];
   map?: typeof WORLD_MAP;
   facts?: { homeSide?: Direction | null; signDisclosed?: boolean };
@@ -53,9 +55,14 @@ function homeCue(game: DemoGame, title = 'Tell them your entrance side'): DemoCu
 }
 
 function nextStepCue(game: DemoGame): DemoCue {
-  if (game.awaitingGuidance) return { title: 'Give the next short direction', spanish: 'Sí, sigue.', english: 'Continue one visible stretch, then stop again.', stage: 2 };
   const map = game.map ?? WORLD_MAP, position = game.courier;
-  if ((game.visibleLandmarks ?? []).some(item => item.id === 'home-door')) return { title: 'Guide the final visible step', spanish: 'Ven a mi portal.', english: 'Come to my entrance.', stage: 2 };
+  if (game.homeEntranceVisible || (game.visibleLandmarks ?? []).some(item => item.id === 'home-door')) return { title: 'Guide the final visible step', spanish: 'Ven a mi portal.', english: 'Come to my entrance.', stage: 2 };
+  if (game.awaitingGuidance) {
+    const ids = new Set((game.newlyVisibleLandmarks ?? []).map(item => item.id));
+    const visible = (game.visibleLandmarks ?? []).filter(item => ids.has(item.id));
+    const corner = visible.find(item => item.type === 'corner') || (game.visibleLandmarks ?? []).find(item => item.type === 'corner');
+    return corner ? { title: 'Guide the next visible corner', spanish: 'Sigue hasta la próxima esquina.', english: 'Continue to the next corner, then stop.', stage: 2 } : { title: 'Guide one more visible stretch', spanish: 'Sigue por el siguiente tramo.', english: 'Continue along the next visible stretch, then stop.', stage: 2 };
+  }
   if (!position) return sightCue(game, 'Check the next visible step');
   const goal = map.home.entrance, dx = goal.x - position.x, dy = goal.y - position.y;
   const first = directionBetween(position, goal);

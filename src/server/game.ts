@@ -7,18 +7,18 @@ import {
 
 export function createGame(weather: Weather = DEFAULT_WEATHER, now = Date.now()): Game {
   const game: Game = {
-    id: globalThis.crypto.randomUUID(), phase: 'incoming', startedAt: null, deadline: null, updatedAt: now,
+    id: globalThis.crypto.randomUUID(), phase: 'incoming', startedAt: null, deadline: null, resolvedAt: null, updatedAt: now,
     courier: { x: 210, y: 250, direction: 'north', moving: false },
     resident: { ...RESIDENT_POSITION, direction: 'south', moving: false },
-    route: [], routeTargetId: null, routeDestination: null, routeComplete: false, awaitingGuidance: false, previousDestination: null, parcel: 'courier', dropLocationId: null,
-    outcome: null, history: [], weather: { ...weather }, knowledge: {}, landmarkKnowledge: {},
+    route: [], routeTargetId: null, routeDestination: null, routeComplete: false, legEndsAtWaypoint: false, awaitingGuidance: false, previousDestination: null, parcel: 'courier', dropLocationId: null,
+    outcome: null, history: [], weather: { ...weather }, knowledge: {}, landmarkKnowledge: {}, departureVisibleBuildingIds: [], departureVisibleLandmarkIds: [], newlyVisibleBuildingIds: [], newlyVisibleLandmarkIds: [],
     facts: { homeSide: null, signDisclosed: false, firstClueSpoken: false, lastClarification: null },
     decision: null, decisions: [], sequence: 0, timeoutPending: false, timeoutStartedAt: null, arrivalSequence: 0,
   };
   rememberObservations(game, now);
   return game;
 }
-export function remainingMs(game: Game, now = Date.now()) { return game.deadline === null ? ROUND_MS : Math.max(0, game.deadline - now); }
+export function remainingMs(game: Game, now = Date.now()) { return game.deadline === null ? ROUND_MS : Math.max(0, game.deadline - (game.resolvedAt ?? now)); }
 export function recordHistory(game: Game, entry: HistoryEntry) {
   // One round is short; keep every actual turn, never a separate director memory.
   game.history.push({ ...entry, text: entry.text.slice(0, 2_000) });
@@ -86,7 +86,7 @@ export function canHandoff(game: Game, now = Date.now()) {
 export function handoff(game: Game, now = Date.now()) {
   tickGame(game, now, 0);
   if (!canHandoff(game, now)) return false;
-  game.parcel = 'resident'; game.phase = 'resolved'; game.route = []; game.courier.moving = false; game.resident.moving = false;
+  game.parcel = 'resident'; game.phase = 'resolved'; game.resolvedAt = now; game.route = []; game.courier.moving = false; game.resident.moving = false;
   game.outcome = { kind: 'received', title: 'Parcel received!', detail: 'You guided the courier to your apartment entrance and accepted the parcel.', feedback: game.facts.signDisclosed ? 'Asking for the sign removed the ambiguity. Clear directions brought the courier to the entrance.' : 'Your directions brought the courier to the apartment door. A landmark name can make the next delivery even easier.' };
   recordHistory(game, { role: 'event', text: 'The courier physically reached the apartment entrance and the resident accepted the parcel.', at: now });
   return true;
@@ -99,19 +99,34 @@ export function enterTimeout(game: Game, now = Date.now()) {
   return true;
 }
 function returnParcel(game: Game, now: number, detail: string) {
-  game.parcel = 'returned'; game.phase = 'resolved'; game.timeoutPending = false; game.route = []; game.courier.moving = false;
+  game.parcel = 'returned'; game.phase = 'resolved'; game.resolvedAt = now; game.timeoutPending = false; game.route = []; game.courier.moving = false;
   game.outcome = { kind: 'returned', title: 'Delivery missed', detail, feedback: 'Clarify the landmark, give the entrance side, then guide the courier to the door and accept the parcel.' };
   recordHistory(game, { role: 'event', text: 'No physical handoff or suitable completed drop-off. The courier kept the parcel for return to the depot.', at: now });
 }
 function finishRoute(game: Game, now: number) {
   game.courier.moving = false;
+  if (game.phase === 'active') {
+    // A stationary look makes the next visible cue useful without authorizing
+    // another movement leg or projecting the unseen remainder of the route.
+    if (!game.routeComplete && game.legEndsAtWaypoint && game.routeDestination) {
+      const next = findRoute(game.courier, game.routeDestination)?.find(point => distance(game.courier, point) > 0.1);
+      if (next) {
+        game.courier.direction = directionBetween(game.courier, next);
+        recordHistory(game, { role: 'event', text: `At the visible-leg stop the courier looked ${game.courier.direction} while standing still, to inspect the next visible direction. No new movement was started.`, at: now });
+      }
+    }
+    rememberObservations(game, now);
+    const view = perception(game, now);
+    game.newlyVisibleBuildingIds = view.buildings.filter(b => !game.departureVisibleBuildingIds.includes(b.id)).map(b => b.id);
+    game.newlyVisibleLandmarkIds = view.landmarks.filter(l => !game.departureVisibleLandmarkIds.includes(l.id)).map(l => l.id);
+  }
   game.arrivalSequence++;
   if (game.phase === 'timeout' && game.routeTargetId) {
     const location = BUILDINGS.find(b => b.id === game.routeTargetId);
     if (!location || !game.knowledge[location.id] || !isOpen(location, now) || !location.acceptsParcels || !location.accessible || (game.weather.isRain && !location.sheltered) || distance(game.courier, location.entrance) > 15) {
       returnParcel(game, now, 'The observed alternative could not accept the parcel on arrival. It is returning to the depot; arrange another delivery.'); return;
     }
-    game.parcel = 'drop'; game.dropLocationId = location.id; game.phase = 'resolved'; game.timeoutPending = false;
+    game.parcel = 'drop'; game.dropLocationId = location.id; game.phase = 'resolved'; game.resolvedAt = now; game.timeoutPending = false;
     game.outcome = { kind: 'collection', title: 'Parcel waiting for collection', detail: `The courier reached ${location.name} and left your parcel there. You still need to collect it from the shop.`, feedback: 'The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance.' };
     recordHistory(game, { role: 'event', text: `The courier physically reached the open ${location.name} entrance and left the parcel for collection. The resident has not received it.`, at: now });
   } else if (game.routeTargetId && !(game.routeComplete && game.routeTargetId === 'home-south' && canHandoff(game, now))) {
@@ -136,6 +151,19 @@ export function tickGame(game: Game, now = Date.now(), dt = Math.max(0, (now - g
       const target = game.route[0], d = distance(game.courier, target);
       const step = Math.min(available, d), next = { x: game.courier.x + (target.x - game.courier.x) * step / Math.max(d, 0.001), y: game.courier.y + (target.y - game.courier.y) * step / Math.max(d, 0.001) };
       if (!segmentClear(game.courier, next)) { game.route = []; game.courier.moving = false; recordHistory(game, { role: 'event', text: 'The courier stopped at an obstruction; a new direction is needed.', at: now }); break; }
+      if (game.phase === 'active' && game.parcel === 'courier') {
+        const start = { x: game.courier.x, y: game.courier.y }, dx = next.x - start.x, dy = next.y - start.y;
+        const fraction = Math.max(0, Math.min(1, ((HOME_ENTRANCE.x - start.x) * dx + (HOME_ENTRANCE.y - start.y) * dy) / Math.max(dx * dx + dy * dy, 0.000001)));
+        const nearest = { x: start.x + dx * fraction, y: start.y + dy * fraction };
+        if (distance(nearest, HOME_ENTRANCE) <= 32 && segmentClear(nearest, HOME_ENTRANCE)) {
+          // Swept proximity catches a door crossed between ticks. Any alignment
+          // is an actual collision-clear walk within this tick's travel budget.
+          const aligned = distance(start, nearest) + distance(nearest, HOME_ENTRANCE) <= available && segmentClear(start, HOME_ENTRANCE);
+          Object.assign(game.courier, aligned ? HOME_ENTRANCE : nearest, { direction: directionBetween(start, HOME_ENTRANCE), moving: false });
+          game.route = []; game.routeTargetId = 'home-south'; game.routeDestination = { ...HOME_ENTRANCE }; game.routeComplete = true; game.legEndsAtWaypoint = true; game.awaitingGuidance = false;
+          rememberObservations(game, now); finishRoute(game, now); break;
+        }
+      }
       game.courier.direction = directionBetween(game.courier, target); game.courier.x = next.x; game.courier.y = next.y; game.courier.moving = step > 0; available -= step;
       rememberObservations(game, now);
       if (d <= step + 0.01) { game.route.shift(); if (!game.route.length) finishRoute(game, now); }
@@ -207,6 +235,8 @@ export function npcContext(game: Game, now = game.updatedAt) {
     position: { x: Math.round(game.courier.x), y: Math.round(game.courier.y), facing: game.courier.direction },
     orientation: { facing: game.courier.direction, viewAngleDegrees: VIEW_ANGLE_DEGREES, sightRange: SIGHT_RANGE, navigationFrame: 'map', left: 'west', right: 'east' },
     visibleLandmarks: opening ? [] : view.landmarks.map(({ approach: _approach, crossTo: _crossTo, ...landmark }) => landmark),
+    newlyVisibleLandmarks: opening ? [] : view.landmarks.filter(l => game.newlyVisibleLandmarkIds.includes(l.id)).map(({ approach: _approach, crossTo: _crossTo, ...landmark }) => landmark),
+    newlyVisibleBuildings: opening ? [] : view.buildings.filter(b => game.newlyVisibleBuildingIds.includes(b.id)).map(scopedBuilding),
     rememberedLandmarks: opening ? [] : Object.values(game.landmarkKnowledge).map(({ approach: _approach, crossTo: _crossTo, ...landmark }) => landmark),
     surroundings: { currentRoad: opening || !road ? null : { id: road.id, label: road.label, type: road.type }, nearestVisible: opening ? null : visibleFacts[0] ?? null, furthestVisible: opening ? null : visibleFacts.at(-1) ?? null },
     residentInside: true,
@@ -247,6 +277,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   candidates.push({ id: 'look:around', type: 'look', label: 'Look around in all four directions', reason: 'Physically turn and observe each direction, then return to the original heading; no movement.' });
   candidates.push({ id: 'clarify', type: 'clarify', label: 'Ask for a clearer landmark or entrance side', reason: 'Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place.' });
   candidates.push({ id: 'wait', type: 'wait', label: 'Stop and wait', reason: 'Use for an explicit wait/stop request; do not claim a handoff or parcel receipt.' });
+  if (game.routeTargetId === 'home-south' && game.routeComplete && canHandoff(game, now)) return candidates.filter(c => c.type !== 'look');
   if (game.route.length) candidates.push({ id: 'continue', type: 'continue', label: 'Continue the current visible movement leg', reason: 'Finish only the movement leg already in progress; do not queue another leg.' });
   else if (game.awaitingGuidance && game.routeDestination && !game.routeComplete) {
     const route = findRoute(game.courier, game.routeDestination);
@@ -300,7 +331,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
     if (!departure) continue;
     const facing = directionBetween(game.courier, departure), leg = visibleRouteLeg(game.courier, candidate.route, facing);
     if (!leg.length) { candidates.splice(i, 1); continue; }
-    candidate.route = leg; candidate.facing = facing; candidate.routeComplete = distance(leg.at(-1)!, candidate.target) < 0.1;
+    candidate.route = leg; candidate.facing = facing; candidate.routeComplete = distance(leg.at(-1)!, candidate.target) < 0.1; candidate.legEndsAtWaypoint = distance(leg.at(-1)!, departure) < 0.1;
     candidate.label = `Walk one visible leg toward ${candidate.targetId?.startsWith('home-') ? `the reported ${candidate.targetId.slice(5)} entrance` : candidate.label.replace(/^(Walk to|Approach|Go around the building toward|Cross|Go back to)\s*/,'')}`;
     candidate.reason = `Turn to face ${facing}, then walk only ${routeDistance(game.courier, leg).toFixed(1)} map units inside the current departure-position view and collision-clear first leg. ${candidate.routeComplete ? 'This leg reaches the requested destination.' : 'Stop at the visible leg boundary and await a NEW resident command. The semantic destination remains remembered; no queued turns or automatic route continuation.'}`;
   }
@@ -365,12 +396,17 @@ export function applyDecision(game: Game, decision: Decision, now = game.updated
     const route = legal.route ?? (legal.target ? findRoute(game.courier, legal.target) : null);
     if (!route) return false;
     game.previousDestination = { x: game.courier.x, y: game.courier.y };
-    game.route = route; game.routeTargetId = legal.targetId ?? legal.id; game.routeDestination = legal.target ? { ...legal.target } : null; game.routeComplete = legal.type === 'drop' || !!legal.routeComplete; game.awaitingGuidance = false; game.courier.direction = legal.facing ?? game.courier.direction; game.courier.moving = true;
+    game.route = route; game.routeTargetId = legal.targetId ?? legal.id; game.routeDestination = legal.target ? { ...legal.target } : null; game.routeComplete = legal.type === 'drop' || !!legal.routeComplete; game.legEndsAtWaypoint = !!legal.legEndsAtWaypoint; game.awaitingGuidance = false; game.courier.direction = legal.facing ?? game.courier.direction; game.courier.moving = true;
+    rememberObservations(game, now);
+    const departureView = perception(game, now);
+    game.departureVisibleBuildingIds = departureView.buildings.map(b => b.id); game.departureVisibleLandmarkIds = departureView.landmarks.map(l => l.id);
+    game.newlyVisibleBuildingIds = []; game.newlyVisibleLandmarkIds = [];
     if (legal.type === 'drop') game.timeoutPending = false;
     recordHistory(game, { role: 'event', text: `Courier started: ${legal.label}. ${legal.type === 'drop' ? 'The parcel remains with the courier until arrival.' : 'Arrival and handoff have not yet happened.'}`, at: now, turnId: decision.id });
     if (distance(game.courier, legal.target!) < 1) { game.route = []; finishRoute(game, now); }
   } else if (legal.type === 'look') {
     game.route = []; game.courier.moving = false;
+    game.newlyVisibleBuildingIds = []; game.newlyVisibleLandmarkIds = [];
     const original = game.courier.direction;
     if (legal.id === 'look:around') scanSurroundings(game, now);
     game.courier.direction = legal.facing ?? original; rememberObservations(game, now);
@@ -387,11 +423,12 @@ export function applyDecision(game: Game, decision: Decision, now = game.updated
 export function publicGame(game: Game, now = Date.now()) {
   const view = perception(game, now);
   return {
-    id: game.id, phase: game.phase, startedAt: game.startedAt, deadline: game.deadline,
+    id: game.id, phase: game.phase, startedAt: game.startedAt, deadline: game.deadline, resolvedAt: game.resolvedAt,
     serverNow: now, remainingMs: remainingMs(game, now), courier: { ...game.courier }, resident: { ...game.resident },
     route: game.route.map(p => ({ ...p })), routeTargetId: game.routeTargetId, routeDestination: game.routeDestination ? { ...game.routeDestination } : null, routeComplete: game.routeComplete, awaitingGuidance: game.awaitingGuidance, parcel: game.parcel, facts: { ...game.facts },
     dropLocationId: game.dropLocationId, outcome: game.outcome, history: game.history.map(h => ({ ...h })),
     weather: { ...game.weather }, time: barcelonaTime(now), map: WORLD_MAP, canHandoff: canHandoff(game, now),
+    homeEntranceVisible: view.homeEntranceVisible, newlyVisibleBuildings: view.buildings.filter(b => game.newlyVisibleBuildingIds.includes(b.id)).map(b => b.id), newlyVisibleLandmarks: view.landmarks.filter(l => game.newlyVisibleLandmarkIds.includes(l.id)).map(({ id, type, label, distance, direction }) => ({ id, type, label, distance, direction })),
     visibleBuildings: view.buildings.map(b => b.id), visibleLandmarks: view.landmarks.map(({ id, type, label, distance, direction }) => ({ id, type, label, distance, direction })), courierView: { facing: game.courier.direction, angle: VIEW_ANGLE_DEGREES, range: SIGHT_RANGE }, furthestVisible: [...view.landmarks.map(l => ({ id: l.id, label: l.label, distance: l.distance })), ...view.buildings.map(b => ({ id: b.id, label: b.name, distance: b.distance }))].sort((a, b) => b.distance - a.distance)[0] ?? null, arrivalSequence: game.arrivalSequence,
     inspector: game.decision ? { ...game.decision, candidates: game.decision.candidates.map(({ route: _route, ...c }) => c), action: { ...game.decision.action, route: undefined }, note: 'Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities.' } : null,
   };
