@@ -1,4 +1,4 @@
-import { WORLD_MAP, directionBetween, segmentClear, type Direction, type HistoryEntry, type Point } from './world';
+import { WORLD_MAP, directionBetween, type Direction, type HistoryEntry, type Point } from './world';
 
 export interface DemoGame {
   id?: string; phase?: string; history?: HistoryEntry[];
@@ -55,26 +55,17 @@ function homeCue(game: DemoGame, title = 'Tell them your entrance side'): DemoCu
 }
 
 function nextStepCue(game: DemoGame): DemoCue {
-  const map = game.map ?? WORLD_MAP, position = game.courier;
+  const map = game.map ?? WORLD_MAP;
   if (game.homeEntranceVisible || (game.visibleLandmarks ?? []).some(item => item.id === 'home-door')) return { title: 'Guide the final visible step', spanish: 'Ven a mi portal.', english: 'Come to my entrance.', stage: 2 };
-  if (game.awaitingGuidance) {
-    const ids = new Set((game.newlyVisibleLandmarks ?? []).map(item => item.id));
-    const visible = (game.visibleLandmarks ?? []).filter(item => ids.has(item.id));
-    const corner = visible.find(item => item.type === 'corner') || (game.visibleLandmarks ?? []).find(item => item.type === 'corner');
-    return corner ? { title: 'Guide the next visible corner', spanish: 'Sigue hasta la próxima esquina.', english: 'Continue to the next corner, then stop.', stage: 2 } : { title: 'Guide one more visible stretch', spanish: 'Sigue por el siguiente tramo.', english: 'Continue along the next visible stretch, then stop.', stage: 2 };
-  }
-  if (!position) return sightCue(game, 'Check the next visible step');
-  const goal = map.home.entrance, dx = goal.x - position.x, dy = goal.y - position.y;
-  const first = directionBetween(position, goal);
-  const second: Direction = first === 'north' || first === 'south' ? (dx >= 0 ? 'east' : 'west') : (dy >= 0 ? 'south' : 'north');
-  const vectors: Record<Direction, Point> = { north: { x: 0, y: -1 }, east: { x: 1, y: 0 }, south: { x: 0, y: 1 }, west: { x: -1, y: 0 } };
-  const direction = [...new Set([first, second, 'north', 'east', 'south', 'west'] as Direction[])].find(candidate => {
-    const v = vectors[candidate];
-    return segmentClear(position, { x: position.x + v.x * 85, y: position.y + v.y * 85 });
-  });
-  if (!direction) return sightCue(game, 'Find a clear next step');
-  if (position.direction !== direction) return { title: 'Look before the next short move', spanish: `Mira hacia el ${es[direction]}.`, english: `Look ${direction} before the next short move.`, stage: 2 };
-  return { title: 'Give one short direction', spanish: `Camina un poco hacia el ${es[direction]}.`, english: `Walk a little ${direction}, then wait for the next direction.`, stage: 2 };
+  const side = directionBetween(map.residentPosition, map.home.entrance);
+  if (game.facts?.homeSide !== side) return { title: 'Tell them your entrance side', spanish: `Mi portal está en el lado ${es[side]}.`, english: `My entrance is on the ${side} side.`, stage: 2 };
+  // Only continue a real unfinished entrance route. A finished cardinal walk,
+  // shop trip or stale target must not send the courier farther along that route.
+  const pendingHome = [`home-${side}`, `home:${side}`].includes(game.routeTargetId ?? '') && !!game.routeDestination && game.routeDestination.x === map.home.entrance.x && game.routeDestination.y === map.home.entrance.y && game.routeComplete === false;
+  if (game.awaitingGuidance && pendingHome) return { title: 'Continue toward your entrance', spanish: 'Sigue.', english: 'Continue one short stretch toward my entrance, then stop.', stage: 2 };
+  // The resident may tell the courier their entrance; this does not claim it is
+  // visible. The navigation engine validates and bounds the resulting move.
+  return { title: 'Guide them toward your entrance', spanish: `Ven a mi portal por el ${es[side]}.`, english: `Come toward my ${side} entrance, one short stretch.`, stage: 2 };
 }
 
 function sightCue(game: DemoGame, title = 'Choose a clear reference'): DemoCue {
@@ -123,7 +114,7 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
   }
   const askingHome = /(?:que|cual|which|what).{0,28}(?:lado|side|entrada|entrance|puerta|door)|donde.{0,25}(?:casa|portal|entrada)|where.{0,25}(?:home|entrance|door)/.test(context.courierQuestion);
   const askingLook = /hacia donde miro|donde (?:miro|mirar)|que (?:punto de referencia|referencia) busco|where.{0,12}look|what.{0,24}look for/.test(context.courierQuestion);
-  if (!options.lifeline && (game.courier?.moving || (game.route?.length ?? 0) > 0) && (!askingHome || game.facts?.homeSide)) return walkingCue(game);
+  if (!options.lifeline && !game.awaitingGuidance && (game.courier?.moving || (game.route?.length ?? 0) > 0) && (!askingHome || game.facts?.homeSide)) return walkingCue(game);
   const recovery = options.lifeline || !!options.recovery || unclearWords.test(context.courierQuestion) || context.decision?.action?.type === 'clarify';
   if (recovery) {
     const cue = askingLook ? sightCue(game) : askingHome || context.stage >= 2 || context.identified ? homeCue(game) : sightCue(game);
@@ -134,7 +125,7 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
   if (game.awaitingGuidance || context.decision?.selected === 'visibility-stop') return nextStepCue(game);
   if (askingHome) return homeCue(game, 'Answer the entrance question');
   if (askingLook) return sightCue(game, 'Answer what to look for');
-  if (game.courier?.moving || (game.route?.length ?? 0) > 0) return walkingCue(game);
+  if (!game.awaitingGuidance && (game.courier?.moving || (game.route?.length ?? 0) > 0)) return walkingCue(game);
   if (/obstruction|stopped at|blocked/.test(clean(context.history.at(-1)?.text ?? ''))) return homeCue(game, 'Recover from the blocked route');
   if (context.stage >= 2) return homeCue(game);
   if (context.identified && /es (?:el|la|ese|esa)|el que dices|te refieres|is (?:that|this)|do you mean/.test(question)) {

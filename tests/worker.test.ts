@@ -337,3 +337,59 @@ test('Worker handoff resolves the parcel before farewell, disables microphone an
     assert.ok(session.game.history.some(entry => entry.role === 'courier' && entry.text === 'Perfecto, paquete entregado. ¡Hasta luego!'));
   } finally { session.dispose(); }
 });
+
+test('Worker retains the entrance objective across the exact truncated side reply and hesitant continue transcript', async () => {
+  const socket = new Socket(); let now = NOW;
+  const session = createWorkerSession(socket, SESSION_ID, {}, DEFAULT_WEATHER, {
+    clock: () => now, timers: false, decisionOptions: { key: '', telemetry: false },
+    voice: { async prepare() { return true; }, async createTurn() { return { sendPhrase() {}, async finish() {}, cancel() {} }; }, handle() {}, dispose() {} },
+    dialogue: async (_context, action: any, signal, onPhrase) => {
+      signal?.throwIfAborted();
+      const text = action?.type === 'reveal' ? 'Estoy junto a Bar Llevant. ¿Por dónde sigo?' : '¿Por dónde sigo?';
+      onPhrase?.(text); return { text, model: 'test-fixture', live: false };
+    },
+  });
+  try {
+    await session.rpc('answer', path('/answer')); await settle();
+    const texts = ['Ah, ¿cómo se llama el bar?', 'Tal esta en la de sur.',
+      'Ah, sigue, hasta la próxima vez que venga.', 'Ah, sigue por la-- sigue, sigue en este tramo.',
+      'Ah, sigue hasta la próxima esquina.'];
+    assert.equal((await session.rpc('bar', path('/turn'), { text: texts[0] })).status, 200);
+    for (let i = 1; i < 4; i++) {
+      assert.equal((await session.rpc('hesitant-' + i, path('/turn'), { text: texts[i], turnId: 'hesitant-' + i })).status, 200);
+      assert.equal(session.game.facts.homeSide, 'south');
+      assert.equal(session.game.routeTargetId, 'home-south');
+      assert.deepEqual(session.game.routeDestination, HOME_ENTRANCE);
+      now += 4_000; session.tick(); await settle();
+      assert.equal(session.game.courier.moving, false);
+      assert.ok(session.game.courier.y <= HOME_ENTRANCE.y + 32);
+      const stop = { x: session.game.courier.x, y: session.game.courier.y };
+      now += 1_000; session.tick(); await settle();
+      assert.deepEqual({ x: session.game.courier.x, y: session.game.courier.y }, stop);
+    }
+    assert.equal(session.getState().canHandoff, true);
+    const door = { x: session.game.courier.x, y: session.game.courier.y };
+    assert.equal((await session.rpc('extra-corner', path('/turn'), { text: texts[4] })).status, 200);
+    now += 4_000; session.tick(); await settle();
+    assert.deepEqual({ x: session.game.courier.x, y: session.game.courier.y }, door);
+    assert.equal(session.getState().canHandoff, true);
+    assert.deepEqual(session.game.history.filter(h => h.role === 'player').map(h => h.text), texts);
+  } finally { session.dispose(); }
+});
+
+test('Worker can re-anchor a completed south cardinal leg to an explicit entrance without walking farther south automatically', async () => {
+  const f = fixture();
+  try {
+    await f.session.rpc('answer', path('/answer')); await settle();
+    assert.equal((await f.session.rpc('cardinal', path('/turn'), { text: 'Ve hacia el sur.' })).status, 200);
+    assert.equal(f.session.game.routeTargetId, 'walk:south');
+    f.advance(4_000); f.session.tick(); await settle();
+    const stop = { x: f.session.game.courier.x, y: f.session.game.courier.y };
+    f.advance(1_000); f.session.tick(); await settle();
+    assert.deepEqual({ x: f.session.game.courier.x, y: f.session.game.courier.y }, stop);
+    assert.equal((await f.session.rpc('recover', path('/turn'), { text: 'Ven a mi portal por el sur.' })).status, 200);
+    assert.equal(f.session.game.facts.homeSide, 'south');
+    assert.equal(f.session.game.routeTargetId, 'home-south');
+    assert.deepEqual(f.session.game.routeDestination, HOME_ENTRANCE);
+  } finally { f.session.dispose(); }
+});

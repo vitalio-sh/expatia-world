@@ -390,3 +390,15 @@ test('a received parcel farewell remains short and plays through fallback genera
   assert.equal(result.text, expected);
   assert.deepEqual(phrases, [expected]);
 });
+
+
+test('a bounded avanzo acknowledgement is not repeated after rejecting an extra question', async () => {
+  const context = { ...richerContext, navigation: { moving: true, awaitingGuidance: false, segmentReachesDestination: false } };
+  const action = { id: 'home:south', type: 'move', targetId: 'home-south' };
+  const accepted = 'Vale, avanzo hasta donde veo y me detengo.';
+  const phrases: string[] = [];
+  const streamer = (async (_messages, onText) => { onText(accepted + ' '); onText('¿Por dónde sigo?'); return { text: '', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, action, undefined, phrase => { phrases.push(phrase); }, streamer);
+  assert.deepEqual(phrases, [accepted]);
+  assert.equal(result.text, accepted);
+});

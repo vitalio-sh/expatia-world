@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, WALLS, LANDMARKS, SIGHT_RANGE, barcelonaTime, distance, findRoute, isOpen, segmentClear, visiblePoint, visibleRouteLeg, walkable } from '../src/shared/world.js';
-import { actionCandidates, answerCall, canHandoff, createGame, handoff, moveResident, npcContext, perception, publicGame, recordSpeech, rememberObservations, tickGame } from '../src/server/game.js';
+import { actionCandidates, answerCall, canHandoff, createGame, handoff, moveResident, navigationText, npcContext, perception, publicGame, recordSpeech, rememberObservations, tickGame } from '../src/server/game.js';
 import { buildJevRequest, decide, fallbackChoice, queryJev, resolveTimeout } from '../src/server/jev.js';
 
 const SATURDAY_NOON = Date.parse('2026-10-10T10:00:00Z');
@@ -491,4 +491,40 @@ test('remote entrance sight cannot cause arrival, and successful handoff freezes
   const game=active();Object.assign(game.courier,{x:370,y:650,direction:'east'});assert.equal(publicGame(game).homeEntranceVisible,true);tickGame(game,SATURDAY_NOON+5_000,5);assert.equal(canHandoff(game,game.updatedAt),false);assert.equal(game.arrivalSequence,0);
   Object.assign(game.courier,HOME_ENTRANCE);assert.equal(handoff(game,SATURDAY_NOON+6_000),true);assert.equal(game.resolvedAt,SATURDAY_NOON+6_000);
   const remaining=publicGame(game,SATURDAY_NOON+6_000).remainingMs;tickGame(game,SATURDAY_NOON+30_000,24);assert.equal(publicGame(game,SATURDAY_NOON+30_000).remainingMs,remaining);assert.equal(remaining,54_000);
+});
+test('the literal hesitant delivery transcript retains a south home destination through each bounded leg', async () => {
+  const game=active();recordSpeech(game,'Estoy frente a Bar Llevant. ¿Por dónde sigo?','bar-question',SATURDAY_NOON);
+  const phrases=['Tal esta en la de sur.','Ah, sigue, hasta la próxima vez que venga.','Ah, sigue por la-- sigue, sigue en este tramo.','Ah, sigue hasta la próxima esquina.'];
+  const expected=['home:south','continue','continue','wait'];
+  for(let i=0;i<phrases.length;i++){
+    const now=game.updatedAt, decision=await decide(game,phrases[i],undefined,{...offline,now:()=>now,key:'fixture',fetcher:mockJev(criteria=>{assert.deepEqual(Object.keys(criteria),[expected[i]]);return expected[i];})});
+    assert.equal(decision?.source,'jev');assert.equal(decision?.selected,expected[i]);assert.equal(game.facts.homeSide,'south');assert.equal(game.routeTargetId,'home-south');assert.ok(game.route.length<=1);
+    tickGame(game,now+4_000,4);const stopped={x:game.courier.x,y:game.courier.y};assert.equal(game.courier.moving,false);
+    tickGame(game,game.updatedAt+1_000,1);assert.deepEqual({x:game.courier.x,y:game.courier.y},stopped);
+  }
+  assert.deepEqual({x:game.courier.x,y:game.courier.y},HOME_ENTRANCE);assert.equal(game.arrivalSequence,3);assert.equal(canHandoff(game,game.updatedAt),true);
+  assert.deepEqual(game.history.filter(h=>h.role==='player').map(h=>h.text),phrases);
+});
+test('generic next-way question only lends entrance context to declarative location answers', async () => {
+  for(const direction of [{es:'sur',en:'south'},{es:'norte',en:'north'},{es:'este',en:'east'},{es:'oeste',en:'west'}]){
+    const game=active();recordSpeech(game,'Estoy frente a Bar Llevant. ¿Por dónde sigo?','bar-question',SATURDAY_NOON);
+    assert.equal((await decide(game,`Tal está en la de ${direction.es}.`,undefined,offline))?.selected,`home:${direction.en}`);assert.equal(game.facts.homeSide,direction.en);
+    for(const text of [`Ve al ${direction.es}.`,`Camina hacia el ${direction.es}.`,direction.es,`Tal no está en la de ${direction.es}.`,`La frutería está al ${direction.es}.`]){
+      const other=active();recordSpeech(other,'¿Por dónde sigo?','next-question',SATURDAY_NOON);const result=await decide(other,text,undefined,offline);assert.equal(other.facts.homeSide,null);assert.ok(!result?.selected.startsWith('home:'));
+    }
+  }
+  assert.ok(navigationText('sigue en este tramo').includes('this tramo'));assert.ok(!navigationText('sigue en este tramo').includes('east'));
+  assert.ok(navigationText('Ve hacia el este').includes('east'));
+  const other=active();recordSpeech(other,'Estoy frente al bar.','no-question',SATURDAY_NOON);await decide(other,'Tal está en la de sur.',undefined,offline);assert.equal(other.facts.homeSide,null);
+  for(const question of ['¿Por dónde voy?','¿Hacia dónde voy?','Where should I go?']){const game=active();recordSpeech(game,question,'next-way',SATURDAY_NOON);assert.equal((await decide(game,'Tal está en la de sur.',undefined,offline))?.selected,'home:south');assert.equal(game.facts.homeSide,'south');}
+  for(const text of ['La peluquería está al sur.','La calle está al sur.','La intersección está al sur.','Bar Llevant está al sur.']){const game=active();recordSpeech(game,'¿Por dónde sigo?','next-way',SATURDAY_NOON);await decide(game,text,undefined,offline);assert.equal(game.facts.homeSide,null);}
+});
+test('explicit east and named shop changes supersede home continuation while este tramo does not', async () => {
+  for(const sample of [{text:'Sigue hacia el este.',selected:'walk:east'},{text:'Sigue hasta Bar Llevant.',selected:'go:bar-llevant'},{text:'Ah, sigue por la-- sigue, sigue en este tramo.',selected:'continue'}]){
+    const game=active();await decide(game,'Mi portal está al sur.',undefined,offline);tickGame(game,SATURDAY_NOON+4_000,4);
+    await decide(game,'Sigue.',undefined,{...offline,now:()=>game.updatedAt});tickGame(game,SATURDAY_NOON+8_000,4);
+    const result=await decide(game,sample.text,undefined,{...offline,now:()=>game.updatedAt,key:'fixture',fetcher:mockJev(criteria=>{assert.deepEqual(Object.keys(criteria),[sample.selected]);return sample.selected;})});
+    assert.equal(result?.source,'jev');assert.equal(result?.selected,sample.selected);assert.equal(game.facts.homeSide,'south');
+    assert.equal(game.routeTargetId,sample.selected==='continue'?'home-south':sample.selected==='go:bar-llevant'?'bar-llevant':'walk:east');
+  }
 });

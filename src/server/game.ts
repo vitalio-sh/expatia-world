@@ -181,12 +181,26 @@ export function navigationText(text: string) {
   return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/^\s*para(?:te)?(?:\s+(?:aqui|ahi|un momento|por favor))?[.!?]*\s*$/, 'stop')
     .replace(/\bpaso de peatones\b/g,'pedestrian crossing')
+    // Spanish demonstrative este is not the compass east in “este tramo”.
+    .replace(/\beste\s+(tramo|calle|camino|edificio|lado|lugar|punto|portal|paso|cruce|barrio)\b/g,'this $1')
     .replace(/\b[a-z]+\b/g, word=>vocabulary[word]??word)
     .replace(/\bside\s+(north|south|east|west)\b/g,'$1 side')
     .replace(/\b(entrance|door)\s*,\s*((?:on|at)\s+(?:the\s+)?(?:north|south|east|west)\s+side)/g,'$1 $2');
 }
 export function hasNegatedNavigation(text: string) {
   return /\b(?:not|don't|do not)\s+(?:go|walk|head|come|reach|approach|navigate|move|turn|look|face|wait|stop|mires|vayas|vengas|camines|gires|avances)\b/.test(navigationText(text));
+}
+function contextualEntranceStatement(game: Game, text: string) {
+  const lastCourier = navigationText(game.history.filter(h => h.role === 'courier').at(-1)?.text ?? '');
+  const statement = navigationText(text);
+  // A broken declarative answer can retain the delivery subject from an actual
+  // “where next?” question. An explicit walking instruction remains a street step.
+  return /\?/.test(lastCourier) && /\b(donde|where|which way|which direction)\b/.test(lastCourier)
+    && /\b(continue|go|head|walk|sigo|voy|follow)\b/.test(lastCourier)
+    && /\b(is|located|faces)\b/.test(statement)
+    && !/\b(not|go|walk|head|come|reach|approach|navigate|move|turn|look|face|cross|stop|wait|bar|shop|bakery|fruit|supermarket|hairdresser|peluqueria|perruqueria|mercat|forn|intersection|junction|street|road|corner|crossing|tree|fountain|crate)\b/.test(statement)
+    && !Object.values(game.knowledge).some(b => statement.includes(navigationText(b.name)))
+    && !/[?¿]/.test(text);
 }
 export function learnPlayerFacts(game: Game, text: string) {
   // Learn an explicit side claim, rather than treating every direction elsewhere
@@ -203,7 +217,7 @@ export function learnPlayerFacts(game: Game, text: string) {
     if (game.routeTargetId === `home-${priorSide}`) { game.route = []; game.routeTargetId = null; game.courier.moving = false; recordHistory(game, { role: 'event', text: 'The resident retracted the reported entrance; the courier stopped the old entrance route and needs the corrected side.', at: game.updatedAt }); }
   }
   const answerSides = shortAnswer.match(/\b(south|north|east|west|left|right|bottom|back|top)\b/g) ?? [];
-  const answeringSide = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier);
+  const answeringSide = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier) || contextualEntranceStatement(game, text);
   const directionalAnswer = [...new Set(answerSides)];
   const deniedSide = /\b(?:not|isn't|is not|do not|don't)\b[^.!?;]{0,30}\b(?:south|north|east|west|left|right|bottom|back|top)\b/.test(shortAnswer) && !/^not\s+sorry\b/.test(shortAnswer);
   const homeTopic = /\b(entrance|door|home|house|flat|apartment)\b/.test(shortAnswer);
@@ -356,6 +370,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
 /** Explicit legal user commands do not require a fresh entrance interrogation. */
 export function explicitNavigationAction(game: Game, candidates: ActionCandidate[], text: string): ActionCandidate | null {
   const normalized = navigationText(text), byId = (id: string) => candidates.find(c=>c.id===id) ?? null;
+  const requestsPlace = Object.values(game.knowledge).some(b=>normalized.includes(navigationText(b.name))) || /\b(bar|fruit|shop|bakery|supermarket|greengrocer|mercat|forn)\b/.test(normalized);
   if (hasNegatedNavigation(text)) return null;
   const asksInformation = /\b(what|which|name|called|see|describe|where)\b/.test(normalized.replace(/\b(?:creo|pienso|think|believe)\s+what\b/g, ''));
   const verb = /\b(go|walk|head|come|reach|approach|navigate|around|move|turn)\b/.test(normalized);
@@ -363,17 +378,21 @@ export function explicitNavigationAction(game: Game, candidates: ActionCandidate
   const directions = [...normalized.matchAll(/\b(north|south|east|west|left|right|top|bottom|up|down)\b/g)].map(m=>({north:'north',south:'south',east:'east',west:'west',left:'west',right:'east',top:'north',bottom:'south',up:'north',down:'south'}[m[0]]!));
   const uniqueDirections = [...new Set(directions)];
   if (/\b(look|face)\b/.test(normalized)) return uniqueDirections.length===1 ? byId(`look:${uniqueDirections[0]}`) : /\baround\b/.test(normalized) ? byId('look:around') : null;
+  if (/\bcontinue\b/.test(normalized) && uniqueDirections.length === 0 && !verb && !requestsPlace && !/[?¿]/.test(text) && !/\b(not|cross|look|face)\b/.test(normalized)) {
+    if (byId('continue')) return byId('continue');
+    if (game.routeTargetId === 'home-south' && game.routeComplete && canHandoff(game,game.updatedAt)) return byId('wait');
+  }
   if (asksInformation) return null;
   const lastCourier = navigationText(game.history.filter(h=>h.role==='courier').at(-1)?.text ?? '');
-  const sideAnswer = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier) && uniqueDirections.length===1 && !verb && !/\bnot\b/.test(normalized.replace(/^\s*not\s*,?\s*sorry\s*,?/,''));
+  const sideAnswer = (/\b(entrance|door|side)\b[^?]*\?/.test(lastCourier) || contextualEntranceStatement(game,text)) && uniqueDirections.length===1 && !verb && !/\bnot\b/.test(normalized.replace(/^\s*not\s*,?\s*sorry\s*,?/,''));
   const entranceRequest = /\b(entrance|door|home|house|apartment|flat)\b/.test(normalized) && !/\bnot\b/.test(normalized);
   if (game.facts.homeSide && (sideAnswer || entranceRequest)) return byId(`home:${game.facts.homeSide}`);
-  if (/\b(yes|okay|continue)\b/.test(normalized) && !verb && uniqueDirections.length===0) {
+  if (/\b(yes|okay|continue)\b/.test(normalized) && !verb && !requestsPlace && uniqueDirections.length===0) {
     if (byId('continue')) return byId('continue');
     const lastMove=[...game.decisions].reverse().find(d=>d.action.type==='move');
     return lastMove ? byId(lastMove.selected) : null;
   }
-  if (verb) {
+  if (verb || /\bcontinue\b/.test(normalized)) {
     const named=Object.values(game.knowledge).filter(b=>normalized.includes(navigationText(b.name)));
     if(named.length===1) return byId(`go:${named[0].id}`);
     const category= /\b(fruit|greengrocer)\b/.test(normalized)?'fruit shop':/\b(bakery|forn)\b/.test(normalized)?'bakery':/\b(supermarket|mercat)\b/.test(normalized)?'supermarket':null;

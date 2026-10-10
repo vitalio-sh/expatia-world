@@ -290,7 +290,7 @@ export async function generateDialogue(context: unknown, decision: unknown, sign
     if (actionConflict && spoken) {
       // A streamed acknowledgement must not leave the chosen movement unexplained.
       const d = (decision || {}) as Record<string, any>, action = d.action || d;
-      const alreadyAcknowledgedMove = movementTypes.includes(action.type) && /\b(?:voy|camino|sigo|me dirijo)\b/i.test(spoken);
+      const alreadyAcknowledgedMove = movementTypes.includes(action.type) && /\b(?:voy|camino|sigo|avanzo|me dirijo)\b/i.test(spoken);
       const correction = /^Vale[.!]?$/i.test(spoken.trim()) ? fallbackLine(context, decision).replace(/^Vale, /, '').replace(/^./, first => first.toUpperCase()) : fallbackLine(context, decision);
       if (!alreadyAcknowledgedMove && !spoken.includes(correction)) { spoken += ` ${correction}`; emits.push(Promise.resolve(onPhrase?.(correction))); }
     }

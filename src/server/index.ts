@@ -49,7 +49,7 @@ async function speak(s:Session,decision:Partial<Decision>|null,turnId:string,sig
 }
 function finishReply(s:Session,turnId:string){if(s.pendingReply===turnId)s.pendingReply=undefined;}
 function beginTurn(s:Session,turnId:string){s.controller?.abort();if(s.turnId)realtime.send(s.game.id,{type:'npc.cancel',sessionId:s.game.id,turnId:s.turnId});s.controller=new AbortController();s.turnId=turnId;s.pendingReply=turnId;return s.controller.signal;}
-app.get('/api/health',(_req,res)=>res.json({ok:true,product:'Expatia World',speech:'eleven_v4_turbo',deployment:'portable-node',build:'2026-10-10-route-discovery'}));
+app.get('/api/health',(_req,res)=>res.json({ok:true,product:'Expatia World',speech:'eleven_v4_turbo',deployment:'portable-node',build:'2026-10-10-context-route'}));
 app.get('/api/weather',async(_req,res)=>res.json(await getWeather()));
 app.post('/api/session',async(req,res)=>{const ip=req.ip??'unknown',now=Date.now(),limit=limits.get(ip);if(limit&&limit.reset>now&&limit.count>=20){res.status(429).json({error:'A few too many calls. Please take a short break.'});return;}limits.set(ip,{count:limit&&limit.reset>now?limit.count+1:1,reset:now+600000});if(sessions.size>150){res.status(503).json({error:'All couriers are busy. Please try again shortly.'});return;}const game=createGame(await getWeather());const s:Session={game,token:randomBytes(24).toString('base64url'),lastActivity:now,lastMove:now,turnTimes:[],arrival:0,timeoutRunning:false};sessions.set(game.id,s);void prewarmSpeech(game.id);res.json({game:state(s),token:s.token});});
 app.get('/api/session/:id',(req,res)=>{const s=obtain(req,res);if(s)res.json({game:state(s)});});

@@ -108,7 +108,7 @@ test('the presenter gives one entrance fact then one action, from either side', 
   for (const courier of [{x:730,y:400},{x:730,y:650},{x:230,y:650}]) {
     const game = { ...base, courier, history: identified };
     assert.equal(chooseDemoCue(game).spanish, 'Mi portal está en el lado sur.');
-    assert.match(chooseDemoCue({...game, facts:{homeSide:'south'}}).spanish, /^(?:Mira|Camina)/);
+    assert.equal(chooseDemoCue({...game, facts:{homeSide:'south'}}).spanish, 'Ven a mi portal por el sur.');
   }
 });
 
@@ -139,24 +139,35 @@ test('all core demo prompts stay short even during repeated recovery', () => {
 test('visible-edge stop suggests one short direction and keeps the learned entrance side', () => {
   const game: DemoGame = { ...base, history: [...identified, line('player', 'Mi portal está al sur.', 5)], facts: { homeSide: 'south' }, awaitingGuidance: true, routeComplete: false, courier: { x: 230, y: 500, direction: 'south', moving: false }, inspector: { selected: 'visibility-stop', action: { type: 'describe' } } };
   const cue = chooseDemoCue(game);
-  assert.equal(cue.spanish, 'Sigue por el siguiente tramo.');
-  assert.doesNotMatch(cue.spanish, /portal|rodea|entrada|Hola/);
+  assert.equal(cue.spanish, 'Ven a mi portal por el sur.');
+  assert.doesNotMatch(cue.spanish, /rodea|esquina|Hola/);
   const look = chooseDemoCue({ ...game, courier: { ...game.courier!, direction: 'north' } });
-  assert.equal(look.spanish, 'Sigue por el siguiente tramo.');
+  assert.equal(look.spanish, 'Ven a mi portal por el sur.');
   assert.equal(game.facts?.homeSide, 'south');
 });
 
 test('demo only suggests the final portal step when the actual doorway is visible', () => {
   const game: DemoGame = { ...base, history: identified, facts: { homeSide: 'south' }, awaitingGuidance: false, courier: { x: 230, y: 645, direction: 'east', moving: false } };
-  assert.equal(chooseDemoCue(game).spanish, 'Camina un poco hacia el este.');
+  assert.equal(chooseDemoCue(game).spanish, 'Ven a mi portal por el sur.');
   assert.equal(chooseDemoCue({ ...game, visibleLandmarks: [{ id: 'home-door', label: 'south apartment entrance', type: 'entrance' }] }).spanish, 'Ven a mi portal.');
   assert.equal(chooseDemoCue({ ...game, awaitingGuidance: true, visibleLandmarks: [{ id: 'home-door', label: 'south apartment entrance', type: 'entrance' }] }).spanish, 'Ven a mi portal.');
 });
 
 
-test('a new visible corner gets one bounded continuation cue, while the visible entrance wins', () => {
+test('a visible corner cannot replace the entrance target, while the visible entrance wins', () => {
   const corner = { id: 'home-corner-sw', type: 'corner', label: 'Southwest corner', direction: 'south' as const, distance: 40 };
   const game: DemoGame = { ...base, history: identified, facts: { homeSide: 'south' }, awaitingGuidance: true, newlyVisibleLandmarks: [corner], visibleLandmarks: [corner] };
-  assert.equal(chooseDemoCue(game).spanish, 'Sigue hasta la próxima esquina.');
+  assert.equal(chooseDemoCue(game).spanish, 'Ven a mi portal por el sur.');
   assert.equal(chooseDemoCue({ ...game, visibleLandmarks: [corner, { id: 'home-door', type: 'entrance', label: 'South entrance' }] }).spanish, 'Ven a mi portal.');
+});
+
+
+test('only an actual pending entrance route gets a short continuation cue', () => {
+  const stopped: DemoGame = { ...base, history: identified, facts: { homeSide: 'south' }, courier: { x: 270, y: 915, direction: 'south', moving: false }, awaitingGuidance: true, routeComplete: true, routeTargetId: 'walk:south', routeDestination: { x: 270, y: 915 }, visibleLandmarks: [{ id: 'perruqueria-corner-3', type: 'corner', label: 'Hairdresser corner', distance: 20 }] };
+  assert.equal(chooseDemoCue(stopped).spanish, 'Ven a mi portal por el sur.');
+  const pending = { ...stopped, routeTargetId: 'home-south', routeDestination: WORLD_MAP.home.entrance, routeComplete: false };
+  assert.equal(chooseDemoCue(pending).spanish, 'Sigue.');
+  assert.equal(chooseDemoCue({ ...pending, routeDestination: null }).spanish, 'Ven a mi portal por el sur.');
+  assert.equal(chooseDemoCue({ ...pending, routeTargetId: 'home-north', routeDestination: { x: 480, y: 200 } }).spanish, 'Ven a mi portal por el sur.');
+  assert.equal(chooseDemoCue({ ...pending, facts: { homeSide: null } }).spanish, 'Mi portal está en el lado sur.');
 });
