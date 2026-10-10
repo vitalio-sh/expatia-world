@@ -1,0 +1,4386 @@
+{
+  "at": "2026-10-10T13:47:40.007Z",
+  "url": "https://expatia.world",
+  "expectedBuild": "2026-10-10-context-route",
+  "scope": "Exact user-reported hesitant text after the generated opening and visible bar-name question. Actual signed Worker RPC, real JEV/dialogue, authoritative physical positions and idle observations. Collision checks use current local authored geometry. No human microphone, hardware audio, keys or capabilities recorded.",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-context-route"
+  },
+  "opening": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+  "initial": {
+    "stage": "initial",
+    "atMs": 2118,
+    "position": {
+      "x": 210,
+      "y": 250
+    },
+    "facing": "north",
+    "moving": false,
+    "phase": "active",
+    "homeSide": null,
+    "routeTargetId": null,
+    "routeDestination": null,
+    "route": [],
+    "routeComplete": false,
+    "awaitingGuidance": false,
+    "canHandoff": false,
+    "homeEntranceVisible": false,
+    "visibleLandmarks": [
+      {
+        "id": "crossing-nw",
+        "type": "crossing",
+        "label": "northwest zebra crossing",
+        "distance": 50,
+        "direction": "north"
+      },
+      {
+        "id": "bar-llevant-corner-2",
+        "type": "corner",
+        "label": "southeast corner of Bar Llevant",
+        "distance": 118,
+        "direction": "north"
+      },
+      {
+        "id": "bar-llevant-corner-3",
+        "type": "corner",
+        "label": "southwest corner of Bar Llevant",
+        "distance": 178,
+        "direction": "west"
+      },
+      {
+        "id": "bar-ponent-corner-3",
+        "type": "corner",
+        "label": "southwest corner of Bar Ponent",
+        "distance": 161,
+        "direction": "east"
+      },
+      {
+        "id": "bar-llevant-awning",
+        "type": "awning",
+        "label": "red bar awning",
+        "distance": 112,
+        "direction": "north"
+      },
+      {
+        "id": "bar-ponent-awning",
+        "type": "awning",
+        "label": "blue bar awning",
+        "distance": 240,
+        "direction": "east"
+      }
+    ],
+    "newlyVisibleLandmarks": [],
+    "arrivalSequence": 0
+  },
+  "final": {
+    "stage": "final",
+    "atMs": 16201,
+    "position": {
+      "x": 448.7426962135369,
+      "y": 646.4207865357481
+    },
+    "facing": "east",
+    "moving": false,
+    "phase": "active",
+    "homeSide": "south",
+    "routeTargetId": "home-south",
+    "routeDestination": {
+      "x": 480,
+      "y": 645
+    },
+    "route": [],
+    "routeComplete": true,
+    "awaitingGuidance": false,
+    "canHandoff": true,
+    "homeEntranceVisible": true,
+    "visibleLandmarks": [
+      {
+        "id": "perruqueria-corner-1",
+        "type": "corner",
+        "label": "northeast corner of a hairdresser",
+        "distance": 183,
+        "direction": "east"
+      },
+      {
+        "id": "intersection-se",
+        "type": "intersection",
+        "label": "southeast street junction",
+        "distance": 281,
+        "direction": "east"
+      },
+      {
+        "id": "home-door",
+        "type": "entrance",
+        "label": "south apartment entrance",
+        "distance": 31,
+        "direction": "east"
+      }
+    ],
+    "newlyVisibleLandmarks": [
+      {
+        "id": "intersection-se",
+        "type": "intersection",
+        "label": "southeast street junction",
+        "distance": 281,
+        "direction": "east"
+      }
+    ],
+    "arrivalSequence": 3
+  },
+  "finalHistory": [
+    {
+      "role": "event",
+      "text": "The resident answered the incoming delivery call. The 60-second delivery window began."
+    },
+    {
+      "role": "courier",
+      "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+      "turnId": "hesitant-opening"
+    },
+    {
+      "role": "player",
+      "text": "Ah, ¿cómo se llama el bar?"
+    },
+    {
+      "role": "event",
+      "text": "The courier read the currently visible sign: Bar Llevant.",
+      "turnId": "6ee77584-e384-4683-af41-491bd735d017"
+    },
+    {
+      "role": "courier",
+      "text": "Estoy junto a Bar Llevant. ¿En qué lado está tu portal?",
+      "turnId": "hesitant-0"
+    },
+    {
+      "role": "player",
+      "text": "Tal esta en la de sur."
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "2fe26547-b961-432a-8f2e-b1ae7b33939b"
+    },
+    {
+      "role": "courier",
+      "text": "Avanzo hacia el sur hasta donde alcanzo a ver y me detengo.",
+      "turnId": "hesitant-1"
+    },
+    {
+      "role": "event",
+      "text": "At the visible-leg stop the courier looked south while standing still, to inspect the next visible direction. No new movement was started."
+    },
+    {
+      "role": "event",
+      "text": "The courier stopped at the end of the current visible movement leg. The intended destination remains remembered, but has not been reached. The courier awaits a new resident command and does not start another leg automatically."
+    },
+    {
+      "role": "courier",
+      "text": "Ahora veo el cruce de calles del suroeste al sur. ¿Sigo desde aquí?",
+      "turnId": "arrival-1"
+    },
+    {
+      "role": "player",
+      "text": "Ah, sigue, hasta la próxima vez que venga."
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "ff087d85-31bb-4b54-90e1-f992bf8e98e3"
+    },
+    {
+      "role": "courier",
+      "text": "Avanzo solo hasta donde alcanza mi vista y me detengo. Veo el cruce de calles del suroeste.",
+      "turnId": "hesitant-2"
+    },
+    {
+      "role": "event",
+      "text": "At the visible-leg stop the courier looked east while standing still, to inspect the next visible direction. No new movement was started."
+    },
+    {
+      "role": "event",
+      "text": "The courier stopped at the end of the current visible movement leg. The intended destination remains remembered, but has not been reached. The courier awaits a new resident command and does not start another leg automatically."
+    },
+    {
+      "role": "courier",
+      "text": "Ahora veo la entrada sur del bloque al este. ¿Me acerco?",
+      "turnId": "arrival-2"
+    },
+    {
+      "role": "player",
+      "text": "Ah, sigue por la-- sigue, sigue en este tramo."
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "c3d044d9-d7cf-46a9-8499-f422b0a1d9b7"
+    },
+    {
+      "role": "event",
+      "text": "The courier arrived at the entrance described by the resident. The parcel remains with the courier until a physical handoff."
+    },
+    {
+      "role": "courier",
+      "text": "Llego hasta la entrada sur del bloque. Vale, voy hacia tu portal en el lado sur.",
+      "turnId": "hesitant-3"
+    },
+    {
+      "role": "courier",
+      "text": "Ya he llegado a tu portal. ¿Puedes bajar a por el paquete?",
+      "turnId": "arrival-3"
+    },
+    {
+      "role": "player",
+      "text": "Ah, sigue hasta la próxima esquina."
+    },
+    {
+      "role": "courier",
+      "text": "Vale, me quedo aquí en tu portal esperando a que bajes.",
+      "turnId": "hesitant-4"
+    }
+  ],
+  "validation": {
+    "healthBuildVerified": true,
+    "visibleBarRead": true,
+    "truncatedSideReplyLearnsSouth": true,
+    "truncatedReplyStartsHomeRoute": true,
+    "semanticHomeTargetPreserved": true,
+    "allMovesBoundedByDepartureView": true,
+    "everyIdleStationary": true,
+    "collisionClearBetweenSamples": true,
+    "noWalkingBelowEntranceStreet": true,
+    "convergedToPhysicalSouthEntrance": true,
+    "extraCornerCommandDoesNotLoseDoor": true,
+    "exactTranscriptPreserved": true
+  },
+  "passed": true,
+  "cases": [
+    {
+      "text": "Ah, ¿cómo se llama el bar?",
+      "turnId": "hesitant-0",
+      "selected": "reveal:bar-llevant",
+      "action": {
+        "id": "reveal:bar-llevant",
+        "type": "reveal",
+        "targetId": "bar-llevant",
+        "label": "Read the visible Bar Llevant sign",
+        "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+      },
+      "commanded": {
+        "stage": "hesitant-0-applied",
+        "atMs": 3110,
+        "position": {
+          "x": 210,
+          "y": 250
+        },
+        "facing": "north",
+        "moving": false,
+        "phase": "active",
+        "homeSide": null,
+        "routeTargetId": null,
+        "routeDestination": null,
+        "route": [],
+        "routeComplete": false,
+        "awaitingGuidance": false,
+        "canHandoff": false,
+        "homeEntranceVisible": false,
+        "visibleLandmarks": [
+          {
+            "id": "crossing-nw",
+            "type": "crossing",
+            "label": "northwest zebra crossing",
+            "distance": 50,
+            "direction": "north"
+          },
+          {
+            "id": "bar-llevant-corner-2",
+            "type": "corner",
+            "label": "southeast corner of Bar Llevant",
+            "distance": 118,
+            "direction": "north"
+          },
+          {
+            "id": "bar-llevant-corner-3",
+            "type": "corner",
+            "label": "southwest corner of Bar Llevant",
+            "distance": 178,
+            "direction": "west"
+          },
+          {
+            "id": "bar-ponent-corner-3",
+            "type": "corner",
+            "label": "southwest corner of Bar Ponent",
+            "distance": 161,
+            "direction": "east"
+          },
+          {
+            "id": "bar-llevant-awning",
+            "type": "awning",
+            "label": "red bar awning",
+            "distance": 112,
+            "direction": "north"
+          },
+          {
+            "id": "bar-ponent-awning",
+            "type": "awning",
+            "label": "blue bar awning",
+            "distance": 240,
+            "direction": "east"
+          }
+        ],
+        "newlyVisibleLandmarks": [],
+        "arrivalSequence": 0
+      },
+      "stopped": {
+        "stage": "hesitant-0-stop",
+        "atMs": 3168,
+        "position": {
+          "x": 210,
+          "y": 250
+        },
+        "facing": "north",
+        "moving": false,
+        "phase": "active",
+        "homeSide": null,
+        "routeTargetId": null,
+        "routeDestination": null,
+        "route": [],
+        "routeComplete": false,
+        "awaitingGuidance": false,
+        "canHandoff": false,
+        "homeEntranceVisible": false,
+        "visibleLandmarks": [
+          {
+            "id": "crossing-nw",
+            "type": "crossing",
+            "label": "northwest zebra crossing",
+            "distance": 50,
+            "direction": "north"
+          },
+          {
+            "id": "bar-llevant-corner-2",
+            "type": "corner",
+            "label": "southeast corner of Bar Llevant",
+            "distance": 118,
+            "direction": "north"
+          },
+          {
+            "id": "bar-llevant-corner-3",
+            "type": "corner",
+            "label": "southwest corner of Bar Llevant",
+            "distance": 178,
+            "direction": "west"
+          },
+          {
+            "id": "bar-ponent-corner-3",
+            "type": "corner",
+            "label": "southwest corner of Bar Ponent",
+            "distance": 161,
+            "direction": "east"
+          },
+          {
+            "id": "bar-llevant-awning",
+            "type": "awning",
+            "label": "red bar awning",
+            "distance": 112,
+            "direction": "north"
+          },
+          {
+            "id": "bar-ponent-awning",
+            "type": "awning",
+            "label": "blue bar awning",
+            "distance": 240,
+            "direction": "east"
+          }
+        ],
+        "newlyVisibleLandmarks": [],
+        "arrivalSequence": 0
+      },
+      "displacementUnits": 0,
+      "idleMs": 1046,
+      "idleStable": true,
+      "captions": [
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-0",
+          "text": "Estoy junto a Bar Llevant.",
+          "atMs": 3066
+        },
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-0",
+          "text": "¿En qué lado está tu portal?",
+          "atMs": 3066
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "hesitant-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant. ¿En qué lado está tu portal?",
+          "turnId": "hesitant-0"
+        }
+      ]
+    },
+    {
+      "text": "Tal esta en la de sur.",
+      "turnId": "hesitant-1",
+      "selected": "home:south",
+      "action": {
+        "id": "home:south",
+        "type": "move",
+        "targetId": "home-south",
+        "target": {
+          "x": 480,
+          "y": 645
+        },
+        "label": "Walk one visible leg toward the reported south entrance",
+        "reason": "Turn to face south, then walk only 305.9 map units inside the current departure-position view and collision-clear first leg. Stop at the visible leg boundary and await a NEW resident command. The semantic destination remains remembered; no queued turns or automatic route continuation.",
+        "facing": "south",
+        "routeComplete": false,
+        "legEndsAtWaypoint": true
+      },
+      "commanded": {
+        "stage": "hesitant-1-applied",
+        "atMs": 5485,
+        "position": {
+          "x": 232.03090215688326,
+          "y": 360.1545107844157
+        },
+        "facing": "south",
+        "moving": true,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [
+          {
+            "x": 270,
+            "y": 550
+          }
+        ],
+        "routeComplete": false,
+        "awaitingGuidance": false,
+        "canHandoff": false,
+        "homeEntranceVisible": false,
+        "visibleLandmarks": [
+          {
+            "id": "fruita-corner-2",
+            "type": "corner",
+            "label": "southeast corner of Fruita Fresca",
+            "distance": 174,
+            "direction": "south"
+          },
+          {
+            "id": "home-corner-sw",
+            "type": "corner",
+            "label": "southwest chamfered corner",
+            "distance": 207,
+            "direction": "south"
+          },
+          {
+            "id": "intersection-sw",
+            "type": "intersection",
+            "label": "southwest street junction",
+            "distance": 280,
+            "direction": "south"
+          },
+          {
+            "id": "home-wall-west",
+            "type": "wall",
+            "label": "west apartment wall",
+            "distance": 84,
+            "direction": "south"
+          },
+          {
+            "id": "fruit-display",
+            "type": "fruit-display",
+            "label": "fruit crates",
+            "distance": 145,
+            "direction": "south"
+          },
+          {
+            "id": "fruit-awning",
+            "type": "awning",
+            "label": "striped fruit-shop awning",
+            "distance": 98,
+            "direction": "south"
+          }
+        ],
+        "newlyVisibleLandmarks": [],
+        "arrivalSequence": 0
+      },
+      "stopped": {
+        "stage": "hesitant-1-stop",
+        "atMs": 7273,
+        "position": {
+          "x": 270,
+          "y": 550
+        },
+        "facing": "south",
+        "moving": false,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [],
+        "routeComplete": false,
+        "awaitingGuidance": true,
+        "canHandoff": false,
+        "homeEntranceVisible": false,
+        "visibleLandmarks": [
+          {
+            "id": "crossing-sw",
+            "type": "crossing",
+            "label": "southwest zebra crossing",
+            "distance": 158,
+            "direction": "south"
+          },
+          {
+            "id": "perruqueria-corner-0",
+            "type": "corner",
+            "label": "northwest corner of a hairdresser",
+            "distance": 175,
+            "direction": "south"
+          },
+          {
+            "id": "home-corner-sw",
+            "type": "corner",
+            "label": "southwest chamfered corner",
+            "distance": 18,
+            "direction": "south"
+          },
+          {
+            "id": "intersection-sw",
+            "type": "intersection",
+            "label": "southwest street junction",
+            "distance": 98,
+            "direction": "south"
+          },
+          {
+            "id": "southwest-tree",
+            "type": "tree",
+            "label": "orange tree",
+            "distance": 290,
+            "direction": "south"
+          }
+        ],
+        "newlyVisibleLandmarks": [
+          {
+            "id": "crossing-sw",
+            "type": "crossing",
+            "label": "southwest zebra crossing",
+            "distance": 158,
+            "direction": "south"
+          },
+          {
+            "id": "perruqueria-corner-0",
+            "type": "corner",
+            "label": "northwest corner of a hairdresser",
+            "distance": 175,
+            "direction": "south"
+          },
+          {
+            "id": "home-corner-sw",
+            "type": "corner",
+            "label": "southwest chamfered corner",
+            "distance": 18,
+            "direction": "south"
+          },
+          {
+            "id": "intersection-sw",
+            "type": "intersection",
+            "label": "southwest street junction",
+            "distance": 98,
+            "direction": "south"
+          },
+          {
+            "id": "southwest-tree",
+            "type": "tree",
+            "label": "orange tree",
+            "distance": 290,
+            "direction": "south"
+          }
+        ],
+        "arrivalSequence": 1
+      },
+      "displacementUnits": 305.9411708155671,
+      "idleMs": 1171,
+      "idleStable": true,
+      "captions": [
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-1",
+          "text": "Avanzo hacia el sur hasta donde alcanzo a ver y me detengo.",
+          "atMs": 5280
+        },
+        {
+          "type": "npc.caption",
+          "turnId": "arrival-1",
+          "text": "Ahora veo el cruce de calles del suroeste al sur. ¿Sigo desde aquí?",
+          "atMs": 7989
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "hesitant-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant. ¿En qué lado está tu portal?",
+          "turnId": "hesitant-0"
+        },
+        {
+          "text": "Avanzo hacia el sur hasta donde alcanzo a ver y me detengo.",
+          "turnId": "hesitant-1"
+        },
+        {
+          "text": "Ahora veo el cruce de calles del suroeste al sur. ¿Sigo desde aquí?",
+          "turnId": "arrival-1"
+        }
+      ]
+    },
+    {
+      "text": "Ah, sigue, hasta la próxima vez que venga.",
+      "turnId": "hesitant-2",
+      "selected": "continue",
+      "action": {
+        "id": "continue",
+        "type": "continue",
+        "target": {
+          "x": 480,
+          "y": 645
+        },
+        "targetId": "home-south",
+        "label": "Walk one visible leg toward the reported south entrance",
+        "reason": "Turn to face south, then walk only 141.4 map units inside the current departure-position view and collision-clear first leg. Stop at the visible leg boundary and await a NEW resident command. The semantic destination remains remembered; no queued turns or automatic route continuation.",
+        "facing": "south",
+        "routeComplete": false,
+        "legEndsAtWaypoint": true
+      },
+      "commanded": {
+        "stage": "hesitant-2-applied",
+        "atMs": 9936,
+        "position": {
+          "x": 369.54225001475487,
+          "y": 649.5422500147549
+        },
+        "facing": "south",
+        "moving": true,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [
+          {
+            "x": 370,
+            "y": 650
+          }
+        ],
+        "routeComplete": false,
+        "awaitingGuidance": false,
+        "canHandoff": false,
+        "homeEntranceVisible": false,
+        "visibleLandmarks": [
+          {
+            "id": "perruqueria-corner-0",
+            "type": "corner",
+            "label": "northwest corner of a hairdresser",
+            "distance": 67,
+            "direction": "south"
+          },
+          {
+            "id": "southwest-tree",
+            "type": "tree",
+            "label": "orange tree",
+            "distance": 302,
+            "direction": "west"
+          }
+        ],
+        "newlyVisibleLandmarks": [],
+        "arrivalSequence": 1
+      },
+      "stopped": {
+        "stage": "hesitant-2-stop",
+        "atMs": 9968,
+        "position": {
+          "x": 370,
+          "y": 650
+        },
+        "facing": "east",
+        "moving": false,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [],
+        "routeComplete": false,
+        "awaitingGuidance": true,
+        "canHandoff": false,
+        "homeEntranceVisible": true,
+        "visibleLandmarks": [
+          {
+            "id": "perruqueria-corner-1",
+            "type": "corner",
+            "label": "northeast corner of a hairdresser",
+            "distance": 257,
+            "direction": "east"
+          },
+          {
+            "id": "home-door",
+            "type": "entrance",
+            "label": "south apartment entrance",
+            "distance": 110,
+            "direction": "east"
+          }
+        ],
+        "newlyVisibleLandmarks": [
+          {
+            "id": "perruqueria-corner-1",
+            "type": "corner",
+            "label": "northeast corner of a hairdresser",
+            "distance": 257,
+            "direction": "east"
+          },
+          {
+            "id": "home-door",
+            "type": "entrance",
+            "label": "south apartment entrance",
+            "distance": 110,
+            "direction": "east"
+          }
+        ],
+        "arrivalSequence": 2
+      },
+      "displacementUnits": 141.4213562373095,
+      "idleMs": 1191,
+      "idleStable": true,
+      "captions": [
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-2",
+          "text": "Avanzo solo hasta donde alcanza mi vista y me detengo.",
+          "atMs": 9748
+        },
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-2",
+          "text": "Veo el cruce de calles del suroeste.",
+          "atMs": 9760
+        },
+        {
+          "type": "npc.caption",
+          "turnId": "arrival-2",
+          "text": "Ahora veo la entrada sur del bloque al este. ¿Me acerco?",
+          "atMs": 10914
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "hesitant-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant. ¿En qué lado está tu portal?",
+          "turnId": "hesitant-0"
+        },
+        {
+          "text": "Avanzo hacia el sur hasta donde alcanzo a ver y me detengo.",
+          "turnId": "hesitant-1"
+        },
+        {
+          "text": "Ahora veo el cruce de calles del suroeste al sur. ¿Sigo desde aquí?",
+          "turnId": "arrival-1"
+        },
+        {
+          "text": "Avanzo solo hasta donde alcanza mi vista y me detengo. Veo el cruce de calles del suroeste.",
+          "turnId": "hesitant-2"
+        },
+        {
+          "text": "Ahora veo la entrada sur del bloque al este. ¿Me acerco?",
+          "turnId": "arrival-2"
+        }
+      ]
+    },
+    {
+      "text": "Ah, sigue por la-- sigue, sigue en este tramo.",
+      "turnId": "hesitant-3",
+      "selected": "continue",
+      "action": {
+        "id": "continue",
+        "type": "continue",
+        "target": {
+          "x": 480,
+          "y": 645
+        },
+        "targetId": "home-south",
+        "label": "Walk one visible leg toward the reported south entrance",
+        "reason": "Turn to face east, then walk only 110.1 map units inside the current departure-position view and collision-clear first leg. This leg reaches the requested destination.",
+        "facing": "east",
+        "routeComplete": true,
+        "legEndsAtWaypoint": true
+      },
+      "commanded": {
+        "stage": "hesitant-3-applied",
+        "atMs": 12722,
+        "position": {
+          "x": 448.7426962135369,
+          "y": 646.4207865357481
+        },
+        "facing": "east",
+        "moving": false,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [],
+        "routeComplete": true,
+        "awaitingGuidance": false,
+        "canHandoff": true,
+        "homeEntranceVisible": true,
+        "visibleLandmarks": [
+          {
+            "id": "perruqueria-corner-1",
+            "type": "corner",
+            "label": "northeast corner of a hairdresser",
+            "distance": 183,
+            "direction": "east"
+          },
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          },
+          {
+            "id": "home-door",
+            "type": "entrance",
+            "label": "south apartment entrance",
+            "distance": 31,
+            "direction": "east"
+          }
+        ],
+        "newlyVisibleLandmarks": [
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          }
+        ],
+        "arrivalSequence": 3
+      },
+      "stopped": {
+        "stage": "hesitant-3-stop",
+        "atMs": 12752,
+        "position": {
+          "x": 448.7426962135369,
+          "y": 646.4207865357481
+        },
+        "facing": "east",
+        "moving": false,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [],
+        "routeComplete": true,
+        "awaitingGuidance": false,
+        "canHandoff": true,
+        "homeEntranceVisible": true,
+        "visibleLandmarks": [
+          {
+            "id": "perruqueria-corner-1",
+            "type": "corner",
+            "label": "northeast corner of a hairdresser",
+            "distance": 183,
+            "direction": "east"
+          },
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          },
+          {
+            "id": "home-door",
+            "type": "entrance",
+            "label": "south apartment entrance",
+            "distance": 31,
+            "direction": "east"
+          }
+        ],
+        "newlyVisibleLandmarks": [
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          }
+        ],
+        "arrivalSequence": 3
+      },
+      "displacementUnits": 78.82400000000023,
+      "idleMs": 1268,
+      "idleStable": true,
+      "captions": [
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-3",
+          "text": "Llego hasta la entrada sur del bloque.",
+          "atMs": 12528
+        },
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-3",
+          "text": "Vale, voy hacia tu portal en el lado sur.",
+          "atMs": 12721
+        },
+        {
+          "type": "npc.caption",
+          "turnId": "arrival-3",
+          "text": "Ya he llegado a tu portal.",
+          "atMs": 13482
+        },
+        {
+          "type": "npc.caption",
+          "turnId": "arrival-3",
+          "text": "¿Puedes bajar a por el paquete?",
+          "atMs": 13482
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "hesitant-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant. ¿En qué lado está tu portal?",
+          "turnId": "hesitant-0"
+        },
+        {
+          "text": "Avanzo hacia el sur hasta donde alcanzo a ver y me detengo.",
+          "turnId": "hesitant-1"
+        },
+        {
+          "text": "Ahora veo el cruce de calles del suroeste al sur. ¿Sigo desde aquí?",
+          "turnId": "arrival-1"
+        },
+        {
+          "text": "Avanzo solo hasta donde alcanza mi vista y me detengo. Veo el cruce de calles del suroeste.",
+          "turnId": "hesitant-2"
+        },
+        {
+          "text": "Ahora veo la entrada sur del bloque al este. ¿Me acerco?",
+          "turnId": "arrival-2"
+        },
+        {
+          "text": "Llego hasta la entrada sur del bloque. Vale, voy hacia tu portal en el lado sur.",
+          "turnId": "hesitant-3"
+        },
+        {
+          "text": "Ya he llegado a tu portal. ¿Puedes bajar a por el paquete?",
+          "turnId": "arrival-3"
+        }
+      ]
+    },
+    {
+      "text": "Ah, sigue hasta la próxima esquina.",
+      "turnId": "hesitant-4",
+      "selected": "wait",
+      "action": {
+        "id": "wait",
+        "type": "wait",
+        "label": "Stop and wait",
+        "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+      },
+      "commanded": {
+        "stage": "hesitant-4-applied",
+        "atMs": 15047,
+        "position": {
+          "x": 448.7426962135369,
+          "y": 646.4207865357481
+        },
+        "facing": "east",
+        "moving": false,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [],
+        "routeComplete": true,
+        "awaitingGuidance": false,
+        "canHandoff": true,
+        "homeEntranceVisible": true,
+        "visibleLandmarks": [
+          {
+            "id": "perruqueria-corner-1",
+            "type": "corner",
+            "label": "northeast corner of a hairdresser",
+            "distance": 183,
+            "direction": "east"
+          },
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          },
+          {
+            "id": "home-door",
+            "type": "entrance",
+            "label": "south apartment entrance",
+            "distance": 31,
+            "direction": "east"
+          }
+        ],
+        "newlyVisibleLandmarks": [
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          }
+        ],
+        "arrivalSequence": 3
+      },
+      "stopped": {
+        "stage": "hesitant-4-stop",
+        "atMs": 15181,
+        "position": {
+          "x": 448.7426962135369,
+          "y": 646.4207865357481
+        },
+        "facing": "east",
+        "moving": false,
+        "phase": "active",
+        "homeSide": "south",
+        "routeTargetId": "home-south",
+        "routeDestination": {
+          "x": 480,
+          "y": 645
+        },
+        "route": [],
+        "routeComplete": true,
+        "awaitingGuidance": false,
+        "canHandoff": true,
+        "homeEntranceVisible": true,
+        "visibleLandmarks": [
+          {
+            "id": "perruqueria-corner-1",
+            "type": "corner",
+            "label": "northeast corner of a hairdresser",
+            "distance": 183,
+            "direction": "east"
+          },
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          },
+          {
+            "id": "home-door",
+            "type": "entrance",
+            "label": "south apartment entrance",
+            "distance": 31,
+            "direction": "east"
+          }
+        ],
+        "newlyVisibleLandmarks": [
+          {
+            "id": "intersection-se",
+            "type": "intersection",
+            "label": "southeast street junction",
+            "distance": 281,
+            "direction": "east"
+          }
+        ],
+        "arrivalSequence": 3
+      },
+      "displacementUnits": 0,
+      "idleMs": 1020,
+      "idleStable": true,
+      "captions": [
+        {
+          "type": "npc.caption",
+          "turnId": "hesitant-4",
+          "text": "Vale, me quedo aquí en tu portal esperando a que bajes.",
+          "atMs": 14918
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "hesitant-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant. ¿En qué lado está tu portal?",
+          "turnId": "hesitant-0"
+        },
+        {
+          "text": "Avanzo hacia el sur hasta donde alcanzo a ver y me detengo.",
+          "turnId": "hesitant-1"
+        },
+        {
+          "text": "Ahora veo el cruce de calles del suroeste al sur. ¿Sigo desde aquí?",
+          "turnId": "arrival-1"
+        },
+        {
+          "text": "Avanzo solo hasta donde alcanza mi vista y me detengo. Veo el cruce de calles del suroeste.",
+          "turnId": "hesitant-2"
+        },
+        {
+          "text": "Ahora veo la entrada sur del bloque al este. ¿Me acerco?",
+          "turnId": "arrival-2"
+        },
+        {
+          "text": "Llego hasta la entrada sur del bloque. Vale, voy hacia tu portal en el lado sur.",
+          "turnId": "hesitant-3"
+        },
+        {
+          "text": "Ya he llegado a tu portal. ¿Puedes bajar a por el paquete?",
+          "turnId": "arrival-3"
+        },
+        {
+          "text": "Vale, me quedo aquí en tu portal esperando a que bajes.",
+          "turnId": "hesitant-4"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-opening",
+      "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar.",
+      "atMs": 1968
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-opening",
+      "text": "¿Por dónde voy?",
+      "atMs": 2067
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "hesitant-opening",
+      "atMs": 2067
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-opening",
+      "atMs": 2308
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-opening",
+      "atMs": 2308
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-0",
+      "text": "Estoy junto a Bar Llevant.",
+      "atMs": 3066
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-0",
+      "text": "¿En qué lado está tu portal?",
+      "atMs": 3066
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "hesitant-0",
+      "atMs": 3107
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-0",
+      "atMs": 4238
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-1",
+      "text": "Avanzo hacia el sur hasta donde alcanzo a ver y me detengo.",
+      "atMs": 5280
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "hesitant-1",
+      "atMs": 5483
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-1",
+      "atMs": 7086
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-1",
+      "text": "Ahora veo el cruce de calles del suroeste al sur. ¿Sigo desde aquí?",
+      "atMs": 7989
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "arrival-1",
+      "atMs": 7989
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-1",
+      "atMs": 8494
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-1",
+      "atMs": 8501
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-2",
+      "text": "Avanzo solo hasta donde alcanza mi vista y me detengo.",
+      "atMs": 9748
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-2",
+      "text": "Veo el cruce de calles del suroeste.",
+      "atMs": 9760
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "hesitant-2",
+      "atMs": 9936
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-2",
+      "atMs": 9959
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-2",
+      "atMs": 9959
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-2",
+      "text": "Ahora veo la entrada sur del bloque al este. ¿Me acerco?",
+      "atMs": 10914
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "arrival-2",
+      "atMs": 10917
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-2",
+      "atMs": 11194
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-2",
+      "atMs": 11233
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-3",
+      "text": "Llego hasta la entrada sur del bloque.",
+      "atMs": 12528
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-3",
+      "text": "Vale, voy hacia tu portal en el lado sur.",
+      "atMs": 12721
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "hesitant-3",
+      "atMs": 12721
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-3",
+      "atMs": 12723
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-3",
+      "atMs": 12723
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-3",
+      "text": "Ya he llegado a tu portal.",
+      "atMs": 13482
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-3",
+      "text": "¿Puedes bajar a por el paquete?",
+      "atMs": 13482
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "arrival-3",
+      "atMs": 13710
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-3",
+      "atMs": 14053
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-3",
+      "atMs": 14053
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "hesitant-4",
+      "text": "Vale, me quedo aquí en tu portal esperando a que bajes.",
+      "atMs": 14918
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "hesitant-4",
+      "atMs": 15047
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "hesitant-4",
+      "atMs": 16229
+    }
+  ],
+  "samples": [
+    {
+      "stage": "initial",
+      "atMs": 2118,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-0-applied",
+      "atMs": 3110,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-0-movement",
+      "atMs": 3168,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-0-stop",
+      "atMs": 3168,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-0-idle",
+      "atMs": 3419,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-0-idle",
+      "atMs": 3727,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-0-idle",
+      "atMs": 3963,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-0-idle",
+      "atMs": 4214,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "facing": "north",
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "routeTargetId": null,
+      "routeDestination": null,
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-nw",
+          "type": "crossing",
+          "label": "northwest zebra crossing",
+          "distance": 50,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Bar Llevant",
+          "distance": 118,
+          "direction": "north"
+        },
+        {
+          "id": "bar-llevant-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Llevant",
+          "distance": 178,
+          "direction": "west"
+        },
+        {
+          "id": "bar-ponent-corner-3",
+          "type": "corner",
+          "label": "southwest corner of Bar Ponent",
+          "distance": 161,
+          "direction": "east"
+        },
+        {
+          "id": "bar-llevant-awning",
+          "type": "awning",
+          "label": "red bar awning",
+          "distance": 112,
+          "direction": "north"
+        },
+        {
+          "id": "bar-ponent-awning",
+          "type": "awning",
+          "label": "blue bar awning",
+          "distance": 240,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-applied",
+      "atMs": 5485,
+      "position": {
+        "x": 232.03090215688326,
+        "y": 360.1545107844157
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "fruita-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Fruita Fresca",
+          "distance": 174,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 207,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 280,
+          "direction": "south"
+        },
+        {
+          "id": "home-wall-west",
+          "type": "wall",
+          "label": "west apartment wall",
+          "distance": 84,
+          "direction": "south"
+        },
+        {
+          "id": "fruit-display",
+          "type": "fruit-display",
+          "label": "fruit crates",
+          "distance": 145,
+          "direction": "south"
+        },
+        {
+          "id": "fruit-awning",
+          "type": "awning",
+          "label": "striped fruit-shop awning",
+          "distance": 98,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-movement",
+      "atMs": 5574,
+      "position": {
+        "x": 234.18308062388968,
+        "y": 370.9154031194479
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "fruita-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Fruita Fresca",
+          "distance": 165,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 196,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 269,
+          "direction": "south"
+        },
+        {
+          "id": "home-wall-west",
+          "type": "wall",
+          "label": "west apartment wall",
+          "distance": 74,
+          "direction": "south"
+        },
+        {
+          "id": "fruit-display",
+          "type": "fruit-display",
+          "label": "fruit crates",
+          "distance": 135,
+          "direction": "south"
+        },
+        {
+          "id": "fruit-awning",
+          "type": "awning",
+          "label": "striped fruit-shop awning",
+          "distance": 91,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-movement",
+      "atMs": 5807,
+      "position": {
+        "x": 240.87103306437203,
+        "y": 404.3551653218598
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 282,
+          "direction": "south"
+        },
+        {
+          "id": "fruita-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Fruita Fresca",
+          "distance": 137,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 162,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 236,
+          "direction": "south"
+        },
+        {
+          "id": "home-wall-west",
+          "type": "wall",
+          "label": "west apartment wall",
+          "distance": 46,
+          "direction": "east"
+        },
+        {
+          "id": "fruit-display",
+          "type": "fruit-display",
+          "label": "fruit crates",
+          "distance": 109,
+          "direction": "south"
+        },
+        {
+          "id": "fruit-awning",
+          "type": "awning",
+          "label": "striped fruit-shop awning",
+          "distance": 75,
+          "direction": "west"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-movement",
+      "atMs": 6045,
+      "position": {
+        "x": 246.26305008386126,
+        "y": 431.31525041930604
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 257,
+          "direction": "south"
+        },
+        {
+          "id": "fruita-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Fruita Fresca",
+          "distance": 118,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 134,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 209,
+          "direction": "south"
+        },
+        {
+          "id": "fruit-display",
+          "type": "fruit-display",
+          "label": "fruit crates",
+          "distance": 92,
+          "direction": "west"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-movement",
+      "atMs": 6401,
+      "position": {
+        "x": 252.83529400461208,
+        "y": 464.1764700230603
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 228,
+          "direction": "south"
+        },
+        {
+          "id": "fruita-corner-2",
+          "type": "corner",
+          "label": "southeast corner of Fruita Fresca",
+          "distance": 99,
+          "direction": "west"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 101,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 177,
+          "direction": "south"
+        },
+        {
+          "id": "fruit-display",
+          "type": "fruit-display",
+          "label": "fruit crates",
+          "distance": 79,
+          "direction": "west"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-movement",
+      "atMs": 6713,
+      "position": {
+        "x": 260.26378097137615,
+        "y": 501.31890485688115
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 196,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 223,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 64,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 142,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-movement",
+      "atMs": 7018,
+      "position": {
+        "x": 267.59970112235516,
+        "y": 537.9985056117757
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 167,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 187,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 28,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 109,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 298,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "hesitant-1-movement",
+      "atMs": 7273,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "facing": "south",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-1-stop",
+      "atMs": 7273,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "facing": "south",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-1-idle",
+      "atMs": 7503,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "facing": "south",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-1-idle",
+      "atMs": 7739,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "facing": "south",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-1-idle",
+      "atMs": 7984,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "facing": "south",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-1-idle",
+      "atMs": 8214,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "facing": "south",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-1-idle",
+      "atMs": 8444,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "facing": "south",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "crossing-sw",
+          "type": "crossing",
+          "label": "southwest zebra crossing",
+          "distance": 158,
+          "direction": "south"
+        },
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 175,
+          "direction": "south"
+        },
+        {
+          "id": "home-corner-sw",
+          "type": "corner",
+          "label": "southwest chamfered corner",
+          "distance": 18,
+          "direction": "south"
+        },
+        {
+          "id": "intersection-sw",
+          "type": "intersection",
+          "label": "southwest street junction",
+          "distance": 98,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 290,
+          "direction": "south"
+        }
+      ],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-2-applied",
+      "atMs": 9936,
+      "position": {
+        "x": 369.54225001475487,
+        "y": 649.5422500147549
+      },
+      "facing": "south",
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [
+        {
+          "x": 370,
+          "y": 650
+        }
+      ],
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "homeEntranceVisible": false,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-0",
+          "type": "corner",
+          "label": "northwest corner of a hairdresser",
+          "distance": 67,
+          "direction": "south"
+        },
+        {
+          "id": "southwest-tree",
+          "type": "tree",
+          "label": "orange tree",
+          "distance": 302,
+          "direction": "west"
+        }
+      ],
+      "newlyVisibleLandmarks": [],
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "hesitant-2-movement",
+      "atMs": 9968,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "hesitant-2-stop",
+      "atMs": 9968,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "hesitant-2-idle",
+      "atMs": 10190,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "hesitant-2-idle",
+      "atMs": 10441,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "hesitant-2-idle",
+      "atMs": 10674,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "hesitant-2-idle",
+      "atMs": 10917,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "hesitant-2-idle",
+      "atMs": 11159,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 257,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 110,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "hesitant-3-applied",
+      "atMs": 12722,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-3-movement",
+      "atMs": 12752,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-3-stop",
+      "atMs": 12752,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-3-idle",
+      "atMs": 12980,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-3-idle",
+      "atMs": 13247,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-3-idle",
+      "atMs": 13481,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-3-idle",
+      "atMs": 13724,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-3-idle",
+      "atMs": 14020,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-4-applied",
+      "atMs": 15047,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-4-movement",
+      "atMs": 15181,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-4-stop",
+      "atMs": 15181,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-4-idle",
+      "atMs": 15434,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-4-idle",
+      "atMs": 15663,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-4-idle",
+      "atMs": 15936,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "hesitant-4-idle",
+      "atMs": 16201,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    },
+    {
+      "stage": "final",
+      "atMs": 16201,
+      "position": {
+        "x": 448.7426962135369,
+        "y": 646.4207865357481
+      },
+      "facing": "east",
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "route": [],
+      "routeComplete": true,
+      "awaitingGuidance": false,
+      "canHandoff": true,
+      "homeEntranceVisible": true,
+      "visibleLandmarks": [
+        {
+          "id": "perruqueria-corner-1",
+          "type": "corner",
+          "label": "northeast corner of a hairdresser",
+          "distance": 183,
+          "direction": "east"
+        },
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        },
+        {
+          "id": "home-door",
+          "type": "entrance",
+          "label": "south apartment entrance",
+          "distance": 31,
+          "direction": "east"
+        }
+      ],
+      "newlyVisibleLandmarks": [
+        {
+          "id": "intersection-se",
+          "type": "intersection",
+          "label": "southeast street junction",
+          "distance": 281,
+          "direction": "east"
+        }
+      ],
+      "arrivalSequence": 3
+    }
+  ],
+  "totalMs": 16230
+}
