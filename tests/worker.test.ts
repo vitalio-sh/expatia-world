@@ -222,3 +222,74 @@ test('interrupting after visible speech preserves its words and applied route fo
     assert.equal(session.game.history.filter(entry => entry.role === 'courier' && entry.turnId === 'visible-moving').length, 1);
   } finally { session.dispose(); }
 });
+
+function boundedMovementFixture(holdCommand = false) {
+  const socket = new Socket(); let now = NOW, releaseCommand!: () => void;
+  const replies: { id: string; signal?: AbortSignal }[] = [];
+  const session = createWorkerSession(socket, SESSION_ID, {}, DEFAULT_WEATHER, {
+    clock: () => now, timers: false, decisionOptions: { key: '', telemetry: false },
+    voice: { async prepare() { return true; }, async createTurn() { return { sendPhrase() {}, async finish() {}, cancel() {} }; }, handle() {}, dispose() {} },
+    dialogue: async (_context, decision: any, signal, onPhrase) => {
+      replies.push({ id: decision?.id, signal });
+      if (holdCommand && replies.length === 2) await new Promise<void>(resolve => { releaseCommand = resolve; });
+      signal?.throwIfAborted();
+      const text = decision?.id === 'visibility-stop' ? 'Me he parado; dime por dónde sigo.' : 'Voy hacia el portal por el sur.';
+      onPhrase?.(text); return { text, model: 'test-fixture', live: false };
+    },
+  });
+  return { session, replies, advance(ms: number) { now += ms; session.tick(); }, release() { releaseCommand(); } };
+}
+
+test('Worker visible movement stop reports surroundings once, stays still, and requires a new continue command', async () => {
+  const f = boundedMovementFixture();
+  try {
+    await f.session.rpc('answer', path('/answer')); await settle();
+    const direction = await f.session.rpc('direction', path('/turn'), { text: 'Mi portal, eh, está en la de sur.', turnId: 'direction' });
+    assert.equal(direction.status, 200);
+    assert.equal(f.session.game.facts.homeSide, 'south');
+    assert.equal(f.session.game.courier.moving, true);
+    f.advance(4_000); await settle();
+    const stop = { x: f.session.game.courier.x, y: f.session.game.courier.y };
+    assert.equal(f.session.game.awaitingGuidance, true);
+    assert.equal(f.session.game.routeComplete, false);
+    assert.equal(f.session.getState().canHandoff, false);
+    assert.deepEqual(f.session.game.routeDestination, HOME_ENTRANCE);
+    assert.equal(f.session.game.route.length, 0);
+    assert.equal(f.replies.filter(reply => reply.id === 'visibility-stop').length, 1);
+    assert.ok(Math.hypot(stop.x - HOME_ENTRANCE.x, stop.y - HOME_ENTRANCE.y) > 32);
+    f.advance(2_000); await settle();
+    assert.deepEqual({ x: f.session.game.courier.x, y: f.session.game.courier.y }, stop);
+    assert.equal(f.session.game.courier.moving, false);
+    assert.equal(f.replies.filter(reply => reply.id === 'visibility-stop').length, 1);
+    assert.equal(f.replies.filter(reply => reply.id === 'arrival').length, 0);
+    const next = await f.session.rpc('continue', path('/turn'), { text: 'Sí, sigue.', turnId: 'continue' });
+    assert.equal(next.status, 200); assert.equal(f.session.game.courier.moving, true);
+    assert.deepEqual(f.session.game.routeDestination, HOME_ENTRANCE);
+    f.advance(500); await settle();
+    assert.ok(Math.hypot(f.session.game.courier.x - stop.x, f.session.game.courier.y - stop.y) > 1);
+    assert.equal(f.session.game.facts.homeSide, 'south');
+  } finally { f.session.dispose(); }
+});
+
+test('Worker defers visibility-stop speech until the pending player reply completes without aborting it', async () => {
+  const f = boundedMovementFixture(true);
+  try {
+    await f.session.rpc('answer', path('/answer')); await settle();
+    const pending = f.session.rpc('direction', path('/turn'), { text: 'Mi portal está en el lado sur.', turnId: 'held-direction' });
+    await settle();
+    assert.equal(f.replies.length, 2); assert.equal(f.session.game.courier.moving, true);
+    const commandSignal = f.replies[1].signal;
+    f.advance(4_000); await settle();
+    assert.equal(f.session.game.awaitingGuidance, true);
+    assert.equal(commandSignal?.aborted, false);
+    assert.equal(f.replies.filter(reply => reply.id === 'visibility-stop').length, 0);
+    f.release(); assert.equal((await pending).status, 200);
+    assert.equal(commandSignal?.aborted, false);
+    f.advance(1); await settle();
+    assert.equal(f.replies.filter(reply => reply.id === 'visibility-stop').length, 1);
+    assert.equal(f.session.game.courier.moving, false);
+    assert.ok(f.session.game.history.some(entry => entry.role === 'courier' && entry.turnId === 'held-direction' && entry.text === 'Voy hacia el portal por el sur.'));
+    f.advance(1_000); await settle();
+    assert.equal(f.replies.filter(reply => reply.id === 'visibility-stop').length, 1);
+  } finally { f.session.dispose(); }
+});

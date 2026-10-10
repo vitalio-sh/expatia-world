@@ -1,7 +1,7 @@
 import {
   BUILDINGS, COURIER_SPEED, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, LANDMARKS, ROADS, SIGHT_RANGE, VIEW_ANGLE_DEGREES,
   ROUND_MS, WORLD_MAP, barcelonaTime, directionBetween, distance, findRoute, isOpen,
-  segmentClear, visiblePoint, walkable, insidePolygon, type ActionCandidate, type Decision, type Game,
+  segmentClear, visiblePoint, visibleRouteLeg, walkable, insidePolygon, type ActionCandidate, type Decision, type Game,
   type HistoryEntry, type Observation, type LandmarkObservation, type Point, type Weather,
 } from '../shared/world.js';
 
@@ -10,7 +10,7 @@ export function createGame(weather: Weather = DEFAULT_WEATHER, now = Date.now())
     id: globalThis.crypto.randomUUID(), phase: 'incoming', startedAt: null, deadline: null, updatedAt: now,
     courier: { x: 210, y: 250, direction: 'north', moving: false },
     resident: { ...RESIDENT_POSITION, direction: 'south', moving: false },
-    route: [], routeTargetId: null, previousDestination: null, parcel: 'courier', dropLocationId: null,
+    route: [], routeTargetId: null, routeDestination: null, routeComplete: false, awaitingGuidance: false, previousDestination: null, parcel: 'courier', dropLocationId: null,
     outcome: null, history: [], weather: { ...weather }, knowledge: {}, landmarkKnowledge: {},
     facts: { homeSide: null, signDisclosed: false, firstClueSpoken: false, lastClarification: null },
     decision: null, decisions: [], sequence: 0, timeoutPending: false, timeoutStartedAt: null, arrivalSequence: 0,
@@ -114,7 +114,11 @@ function finishRoute(game: Game, now: number) {
     game.parcel = 'drop'; game.dropLocationId = location.id; game.phase = 'resolved'; game.timeoutPending = false;
     game.outcome = { kind: 'collection', title: 'Parcel waiting for collection', detail: `The courier reached ${location.name} and left your parcel there. You still need to collect it from the shop.`, feedback: 'The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance.' };
     recordHistory(game, { role: 'event', text: `The courier physically reached the open ${location.name} entrance and left the parcel for collection. The resident has not received it.`, at: now });
+  } else if (game.routeTargetId && !(game.routeComplete && game.routeTargetId === 'home-south' && canHandoff(game, now))) {
+    game.awaitingGuidance = true;
+    recordHistory(game, { role: 'event', text: `The courier stopped at the end of the current visible movement leg. ${game.routeComplete ? 'The requested waypoint was reached.' : 'The intended destination remains remembered, but has not been reached.'} The courier awaits a new resident command and does not start another leg automatically.`, at: now });
   } else if (game.routeTargetId) {
+    game.awaitingGuidance = false;
     const label = game.routeTargetId === 'home-south' ? 'the entrance described by the resident' : game.knowledge[game.routeTargetId]?.name ?? game.landmarkKnowledge[game.routeTargetId]?.label ?? 'the requested waypoint';
     recordHistory(game, { role: 'event', text: `The courier arrived at ${label}. The parcel remains with the courier until a physical handoff.`, at: now });
   }
@@ -210,7 +214,7 @@ export function npcContext(game: Game, now = game.updatedAt) {
     residentVisible: view.residentVisible, residentPosition: view.residentVisible ? { x: game.resident.x, y: game.resident.y } : null,
     homeEntranceVisible: view.homeEntranceVisible, homeEntrance: view.homeEntranceVisible ? HOME_ENTRANCE : null,
     walkableDirections: view.directions, factsLearned: { ...game.facts, lastClarification: actualQuestion },
-    navigation: opening ? null : { destination, moving: game.courier.moving, remainingRouteUnits: Math.round(routeDistance(game.courier, game.route)), arrived: !!destination && game.route.length === 0 },
+    navigation: opening ? null : { destination, moving: game.courier.moving, remainingRouteUnits: Math.round(routeDistance(game.courier, game.route)), segmentDestination: game.route.at(-1) ?? null, segmentReachesDestination: game.routeComplete, awaitingGuidance: game.awaitingGuidance, arrived: !!destination && game.routeComplete && game.route.length === 0 && !!game.routeDestination && distance(game.courier, game.routeDestination) < 1 },
     history: game.history.map(entry => ({ ...entry })), time: barcelonaTime(now), weather: { ...game.weather },
     activeDestination: game.routeTargetId, lastClarification: actualQuestion,
     policy: opening
@@ -243,7 +247,11 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   candidates.push({ id: 'look:around', type: 'look', label: 'Look around in all four directions', reason: 'Physically turn and observe each direction, then return to the original heading; no movement.' });
   candidates.push({ id: 'clarify', type: 'clarify', label: 'Ask for a clearer landmark or entrance side', reason: 'Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place.' });
   candidates.push({ id: 'wait', type: 'wait', label: 'Stop and wait', reason: 'Use for an explicit wait/stop request; do not claim a handoff or parcel receipt.' });
-  if (game.route.length) candidates.push({ id: 'continue', type: 'continue', label: 'Continue the current route', reason: 'Use for confirmation or a reply agreeing with the latest announced route.' });
+  if (game.route.length) candidates.push({ id: 'continue', type: 'continue', label: 'Continue the current visible movement leg', reason: 'Finish only the movement leg already in progress; do not queue another leg.' });
+  else if (game.awaitingGuidance && game.routeDestination && !game.routeComplete) {
+    const route = findRoute(game.courier, game.routeDestination);
+    if (route) candidates.push({ id: 'continue', type: 'continue', target: { ...game.routeDestination }, targetId: game.routeTargetId ?? undefined, route, label: 'Advance one newly visible leg toward the remembered destination', reason: 'Only a new resident command permits another visible movement leg; the old route was discarded at the previous stop.' });
+  }
   for (const observed of view.buildings) candidates.push({ id: `reveal:${observed.id}`, type: 'reveal', targetId: observed.id, label: `Read the visible ${observed.name} sign`, reason: `Reveal the distinguishing sign of this currently visible ${observed.category} after a relevant clarification question; no movement.` });
   for (const known of Object.values(game.knowledge)) {
     const route = findRoute(game.courier, known.entrance);
@@ -273,12 +281,28 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   }
   for (const [direction, vector] of Object.entries({ north: { x: 0, y: -1 }, south: { x: 0, y: 1 }, east: { x: 1, y: 0 }, west: { x: -1, y: 0 } })) {
     let target = { x: game.courier.x, y: game.courier.y };
-    for (let step = 20; step <= 220; step += 20) { const q = { x: game.courier.x + vector.x * step, y: game.courier.y + vector.y * step }; if (!segmentClear(game.courier, q)) break; target = q; }
+    for (let step = 20; step <= SIGHT_RANGE + 20; step += 20) { const q = { x: game.courier.x + vector.x * step, y: game.courier.y + vector.y * step }; if (!segmentClear(game.courier, q)) break; target = q; }
     if (distance(game.courier, target) > 15) candidates.push({ id: `walk:${direction}`, type: 'move', target, route: [target], label: `Walk ${direction} along the clear street`, reason: `Grounded cardinal movement; currently facing ${game.courier.direction}. Map-relative left/izquierda is always west and right/derecha always east, regardless of heading. Forward/straight follows the current heading. Stop before solid buildings.` });
+  }
+  if (game.awaitingGuidance && game.routeComplete && game.routeTargetId?.startsWith('walk:')) {
+    const next = candidates.find(c => c.id === game.routeTargetId);
+    if (next) candidates.push({ ...next, id: 'continue', type: 'continue', targetId: game.routeTargetId, label: 'Continue one newly visible straight movement leg', reason: 'A new resident confirmation authorizes another bounded leg in the same cardinal direction.' });
   }
   if (game.previousDestination && distance(game.courier, game.previousDestination) > 20) {
     const route = findRoute(game.courier, game.previousDestination);
     if (route) candidates.push({ id: 'go-back', type: 'move', target: game.previousDestination, route, label: 'Go back to the previous position', reason: 'Recover from a wrong turn using remembered movement, rather than restarting.' });
+  }
+  // Every active command authorizes just one fixed-view straight leg.
+  for (let i = candidates.length - 1; i >= 0; i--) {
+    const candidate = candidates[i];
+    if ((candidate.type !== 'move' && candidate.type !== 'continue') || !candidate.route || !candidate.target) continue;
+    const departure = candidate.route.find(p => distance(game.courier, p) > 0.01);
+    if (!departure) continue;
+    const facing = directionBetween(game.courier, departure), leg = visibleRouteLeg(game.courier, candidate.route, facing);
+    if (!leg.length) { candidates.splice(i, 1); continue; }
+    candidate.route = leg; candidate.facing = facing; candidate.routeComplete = distance(leg.at(-1)!, candidate.target) < 0.1;
+    candidate.label = `Walk one visible leg toward ${candidate.targetId?.startsWith('home-') ? `the reported ${candidate.targetId.slice(5)} entrance` : candidate.label.replace(/^(Walk to|Approach|Go around the building toward|Cross|Go back to)\s*/,'')}`;
+    candidate.reason = `Turn to face ${facing}, then walk only ${routeDistance(game.courier, leg).toFixed(1)} map units inside the current departure-position view and collision-clear first leg. ${candidate.routeComplete ? 'This leg reaches the requested destination.' : 'Stop at the visible leg boundary and await a NEW resident command. The semantic destination remains remembered; no queued turns or automatic route continuation.'}`;
   }
   // An explicitly requested entrance is one destination. Intermediate corners
   // cannot replace it merely because the sentence also says 'go around'.
@@ -337,11 +361,11 @@ export function applyDecision(game: Game, decision: Decision, now = game.updated
   const legal = actionCandidates(game, decision.trigger, now).find(option => option.id === decision.selected);
   if (!legal) return false;
   decision.action = legal; game.decision = decision; game.decisions.push(decision);
-  if (legal.type === 'move' || legal.type === 'drop') {
+  if (legal.type === 'move' || legal.type === 'drop' || (legal.type === 'continue' && legal.route)) {
     const route = legal.route ?? (legal.target ? findRoute(game.courier, legal.target) : null);
     if (!route) return false;
     game.previousDestination = { x: game.courier.x, y: game.courier.y };
-    game.route = route; game.routeTargetId = legal.targetId ?? legal.id; game.courier.moving = true;
+    game.route = route; game.routeTargetId = legal.targetId ?? legal.id; game.routeDestination = legal.target ? { ...legal.target } : null; game.routeComplete = legal.type === 'drop' || !!legal.routeComplete; game.awaitingGuidance = false; game.courier.direction = legal.facing ?? game.courier.direction; game.courier.moving = true;
     if (legal.type === 'drop') game.timeoutPending = false;
     recordHistory(game, { role: 'event', text: `Courier started: ${legal.label}. ${legal.type === 'drop' ? 'The parcel remains with the courier until arrival.' : 'Arrival and handoff have not yet happened.'}`, at: now, turnId: decision.id });
     if (distance(game.courier, legal.target!) < 1) { game.route = []; finishRoute(game, now); }
@@ -365,7 +389,7 @@ export function publicGame(game: Game, now = Date.now()) {
   return {
     id: game.id, phase: game.phase, startedAt: game.startedAt, deadline: game.deadline,
     serverNow: now, remainingMs: remainingMs(game, now), courier: { ...game.courier }, resident: { ...game.resident },
-    route: game.route.map(p => ({ ...p })), routeTargetId: game.routeTargetId, parcel: game.parcel, facts: { ...game.facts },
+    route: game.route.map(p => ({ ...p })), routeTargetId: game.routeTargetId, routeDestination: game.routeDestination ? { ...game.routeDestination } : null, routeComplete: game.routeComplete, awaitingGuidance: game.awaitingGuidance, parcel: game.parcel, facts: { ...game.facts },
     dropLocationId: game.dropLocationId, outcome: game.outcome, history: game.history.map(h => ({ ...h })),
     weather: { ...game.weather }, time: barcelonaTime(now), map: WORLD_MAP, canHandoff: canHandoff(game, now),
     visibleBuildings: view.buildings.map(b => b.id), visibleLandmarks: view.landmarks.map(({ id, type, label, distance, direction }) => ({ id, type, label, distance, direction })), courierView: { facing: game.courier.direction, angle: VIEW_ANGLE_DEGREES, range: SIGHT_RANGE }, furthestVisible: [...view.landmarks.map(l => ({ id: l.id, label: l.label, distance: l.distance })), ...view.buildings.map(b => ({ id: b.id, label: b.name, distance: b.distance }))].sort((a, b) => b.distance - a.distance)[0] ?? null, arrivalSequence: game.arrivalSequence,

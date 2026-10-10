@@ -1,9 +1,10 @@
-import { WORLD_MAP, directionBetween, type Direction, type HistoryEntry, type Point } from './world';
+import { WORLD_MAP, directionBetween, segmentClear, type Direction, type HistoryEntry, type Point } from './world';
 
 export interface DemoGame {
   id?: string; phase?: string; history?: HistoryEntry[];
   courier?: Point & { direction?: Direction; moving?: boolean };
   route?: Point[]; routeTargetId?: string | null; canHandoff?: boolean;
+  routeDestination?: Point | null; routeComplete?: boolean; awaitingGuidance?: boolean;
   parcel?: string; outcome?: { kind: string } | null; arrivalSequence?: number;
   visibleBuildings?: string[];
   visibleLandmarks?: { id: string; type: string; label: string; direction?: Direction; distance?: number }[];
@@ -47,8 +48,26 @@ function homeCue(game: DemoGame, title = 'Tell them your entrance side'): DemoCu
   const side = directionBetween(map.residentPosition, map.home.entrance);
   // Give one useful fact, then one action. Never ask the presenter to narrate
   // every intermediate turn of a route the navigation engine already knows.
-  if (game.facts?.homeSide === side) return { title: 'Ask them to come to your door', spanish: 'Ven a mi portal.', english: 'Come to my entrance.', stage: 2 };
+  if (game.facts?.homeSide === side) return nextStepCue(game);
   return { title, spanish: `Mi portal está en el lado ${es[side]}.`, english: `My entrance is on the ${side} side.`, stage: 2 };
+}
+
+function nextStepCue(game: DemoGame): DemoCue {
+  if (game.awaitingGuidance) return { title: 'Give the next short direction', spanish: 'Sí, sigue.', english: 'Continue one visible stretch, then stop again.', stage: 2 };
+  const map = game.map ?? WORLD_MAP, position = game.courier;
+  if ((game.visibleLandmarks ?? []).some(item => item.id === 'home-door')) return { title: 'Guide the final visible step', spanish: 'Ven a mi portal.', english: 'Come to my entrance.', stage: 2 };
+  if (!position) return sightCue(game, 'Check the next visible step');
+  const goal = map.home.entrance, dx = goal.x - position.x, dy = goal.y - position.y;
+  const first = directionBetween(position, goal);
+  const second: Direction = first === 'north' || first === 'south' ? (dx >= 0 ? 'east' : 'west') : (dy >= 0 ? 'south' : 'north');
+  const vectors: Record<Direction, Point> = { north: { x: 0, y: -1 }, east: { x: 1, y: 0 }, south: { x: 0, y: 1 }, west: { x: -1, y: 0 } };
+  const direction = [...new Set([first, second, 'north', 'east', 'south', 'west'] as Direction[])].find(candidate => {
+    const v = vectors[candidate];
+    return segmentClear(position, { x: position.x + v.x * 85, y: position.y + v.y * 85 });
+  });
+  if (!direction) return sightCue(game, 'Find a clear next step');
+  if (position.direction !== direction) return { title: 'Look before the next short move', spanish: `Mira hacia el ${es[direction]}.`, english: `Look ${direction} before the next short move.`, stage: 2 };
+  return { title: 'Give one short direction', spanish: `Camina un poco hacia el ${es[direction]}.`, english: `Walk a little ${direction}, then wait for the next direction.`, stage: 2 };
 }
 
 function sightCue(game: DemoGame, title = 'Choose a clear reference'): DemoCue {
@@ -78,7 +97,7 @@ function identifyCue(game: DemoGame, hasConversation: boolean): DemoCue {
 }
 
 function walkingCue(_game: DemoGame): DemoCue {
-  return { title: 'They are walking — no need to speak', spanish: 'Sí, sigue.', english: 'Yes, keep going. Let them finish this route.', stage: 3 };
+  return { title: 'They are walking — no need to speak', spanish: 'Sí, sigue.', english: 'Yes, keep going. Let them finish this short move.', stage: 3 };
 }
 
 /** Spanish presenter suggestions only: choosing a cue never sends or moves anything. */
@@ -105,6 +124,7 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
     return { ...cue, title: 'Try this short phrase' };
   }
   const question = context.courierQuestion;
+  if (game.awaitingGuidance || context.decision?.selected === 'visibility-stop') return nextStepCue(game);
   if (askingHome) return homeCue(game, 'Answer the entrance question');
   if (askingLook) return sightCue(game, 'Answer what to look for');
   if (game.courier?.moving || (game.route?.length ?? 0) > 0) return walkingCue(game);

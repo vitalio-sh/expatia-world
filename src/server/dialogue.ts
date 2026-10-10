@@ -32,6 +32,9 @@ const movementTypes = ['move', 'continue', 'drop'];
 function dialogueConflict(text: string, context: unknown, decision: unknown): boolean {
   const c = (context || {}) as Record<string, any>, d = (decision || {}) as Record<string, any>;
   const action = d.action || (d.type ? d : null), value = plain(text);
+  const partialStep = c.navigation?.segmentReachesDestination === false || c.navigation?.awaitingGuidance === true || action?.id === 'visibility-stop';
+  if (partialStep && /\b(?:estoy abajo|(?:he|ya he) llegado|estoy (?:en|junto a).{0,15}(?:tu portal|tu entrada|la entrada)|i (?:have arrived|am at your))\b/.test(value)) return true;
+  if (partialStep && movementTypes.includes(action?.type) && /\b(?:voy|camino|sigo|me dirijo)\b.{0,45}\b(?:tu portal|tu entrada|la entrada|your entrance|your door)\b/.test(value)) return true;
   const asserted = value.replace(/¿[^?]*\?/g, '');
   const assertedHomeSide = asserted.match(/\b(?:tu|your)\s+(?:portal|entrada|puerta|entrance|door)\b[^.!?]{0,40}\b(sur|norte|este|oeste|north|south|east|west)\b/)?.[1];
   if (assertedHomeSide) {
@@ -53,6 +56,7 @@ function dialogueConflict(text: string, context: unknown, decision: unknown): bo
 }
 
 function movementLine(c: Record<string, any>, action: Record<string, any>): string {
+  if (c.navigation?.segmentReachesDestination === false) return 'Vale, avanzo hasta el límite de lo que veo y paro.';
   const destination = action.targetId || (/^home[:-]/.test(action.id || '') ? action.id : null) || c.navigation?.destination?.id || c.activeDestination;
   const side = c.factsLearned?.homeSide || String(destination || '').match(/^home[:-](north|south|east|west)$/)?.[1];
   if (side && (/^home[:-]/.test(String(destination || '')) || /entrance/.test(action.label || ''))) return `Vale, voy hacia tu portal en el lado ${directionEs[side] || side}.`;
@@ -112,6 +116,12 @@ export function spanishLandmarkLabel(label: string): string {
 }
 const placeLine = (item: GroundedThing) => `${spanishLandmarkLabel(item.label)}${item.direction ? ` al ${directionEs[item.direction] || item.direction}` : ''}`;
 
+function visibilityStopLine(c: Record<string, any>): string {
+  const facts = courierGrounding(c);
+  const visible = facts.nearestVisible || facts.visible[0];
+  return visible ? `Veo ${placeLine(visible)}. ¿Por dónde sigo?` : 'He parado aquí. ¿Hacia dónde miro?';
+}
+
 function surroundingsLine(c: Record<string, any>): string | null {
   const facts = courierGrounding(c);
   const question = [...(c.history || [])].reverse().find((entry: any) => entry.role === 'player')?.text || '';
@@ -136,6 +146,7 @@ export function fallbackLine(context: unknown, decision: unknown): string {
   const selectedAction = d?.action || (d?.type ? d : null);
   const action = String(selectedAction?.type || d?.action || d?.selected?.action?.type || d?.selected?.type || d?.choice || '').toLowerCase();
   if (c?.parcel === 'resident' || c?.parcel?.owner === 'resident') return '¡Aquí tienes! Ya tienes tu paquete.';
+  if (selectedAction?.id === 'visibility-stop' || (selectedAction?.id === 'arrival' && c?.navigation?.awaitingGuidance)) return visibilityStopLine(c || {});
   if (selectedAction?.type === 'wait' && selectedAction?.id === 'arrival' && /entrance/.test(selectedAction.label || '') && c?.parcel === 'courier') return 'Estoy abajo, en la entrada, con tu paquete. Ya puedes recogerlo.';
   if (selectedAction?.id === 'arrival' && c?.parcel === 'drop') return 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.';
   if (/return/.test(action)) return 'No encuentro un lugar adecuado para dejarlo, así que me llevo el paquete de vuelta.';
@@ -232,7 +243,7 @@ export function dialogueMessages(context: unknown, decision: unknown) {
     ? deliveryPhrasebook.courier[action?.type === 'clarify' ? 'clarify' : 'move'] : c.parcel === 'resident' ? deliveryPhrasebook.courier.received : null;
   const conversation = (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'player' || entry.role === 'courier').map((entry: any) => ({ role: entry.role === 'player' ? 'user' : 'assistant', content: String(entry.text) }));
   const projection = { ...c, history: (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'event') };
-  const followup = '\nWhen move or continue is selected, acknowledge following that route/destination. Do not ask where to go, ask the entrance side, or ask permission to start a route already selected. factsLearned.homeSide is already the answer to the entrance-side question: never ask it again. If clarify is selected with a known side, acknowledge that side and ask only for the missing route reference; do not claim movement.';
+  const followup = '\nWhen move or continue is selected, acknowledge only the selected physical leg. If navigation.segmentReachesDestination is false, you will walk only to the edge of the current visible area and STOP, awaiting a new resident command. Never promise to complete the whole route or arrive at the portal in this leg. Say briefly that you advance only as far as you can see and stop. Do not ask a question while this leg is moving. On visibility-stop, describe one currently visible object and ask ONE short next-step question, such as ¿Por dónde sigo? That stop is not entrance arrival. factsLearned.homeSide remains known: never ask its side again. If clarify is selected with a known side, acknowledge that side and ask only for the missing route reference; do not claim movement.';
   const mode = isOpening(c) ? '' : '\nThis is a follow-up directions turn, even if an interrupted greeting was never emitted. The first-line/greeting restrictions do not apply. Answer the latest resident turn and selected action.';
   return [{ role: 'system', content: instructions + followup + mode }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
 }

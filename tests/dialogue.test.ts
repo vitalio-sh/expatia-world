@@ -290,10 +290,12 @@ test('literal disfluent entrance answer is learned before dialogue acknowledges 
   const move = actionCandidates(game, 'directions', game.updatedAt, literal).find(action => action.id === 'home:south')!;
   assert.ok(move);
   const context = npcContext(game), phrases: string[] = [];
-  const streamer = (async (_messages, onText) => { onText('Vale, voy hacia tu portal en el lado sur.'); return { text: '', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const expected = fallbackLine(context, move);
+  const streamer = (async (_messages, onText) => { onText(expected); return { text: '', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
   const result = await generateDialogue(context, move, undefined, phrase => { phrases.push(phrase); }, streamer);
   assert.equal(result.live, true);
-  assert.match(result.text, /voy hacia tu portal en el lado sur/);
+  assert.match(result.text, /límite de lo que veo y paro/);
+  assert.equal(result.text, expected);
   assert.doesNotMatch(result.text, /\?/);
 });
 
@@ -312,4 +314,36 @@ test('clarification after a known entrance route preserves that route context wi
   assert.match(line, /Recuerdo tu portal al sur.*parte de la ruta/);
   assert.doesNotMatch(line, /en qué lado|voy|camino|sigo la ruta/);
   assert.equal(speechIsGrounded(line, context, { type: 'clarify' }), true);
+});
+
+test('clipped home movement acknowledges its visible leg rather than promising the entrance', async () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, navigation: { segmentReachesDestination: false, awaitingGuidance: false } };
+  const move = { id: 'home:south', type: 'move', targetId: 'home-south', label: 'Go toward reported south entrance' };
+  assert.equal(speechIsGrounded('Voy hacia tu portal en el lado sur.', context, move), false);
+  const streamer = (async (_messages, onText) => { onText('Voy hacia tu portal en el lado sur.'); return { text: '', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, move, undefined, undefined, streamer);
+  assert.match(result.text, /límite de lo que veo y paro/);
+  assert.doesNotMatch(result.text, /portal|llegado|\?/);
+});
+
+test('visible-edge stop describes current sight and asks only for the next step', async () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, history: [{ role: 'player', text: 'Mi portal está al sur.' }], navigation: { segmentReachesDestination: false, awaitingGuidance: true, arrived: false } };
+  const stop = { id: 'visibility-stop', type: 'describe', label: 'Describe current stopping point' };
+  const line = fallbackLine(context, stop);
+  assert.match(line, /Veo la esquina oeste.*¿Por dónde sigo\?/);
+  assert.equal(line.split('?').length - 1, 1);
+  assert.doesNotMatch(line, /portal|entrada|Estoy abajo|he llegado/);
+  assert.equal(speechIsGrounded('Estoy abajo, en la entrada.', context, stop), false);
+  assert.equal(speechIsGrounded(line, context, stop), true);
+  const streamer = (async () => { throw new Error('fixture_offline'); }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, stop, undefined, undefined, streamer);
+  assert.equal(result.text, line);
+  const legacy = fallbackLine(context, { id: 'arrival', type: 'wait', label: 'Wait at entrance' });
+  assert.equal(legacy, line);
+});
+
+test('a final physical leg and actual doorway arrival retain truthful entrance wording', () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, navigation: { segmentReachesDestination: true, awaitingGuidance: false, arrived: true } };
+  assert.match(fallbackLine(context, { id: 'home:south', type: 'move', targetId: 'home-south' }), /voy hacia tu portal en el lado sur/);
+  assert.match(fallbackLine(context, { id: 'arrival', type: 'wait', label: 'Wait at home entrance' }), /Estoy abajo/);
 });

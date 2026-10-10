@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, WALLS, LANDMARKS, barcelonaTime, distance, findRoute, isOpen, segmentClear, visiblePoint, walkable } from '../src/shared/world.js';
+import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, WALLS, LANDMARKS, SIGHT_RANGE, barcelonaTime, distance, findRoute, isOpen, segmentClear, visiblePoint, visibleRouteLeg, walkable } from '../src/shared/world.js';
 import { actionCandidates, answerCall, canHandoff, createGame, handoff, moveResident, npcContext, perception, publicGame, recordSpeech, rememberObservations, tickGame } from '../src/server/game.js';
 import { buildJevRequest, decide, fallbackChoice, queryJev, resolveTimeout } from '../src/server/jev.js';
 
@@ -8,6 +8,14 @@ const SATURDAY_NOON = Date.parse('2026-10-10T10:00:00Z');
 const fresh = () => createGame(DEFAULT_WEATHER, SATURDAY_NOON);
 const active = () => { const game = fresh(); answerCall(game, SATURDAY_NOON); recordSpeech(game, 'I am near a bar. Which way should I go?', 'opening', SATURDAY_NOON); return game; };
 const offline = { key: '', now: () => SATURDAY_NOON, telemetry: false };
+async function guideRemainingLegs(game: ReturnType<typeof active>) {
+  for (let leg = 0; leg < 10; leg++) {
+    if (game.routeDestination && distance(game.courier, game.routeDestination) < 0.1) return;
+    if (!game.route.length) await decide(game, 'Sí, sigue.', undefined, { ...offline, now: () => game.updatedAt });
+    tickGame(game, game.updatedAt + 3_000, 3);
+  }
+  assert.fail('Ten explicitly commanded visible legs did not reach the remembered destination');
+}
 function mockJev(select: (criteria: Record<string, unknown>) => string): typeof fetch {
   return (async (_url: unknown, init: RequestInit) => {
     const request = JSON.parse(init.body as string), options = Object.keys(request.questions.action.criteria), chosen = select(request.questions.action.criteria);
@@ -95,14 +103,14 @@ test('vague wrong turn is recoverable with south entrance clarification', async 
   tickGame(game, SATURDAY_NOON + 1_000, 1); assert.equal(game.routeTargetId, 'bar-llevant');
   const recovery = await decide(game, 'Sorry, my home entrance is on the south side. Walk around the building.', undefined, { ...offline, now: () => SATURDAY_NOON + 1_000 });
   assert.equal(recovery?.selected, 'home:south');
-  tickGame(game, SATURDAY_NOON + 10_000, 9); assert.ok(distance(game.courier, HOME_ENTRANCE) < 1);
+  tickGame(game, SATURDAY_NOON + 10_000, 9); assert.ok(game.awaitingGuidance); await guideRemainingLegs(game); assert.ok(distance(game.courier, HOME_ENTRANCE) < 1);
   assert.equal(game.parcel, 'courier'); assert.equal(game.phase, 'active');
   assert.ok(game.history.some(entry => entry.role === 'player' && entry.text.includes('Sorry')));
 });
 test('a wrong reported north entrance remains a hypothesis with a legal route', async () => {
   const game = active(); const result = await decide(game, 'The entrance is on the north side', undefined, offline);
   assert.equal(result?.selected, 'home:north'); assert.ok(game.route.length > 0);
-  tickGame(game, SATURDAY_NOON + 4_000, 4); assert.equal(game.courier.y, 200); assert.equal(game.parcel, 'courier');
+  tickGame(game, SATURDAY_NOON + 4_000, 4); await guideRemainingLegs(game); assert.equal(game.courier.y, 200); assert.equal(game.parcel, 'courier');
 });
 test('multi-step directions do not replace an explicit south entrance with a later right turn', async () => {
   const game = active();
@@ -218,9 +226,9 @@ test('street crossing follows actual stripes and real JEV selects only observed 
   const selected='cross:crossing-nw';
   const result=await decide(game,'Cross the street via the pedestrian crossing',undefined,{...offline,key:'fixture',fetcher:mockJev(()=>selected)});
   assert.equal(result?.source,'jev'); assert.equal(result?.probabilities?.[selected],1);
-  assert.deepEqual(game.route.slice(-2),[{x:180,y:250},{x:180,y:175}]);
+  assert.deepEqual(game.route,[{x:180,y:250}]);assert.deepEqual(game.routeDestination,{x:180,y:175});assert.equal(game.routeComplete,false);
   let start={x:game.courier.x,y:game.courier.y}; for(const end of game.route){assert.ok(segmentClear(start,end));start=end;}
-  tickGame(game,SATURDAY_NOON+2_000,2); assert.equal(game.courier.x,180); assert.equal(game.courier.y,175);
+  tickGame(game,SATURDAY_NOON+2_000,2);assert.equal(game.courier.y,250);assert.equal(game.awaitingGuidance,true);await guideRemainingLegs(game); assert.equal(game.courier.x,180); assert.equal(game.courier.y,175);
 });
 test('left uses map west independently of heading and description requests do not move', async () => {
   const game=active(); Object.assign(game.courier,{x:230,y:400,direction:'east'}); rememberObservations(game);
@@ -262,12 +270,12 @@ test('explicit south entrance route wins over intermediate corners while facing 
   let checked=false;
   const result=await decide(game,phrase,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{
     assert.ok(criteria['home:south']); assert.ok(!Object.keys(criteria).some(id=>id.startsWith('landmark:') || id.startsWith('around:')));
-    assert.ok(JSON.stringify(criteria['home:south']).includes('Complete exterior route'));
+    assert.ok(JSON.stringify(criteria['home:south']).includes('NEW resident command'));
     checked=true;return 'home:south';
   })});
   assert.ok(checked);assert.equal(result?.source,'jev');assert.equal(result?.selected,'home:south');
-  assert.deepEqual(game.route.at(-1),HOME_ENTRANCE);
-  tickGame(game,SATURDAY_NOON+10_000,10);assert.ok(canHandoff(game,SATURDAY_NOON+10_000));
+  assert.deepEqual(game.routeDestination,HOME_ENTRANCE);assert.notDeepEqual(game.route.at(-1),HOME_ENTRANCE);
+  tickGame(game,SATURDAY_NOON+10_000,10);assert.equal(canHandoff(game,game.updatedAt),false);assert.equal(game.awaitingGuidance,true);await guideRemainingLegs(game);assert.ok(canHandoff(game,game.updatedAt));
 });
 
 test('Spanish demo commands map to grounded intents and preserve original conversation words', async () => {
@@ -281,7 +289,7 @@ test('Spanish demo commands map to grounded intents and preserve original conver
   const result=await decide(game,phrase,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{assert.ok(criteria['home:south']);assert.ok(!criteria['landmark:home-corner-nw']);return 'home:south';})});
   assert.equal(result?.source,'jev');assert.equal(result?.selected,'home:south');assert.equal(game.facts.homeSide,'south');
   assert.ok(game.history.some(h=>h.role==='player' && h.text===phrase));
-  assert.deepEqual(game.route.at(-1),HOME_ENTRANCE);
+  assert.deepEqual(game.routeDestination,HOME_ENTRANCE);assert.equal(game.route.length,1);
 });
 test('Spanish entrance-side beliefs, negation and short answers remain conversational hypotheses', async () => {
   const game=active();
@@ -289,7 +297,7 @@ test('Spanish entrance-side beliefs, negation and short answers remain conversat
   await decide(game,'La entrada no está al norte. Está en el lado sur.',undefined,offline);assert.equal(game.facts.homeSide,'south');
   recordSpeech(game,'¿En qué lado está tu portal?','side-question',SATURDAY_NOON);
   await decide(game,'Norte.',undefined,offline);assert.equal(game.facts.homeSide,'north');
-  assert.deepEqual(game.route.at(-1),{x:480,y:200});
+  assert.deepEqual(game.routeDestination,{x:480,y:200});assert.equal(game.route.length,1);
 });
 
 test('timeout scans current surroundings and chooses the nearest eligible physical walking route', async () => {
@@ -335,7 +343,7 @@ test('a wrong-side correction and Spanish short answer recover without resetting
   recordSpeech(game,'¿En qué lado está tu portal?', 'actual-side',SATURDAY_NOON+2_000);
   const answer=await decide(game,'No, perdón, por el sur.',undefined,{...offline,now:()=>SATURDAY_NOON+2_000});
   assert.equal(game.facts.homeSide,'south');assert.equal(answer?.selected,'home:south');
-  tickGame(game,SATURDAY_NOON+12_000,10);assert.ok(canHandoff(game,SATURDAY_NOON+12_000));
+  tickGame(game,SATURDAY_NOON+12_000,10);assert.equal(game.awaitingGuidance,true);await guideRemainingLegs(game);assert.ok(canHandoff(game,game.updatedAt));
 });
 
 test('explicit retraction clears the wrong entrance hypothesis and pauses that route until corrected', async () => {
@@ -355,7 +363,7 @@ test('English and Spanish left/right commands use map west/east for all four cou
       assert.ok(criteria[target]);assert.ok(!criteria[opposite]);return target;
     })});
     assert.equal(decision?.source,'jev');assert.equal(decision?.selected,`walk:${sample.direction}`);
-    assert.equal(game.courier.direction,facing); // Selection does not rotate sight before actual movement.
+    assert.equal(game.courier.direction,sample.direction); // Turn to inspect the departure direction before the bounded leg.
     const initialX=game.courier.x;tickGame(game,SATURDAY_NOON+1_000,1);
     assert.ok(sample.direction==='west'?game.courier.x<initialX:game.courier.x>initialX);
     assert.equal(game.courier.y,680);assert.equal(game.courier.direction,sample.direction);
@@ -429,7 +437,23 @@ test('literal speech fillers retain the portal side and a malformed followup reu
   const followup=await decide(game,'Mi portal está en la descripción.',undefined,offline);
   assert.equal(followup?.selected,'home:south');assert.equal(game.facts.homeSide,'south');
   assert.ok(game.history.some(h=>h.text==='Mi portal, eh, está en la de sur.'));
-  tickGame(game,SATURDAY_NOON+10_000,10);assert.equal(canHandoff(game,SATURDAY_NOON+10_000),true);
+  tickGame(game,SATURDAY_NOON+10_000,10);assert.equal(canHandoff(game,game.updatedAt),false);await guideRemainingLegs(game);assert.equal(canHandoff(game,game.updatedAt),true);
+});
+test('a home command walks one fixed-view leg, idles indefinitely, and needs each new continuation', async () => {
+  const game=active(), origin={x:game.courier.x,y:game.courier.y};
+  const decision=await decide(game,'Mi portal está al sur.',undefined,offline);
+  assert.equal(decision?.selected,'home:south');assert.equal(game.facts.homeSide,'south');assert.equal(game.route.length,1);assert.equal(game.routeComplete,false);
+  assert.ok(distance(origin,game.route[0])<=SIGHT_RANGE);assert.ok(visiblePoint(origin,game.route[0],undefined,game.courier.direction));
+  tickGame(game,SATURDAY_NOON+4_000,4);const stopped={x:game.courier.x,y:game.courier.y};assert.equal(game.awaitingGuidance,true);assert.equal(game.route.length,0);assert.equal(npcContext(game).navigation?.arrived,false);
+  tickGame(game,SATURDAY_NOON+12_000,8);assert.deepEqual({x:game.courier.x,y:game.courier.y},stopped);assert.equal(canHandoff(game,game.updatedAt),false);
+  const continued=await decide(game,'Sí, sigue.',undefined,{...offline,now:()=>game.updatedAt});assert.equal(continued?.selected,'continue');assert.equal(game.route.length,1);assert.equal(game.awaitingGuidance,false);
+  await guideRemainingLegs(game);assert.ok(canHandoff(game,game.updatedAt));assert.equal(game.routeComplete,true);assert.equal(game.awaitingGuidance,false);
+});
+test('visible route legs never queue turns and completed cardinal continuation advances a fresh visible leg', async () => {
+  const origin={x:210,y:250}, route=[{x:210,y:300},{x:250,y:340}];assert.deepEqual(visibleRouteLeg(origin,route,'south'),[{x:210,y:300}]);
+  const blocked=visibleRouteLeg({x:260,y:460},[{x:700,y:460}],'east');assert.ok(!blocked.length||blocked[0].x<279); // Solid apartment wall.
+  const game=active();await decide(game,'Sur.',undefined,offline);await guideRemainingLegs(game);assert.equal(game.awaitingGuidance,true);assert.equal(game.routeComplete,true);
+  const before={x:game.courier.x,y:game.courier.y};await decide(game,'Sí, sigue.',undefined,{...offline,now:()=>game.updatedAt});assert.equal(game.route.length,1);assert.ok(game.route[0].y>before.y);assert.equal(game.courier.direction,'south');
 });
 test('long broken-grammar side replies and bare compass cues distinguish entrance context from street movement', async () => {
   for(const direction of [{es:'sur',en:'south'},{es:'norte',en:'north'},{es:'este',en:'east'},{es:'oeste',en:'west'}]){

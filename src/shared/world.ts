@@ -31,7 +31,7 @@ export interface KnownLandmark extends Landmark { observedAt: number; source: 'o
 export interface LandmarkObservation extends KnownLandmark { distance: number; direction: Direction }
 export interface ActionCandidate {
   id: string; type: 'describe' | 'reveal' | 'clarify' | 'wait' | 'move' | 'continue' | 'drop' | 'return' | 'look';
-  label: string; reason: string; target?: Point; targetId?: string; route?: Point[]; facing?: Direction;
+  label: string; reason: string; target?: Point; targetId?: string; route?: Point[]; facing?: Direction; routeComplete?: boolean;
 }
 export interface Decision {
   id: string; sequence: number; trigger: 'opening' | 'directions' | 'timeout';
@@ -46,7 +46,7 @@ export interface Game {
   id: string; phase: 'incoming' | 'active' | 'timeout' | 'resolved';
   startedAt: number | null; deadline: number | null; updatedAt: number;
   courier: Actor; resident: Actor; route: Point[]; routeTargetId: string | null;
-  previousDestination: Point | null; parcel: 'courier' | 'resident' | 'drop' | 'returned';
+  previousDestination: Point | null; routeDestination: Point | null; routeComplete: boolean; awaitingGuidance: boolean; parcel: 'courier' | 'resident' | 'drop' | 'returned';
   dropLocationId: string | null; outcome: Outcome | null; history: HistoryEntry[];
   weather: Weather; knowledge: Record<string, KnownBuilding>; landmarkKnowledge: Record<string, KnownLandmark>;
   facts: { homeSide: Direction | null; signDisclosed: boolean; firstClueSpoken: boolean; lastClarification: string | null };
@@ -157,6 +157,25 @@ export function visiblePoint(a: Point, b: Point, _excludedBuilding?: string, fac
     if (insidePolygon(p, HOME_POLYGON) || BUILDINGS.some(building => insidePolygon(p, building.footprint))) return false;
   }
   return true;
+}
+/** One straight leg only, bounded by the departure-position view, never a rolling horizon. */
+export function visibleRouteLeg(origin: Point, route: readonly Point[], facing: Direction): Point[] {
+  const target = route.find(p => distance(origin, p) > 0.01);
+  if (!target) return [];
+  const length = distance(origin, target), steps = Math.max(1, Math.ceil(length / 4));
+  let last = { ...origin };
+  const at = (fraction: number) => ({ x: origin.x + (target.x - origin.x) * fraction, y: origin.y + (target.y - origin.y) * fraction });
+  for (let i = 1; i <= steps; i++) {
+    const point = at(i / steps);
+    if (!visiblePoint(origin, point, undefined, facing) || !segmentClear(last, point)) {
+      let low = (i - 1) / steps, high = i / steps;
+      for (let j = 0; j < 12; j++) { const mid = (low + high) / 2, q = at(mid); if (visiblePoint(origin, q, undefined, facing) && segmentClear(last, q)) low = mid; else high = mid; }
+      const edge = at(low);
+      return distance(origin, edge) > 0.1 ? [edge] : [];
+    }
+    last = point;
+  }
+  return [{ ...target }];
 }
 export function barcelonaTime(now: number) {
   const values = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now).map(part => [part.type, part.value]));

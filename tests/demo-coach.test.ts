@@ -108,7 +108,7 @@ test('the presenter gives one entrance fact then one action, from either side', 
   for (const courier of [{x:730,y:400},{x:730,y:650},{x:230,y:650}]) {
     const game = { ...base, courier, history: identified };
     assert.equal(chooseDemoCue(game).spanish, 'Mi portal está en el lado sur.');
-    assert.equal(chooseDemoCue({...game, facts:{homeSide:'south'}}).spanish, 'Ven a mi portal.');
+    assert.match(chooseDemoCue({...game, facts:{homeSide:'south'}}).spanish, /^(?:Mira|Camina)/);
   }
 });
 
@@ -134,4 +134,21 @@ test('all core demo prompts stay short even during repeated recovery', () => {
     assert.ok(cue.spanish.split(/\s+/).length<=11, cue.spanish);
     assert.doesNotMatch(cue.spanish,/rodea.*portal|baja.*esquina|lo repito despacio/i);
   }
+});
+
+test('visible-edge stop suggests one short direction and keeps the learned entrance side', () => {
+  const game: DemoGame = { ...base, history: [...identified, line('player', 'Mi portal está al sur.', 5)], facts: { homeSide: 'south' }, awaitingGuidance: true, routeComplete: false, courier: { x: 230, y: 500, direction: 'south', moving: false }, inspector: { selected: 'visibility-stop', action: { type: 'describe' } } };
+  const cue = chooseDemoCue(game);
+  assert.equal(cue.spanish, 'Sí, sigue.');
+  assert.doesNotMatch(cue.spanish, /portal|rodea|entrada|Hola/);
+  const look = chooseDemoCue({ ...game, courier: { ...game.courier!, direction: 'north' } });
+  assert.equal(look.spanish, 'Sí, sigue.');
+  assert.equal(game.facts?.homeSide, 'south');
+});
+
+test('demo only suggests the final portal step when the actual doorway is visible', () => {
+  const game: DemoGame = { ...base, history: identified, facts: { homeSide: 'south' }, awaitingGuidance: false, courier: { x: 230, y: 645, direction: 'east', moving: false } };
+  assert.equal(chooseDemoCue(game).spanish, 'Camina un poco hacia el este.');
+  assert.equal(chooseDemoCue({ ...game, visibleLandmarks: [{ id: 'home-door', label: 'south apartment entrance', type: 'entrance' }] }).spanish, 'Ven a mi portal.');
+  assert.equal(chooseDemoCue({ ...game, awaitingGuidance: true, visibleLandmarks: [{ id: 'home-door', label: 'south apartment entrance', type: 'entrance' }] }).spanish, 'Sí, sigue.');
 });

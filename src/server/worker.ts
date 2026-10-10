@@ -1,6 +1,6 @@
 /** Free-host adapter: one accepted WebSocket owns one complete short scenario.
  * It never assumes another HTTP request reaches the same Worker isolate. */
-import { answerCall, createGame, handoff, moveResident, npcContext, publicGame, recordSpeech, tickGame } from './game.js';
+import { answerCall, canHandoff, createGame, handoff, moveResident, npcContext, publicGame, recordSpeech, tickGame } from './game.js';
 import { decide, resolveTimeout, type DecisionOptions } from './jev.js';
 import { generateDialogue, type DialogueResult } from './dialogue.js';
 import { configureProviders } from './providers.js';
@@ -64,7 +64,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
   const game = createGame(weather, clock()); game.id = sessionId;
   let controller: AbortController | undefined, currentTurn: string | undefined, disposed = false;
   let dialogueLive: boolean | undefined, lastMove = clock(), lastActivity = clock(), timeoutRunning = false, arrival = 0;
-  let turns = 0;
+  let turns = 0, pendingReply: string | undefined;
   const completed = new Map<string, Promise<RpcResult>>();
   const send = (message: Record<string, unknown>) => {
     if (disposed || client.readyState !== 1) return;
@@ -78,10 +78,12 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
   function beginTurn(turnId: string) {
     controller?.abort();
     if (currentTurn) send({ type: 'npc.cancel', turnId: currentTurn });
-    controller = new AbortController(); currentTurn = turnId;
+    controller = new AbortController(); currentTurn = turnId; pendingReply = turnId;
     return controller.signal;
   }
+  function finishReply(turnId: string) { if (pendingReply === turnId) pendingReply = undefined; }
   async function speak(decision: Partial<Decision> | null, turnId: string, signal: AbortSignal) {
+    try {
     let speech: VoiceTurn | undefined;
     try { speech = await voice.createTurn(turnId, signal); } catch {
       signal.throwIfAborted(); send({ type: 'npc.audio_error', turnId, error: 'Live voice unavailable. Subtitles remain available.' });
@@ -99,6 +101,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
     send({ type: 'dialogue.status', turnId, live: reply.live, model: reply.model });
     if (speech) void speech.finish().then(() => { if (!disposed && game.phase === 'active') void voice.prepare(); }).catch(() => {});
     return reply;
+    } finally { finishReply(turnId); }
   }
   const decisionOptions = () => ({ ...dependencies.decisionOptions, now: clock, key: dependencies.decisionOptions?.key ?? env.JEV_API_KEY });
   function tick() {
@@ -110,15 +113,16 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
       const turnId = `timeout-${crypto.randomUUID()}`, signal = beginTurn(turnId);
       void resolveTimeout(game, signal, decisionOptions()).then(decision => {
         if (!decision?.discarded && !disposed && !signal.aborted) return speak(decision, turnId, signal);
-      }).catch(() => {});
+      }).catch(() => {}).finally(() => finishReply(turnId));
     }
-    if (game.arrivalSequence !== arrival) {
+    if (game.arrivalSequence !== arrival && !pendingReply) {
       arrival = game.arrivalSequence;
-      const home = game.phase === 'active' && game.routeTargetId === 'home-south';
+      const home = canHandoff(game, now) && game.routeComplete && !game.awaitingGuidance;
+      const stopped = game.phase === 'active' && game.awaitingGuidance && !game.courier.moving;
       const drop = game.phase === 'resolved' && game.parcel === 'drop';
-      if (home || drop) {
+      if (home || drop || stopped) {
         const turnId = `arrival-${arrival}`, signal = beginTurn(turnId);
-        const action = { id: 'arrival', type: 'wait' as const, label: home ? 'Wait at the home entrance for the resident to accept the parcel' : 'Explain that the parcel is physically at the collection shop', reason: home ? 'Real arrival occurred; parcel is still with the courier.' : game.outcome!.detail };
+        const action = stopped ? { id: 'visibility-stop', type: 'describe' as const, label: 'Describe what is visible from this stopping point and ask for the next short direction', reason: 'Reached the edge of the previous visible area; stopped and waiting for a new resident command. This is not arrival at the destination.' } : { id: 'arrival', type: 'wait' as const, label: home ? 'Wait at the home entrance for the resident to accept the parcel' : 'Explain that the parcel is physically at the collection shop', reason: home ? 'Real arrival occurred; parcel is still with the courier.' : game.outcome!.detail };
         void speak({ action }, turnId, signal).catch(() => {});
       }
     }
@@ -136,7 +140,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
       const turnId = String(body.turnId ?? 'opening').slice(0, 80), signal = beginTurn(turnId);
       void decide(game, '', signal, decisionOptions()).then(decision => {
         if (!decision?.discarded && !signal.aborted && game.phase === 'active') return speak(decision, turnId, signal);
-      }).catch(() => {});
+      }).catch(() => {}).finally(() => finishReply(turnId));
       return { status: 200, result: { game: getState() } };
     }
     if (action === '/turn') {
@@ -155,7 +159,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
         return { status: 200, result: { game: getState(), timings: { decisionMs: decision?.elapsedMs, ...reply.timings, totalMs: performance.now() - started } } };
       } catch {
         return signal.aborted ? { status: 409, error: 'The conversation moved on.', result: { game: getState() } } : { status: 503, error: 'The connection paused. Try a shorter direction.', result: { game: getState() } };
-      }
+      } finally { finishReply(turnId); }
     }
     if (action === '/move') {
       const now = clock(), elapsed = Math.max(0, (now - lastMove) / 1000); lastMove = now;
@@ -208,7 +212,7 @@ export default {
       headers.set('X-Content-Type-Options', 'nosniff'); headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
       return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
     }
-    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-spoken-directions' });
+    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-visible-steps' });
     if (url.pathname === '/api/weather') return json(await getWeather());
     if (url.pathname === '/api/session' && request.method === 'POST') {
       if (!env.EXPATIA_SESSION_SECRET || env.EXPATIA_SESSION_SECRET.length < 32) return json({ error: 'Game session signing is not configured.' }, 503);
