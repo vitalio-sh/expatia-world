@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-10T12:08:58.953Z",
+  "siteVersion": 8,
+  "scope": "Public mobile browser synthetic test, including around-building ambiguity discovered before the final route-priority fix.",
+  "sessionId": "45d8e11d-5381-4e89-8002-bb5883052ef5",
+  "selected": "drop:bar-llevant",
+  "confidence": 0.44,
+  "evidence": [
+    "Currently visible: southeast zebra crossing (crossing), east, 302 units.",
+    "Currently visible: northeast corner of a hairdresser (corner), east, 154 units.",
+    "Currently visible: southeast street junction (intersection), east, 250 units.",
+    "Currently visible: south apartment entrance (entrance), north, 0 units.",
+    "Facing east; finite forward sight, solid walls occlude.",
+    "Barcelona Sat, 14:08; weather: Clear sky (live).",
+    "Resident reported a south entrance; this remains a belief until observed."
+  ],
+  "usage": {
+    "inputTokens": 6932,
+    "outputTokens": 41,
+    "estimatedUsd": 0.000291144
+  },
+  "sessionUsage": {
+    "calls": 23,
+    "liveCalls": 23,
+    "inputTokens": 57872,
+    "outputTokens": 1299,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 59171,
+    "unreportedTokenCalls": 0,
+    "returnedCostUsd": 0.0089932,
+    "estimatedCostUsd": 0.024737076,
+    "voiceCharacters": 588,
+    "audioSeconds": 33.599999999999994,
+    "providers": {
+      "jev": 5,
+      "openrouter": 6,
+      "browser": 6,
+      "elevenlabs": 6
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  },
+  "world": {
+    "resident": {
+      "x": 480,
+      "y": 440,
+      "direction": "south",
+      "moving": false
+    },
+    "courier": {
+      "x": 185.70262526384656,
+      "y": 301.7443196866548,
+      "direction": "north",
+      "moving": false
+    },
+    "parcel": "returned",
+    "canHandoff": false
+  }
+}

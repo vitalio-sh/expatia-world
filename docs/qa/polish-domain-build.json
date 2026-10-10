@@ -1,0 +1,12 @@
+{
+  "url": "https://expatia.world",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-city-polish"
+  },
+  "clientAsset": "/assets/index-6M2aK9gS.js",
+  "clientMatchesBuild": true
+}
