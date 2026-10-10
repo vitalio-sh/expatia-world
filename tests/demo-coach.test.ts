@@ -171,3 +171,22 @@ test('only an actual pending entrance route gets a short continuation cue', () =
   assert.equal(chooseDemoCue({ ...pending, routeTargetId: 'home-north', routeDestination: { x: 480, y: 200 } }).spanish, 'Ven a mi portal por el sur.');
   assert.equal(chooseDemoCue({ ...pending, facts: { homeSide: null } }).spanish, 'Mi portal está en el lado sur.');
 });
+
+
+test('guided demo follows exactly four backend steps despite history, recovery or manual overrides', () => {
+  const phrases = ['¿Cómo se llama el bar?', 'Mi portal está en el lado sur.', 'Sigue.', 'Ven a mi portal.'];
+  for (let demoStep = 0; demoStep < 4; demoStep++) {
+    const game: DemoGame = { ...base, demoMode: true, demoStep, history: identified, inspector: failed, awaitingGuidance: true, courier: { ...base.courier!, moving: demoStep > 1 } };
+    const snapshot = JSON.stringify(game);
+    for (const options of [{}, { manual: 0 }, { manual: 2 }, { recovery: 'Try again' }, { lifeline: true }]) assert.equal(chooseDemoCue(game, options).spanish, phrases[demoStep]);
+    assert.equal(JSON.stringify(game), snapshot);
+    assert.equal(chooseDemoCue({ ...game, courier: { ...game.courier!, moving: false } }).spanish, phrases[demoStep]);
+  }
+});
+
+test('guided progress revision comes from the server and actual receipt still wins', () => {
+  const game = { ...base, demoMode: true, demoStep: 2 };
+  assert.notEqual(demoConversationRevision(game), demoConversationRevision({ ...game, demoStep: 3 }));
+  assert.equal(chooseDemoCue({ ...game, demoStep: 4, canHandoff: true }).title, 'At your door');
+  assert.equal(chooseDemoCue({ ...game, parcel: 'resident', outcome: { kind: 'received' } }).title, 'Parcel received');
+});

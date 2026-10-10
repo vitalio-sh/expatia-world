@@ -1,7 +1,7 @@
 import { WORLD_MAP, directionBetween, type Direction, type HistoryEntry, type Point } from './world';
 
 export interface DemoGame {
-  id?: string; phase?: string; history?: HistoryEntry[];
+  id?: string; phase?: string; history?: HistoryEntry[]; demoMode?: boolean; demoStep?: number;
   courier?: Point & { direction?: Direction; moving?: boolean };
   route?: Point[]; routeTargetId?: string | null; canHandoff?: boolean;
   routeDestination?: Point | null; routeComplete?: boolean; awaitingGuidance?: boolean;
@@ -107,6 +107,16 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
     return { title: 'Parcel received', spanish: 'Perfecto, gracias. ¡Hasta luego!', english: 'Perfect, thank you. See you!', stage: 3 };
   }
   if (game.canHandoff) return { title: 'At your door', spanish: 'Perfecto, ya puedes entregarme el paquete. Gracias.', english: 'The courier has reached your entrance. Click Collect your parcel to finish.', stage: 3 };
+  if (game.demoMode) {
+    const step = Math.max(0, Math.min(3, Math.floor(game.demoStep ?? 0)));
+    const cues: DemoCue[] = [
+      { title: 'Ask for the bar name', spanish: '¿Cómo se llama el bar?', english: 'What is the bar called?', stage: 0 },
+      { title: 'Tell them your entrance side', spanish: 'Mi portal está en el lado sur.', english: 'My entrance is on the south side.', stage: 1 },
+      { title: 'Guide the next short move', spanish: 'Sigue.', english: 'Continue to the next stopping point.', stage: 2 },
+      { title: 'Guide the final entrance step', spanish: 'Ven a mi portal.', english: 'Come to my entrance.', stage: 3 },
+    ];
+    return cues[step];
+  }
   if (!options.lifeline) {
     if (options.manual === 0) return identifyCue(game, context.players.length > 0);
     if (options.manual === 1) return sightCue(game);
@@ -141,5 +151,5 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
 export function demoConversationRevision(game: DemoGame = {}): string {
   const decision = game.decision ?? game.inspector;
   const last = game.history?.at(-1);
-  return JSON.stringify([game.id, decision?.sequence, decision?.selected, game.history?.length ?? 0, last?.at, last?.text, game.arrivalSequence, game.canHandoff, game.outcome?.kind]);
+  return JSON.stringify([game.id, game.demoMode, game.demoStep, decision?.sequence, decision?.selected, game.history?.length ?? 0, last?.at, last?.text, game.arrivalSequence, game.canHandoff, game.outcome?.kind]);
 }

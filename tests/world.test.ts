@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, WALLS, LANDMARKS, SIGHT_RANGE, barcelonaTime, distance, findRoute, isOpen, segmentClear, visiblePoint, visibleRouteLeg, walkable } from '../src/shared/world.js';
+import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, WALLS, LANDMARKS, SIGHT_RANGE, barcelonaTime, directionBetween, distance, findRoute, isOpen, relativeDirection, segmentClear, visiblePoint, visibleRouteLeg, walkable } from '../src/shared/world.js';
 import { actionCandidates, answerCall, canHandoff, createGame, handoff, moveResident, navigationText, npcContext, perception, publicGame, recordSpeech, rememberObservations, tickGame } from '../src/server/game.js';
 import { buildJevRequest, decide, fallbackChoice, queryJev, resolveTimeout } from '../src/server/jev.js';
 
@@ -230,10 +230,10 @@ test('street crossing follows actual stripes and real JEV selects only observed 
   let start={x:game.courier.x,y:game.courier.y}; for(const end of game.route){assert.ok(segmentClear(start,end));start=end;}
   tickGame(game,SATURDAY_NOON+2_000,2);assert.equal(game.courier.y,250);assert.equal(game.awaitingGuidance,true);await guideRemainingLegs(game); assert.equal(game.courier.x,180); assert.equal(game.courier.y,175);
 });
-test('left uses map west independently of heading and description requests do not move', async () => {
+test('left follows courier facing and description requests do not move', async () => {
   const game=active(); Object.assign(game.courier,{x:230,y:400,direction:'east'}); rememberObservations(game);
   const result=await decide(game,'Walk left',undefined,offline);
-  assert.equal(result?.selected,'walk:west');
+  assert.equal(result?.selected,'walk:north');
   const before={x:game.courier.x,y:game.courier.y};
   const description=await decide(game,'What is the furthest thing you can see?',undefined,offline);
   assert.equal(description?.selected,'describe-surroundings'); assert.deepEqual({x:game.courier.x,y:game.courier.y},before);
@@ -355,28 +355,28 @@ test('explicit retraction clears the wrong entrance hypothesis and pauses that r
   assert.equal(game.facts.homeSide,'south');
 });
 
-test('English and Spanish left/right commands use map west/east for all four courier headings', async () => {
-  for(const facing of ['north','east','south','west'] as const) for(const sample of [{text:'Walk left',direction:'west'},{text:'Walk right',direction:'east'},{text:'Ve a la izquierda',direction:'west'},{text:'Ve a la derecha',direction:'east'}]){
-    const game=active();Object.assign(game.courier,{x:480,y:680,direction:facing});
+test('English and Spanish left/right commands are courier-relative for all four headings', async () => {
+  for(const facing of ['north','east','south','west'] as const) for(const sample of [{text:'Walk left',side:'left'},{text:'Walk right',side:'right'},{text:'Ve a la izquierda',side:'left'},{text:'Ve a la derecha',side:'right'}] as const){
+    const direction=relativeDirection(facing,sample.side),game=active();Object.assign(game.courier,{x:730,y:680,direction:facing});
     const decision=await decide(game,sample.text,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{
-      const target=`walk:${sample.direction}`,opposite=`walk:${sample.direction==='west'?'east':'west'}`;
+      const target=`walk:${direction}`,opposite=`walk:${relativeDirection(facing,sample.side==='left'?'right':'left')}`;
       assert.ok(criteria[target]);assert.ok(!criteria[opposite]);return target;
     })});
-    assert.equal(decision?.source,'jev');assert.equal(decision?.selected,`walk:${sample.direction}`);
-    assert.equal(game.courier.direction,sample.direction); // Turn to inspect the departure direction before the bounded leg.
-    const initialX=game.courier.x;tickGame(game,SATURDAY_NOON+1_000,1);
-    assert.ok(sample.direction==='west'?game.courier.x<initialX:game.courier.x>initialX);
-    assert.equal(game.courier.y,680);assert.equal(game.courier.direction,sample.direction);
+    assert.equal(decision?.source,'jev');assert.equal(decision?.selected,`walk:${direction}`);
+    assert.equal(game.courier.direction,direction);
+    const origin={x:game.courier.x,y:game.courier.y};tickGame(game,SATURDAY_NOON+1_000,1);
+    assert.equal(directionBetween(origin,game.courier),direction);assert.ok(distance(origin,game.courier)>0);assert.equal(game.courier.direction,direction);
   }
 });
-test('map-relative left/right fallback and looking preserve the same map frame for all headings', async () => {
+test('courier-relative left/right fallback and looking use the current facing for all headings', async () => {
   for(const facing of ['north','east','south','west'] as const) for(const sample of [{text:'left',id:'walk:west'},{text:'right',id:'walk:east'},{text:'izquierda',id:'walk:west'},{text:'derecha',id:'walk:east'},{text:'Mira a la izquierda',id:'look:west'},{text:'Look right',id:'look:east'}]){
-    const game=active();Object.assign(game.courier,{x:480,y:680,direction:facing});
-    const result=await decide(game,sample.text,undefined,offline);assert.equal(result?.selected,sample.id);
-    if(sample.id.startsWith('look:')){assert.equal(game.courier.x,480);assert.equal(game.courier.y,680);assert.equal(game.courier.direction,sample.id.slice(5));}
+    const side=/left|izquierda/.test(sample.text)?'left':'right',id=`${sample.id.split(':')[0]}:${relativeDirection(facing,side)}`;
+    const game=active();Object.assign(game.courier,{x:730,y:680,direction:facing});
+    const result=await decide(game,sample.text,undefined,offline);assert.equal(result?.selected,id);
+    if(id.startsWith('look:')){assert.equal(game.courier.x,730);assert.equal(game.courier.y,680);assert.equal(game.courier.direction,id.slice(5));}
   }
 });
-test('compass movement and finite facing-based perception remain distinct from map-relative commands', async () => {
+test('compass movement and finite facing-based perception remain distinct from relative commands', async () => {
   const game=active();const before=perception(game).buildings.map(b=>b.id);
   const context=npcContext(game);assert.equal(context.orientation.left,'west');assert.equal(context.orientation.right,'east');
   assert.ok(before.includes('bar-llevant'));
@@ -539,4 +539,23 @@ test('an actual bar reveal supplies delivery subject even when generated speech 
   for(const text of ['Ve al sur.','sur','La peluquería está al sur.','Tal no está en la de sur.']){
     const game=active();await decide(game,'¿Cómo se llama el bar?',undefined,offline);recordSpeech(game,'Estoy enfrente de Bar Llevant.','real-reveal',SATURDAY_NOON);await decide(game,text,undefined,offline);assert.equal(game.facts.homeSide,null);
   }
+});
+test('Spanish and English heading questions describe actual facing without changing view, route or entrance facts', async () => {
+  for(const facing of ['north','east','south','west'] as const)for(const text of ['¿Hacia dónde miras?','¿En qué dirección estás mirando?','Which way are you facing?','Where are you looking?','What direction are you facing?','¿Estás mirando al sur?']){
+    const game=active();Object.assign(game.courier,{x:730,y:680,direction:facing});game.facts.homeSide='north';recordSpeech(game,'¿En qué lado está tu portal?','prior-side-question',SATURDAY_NOON);
+    const before=perception(game),route=game.route.map(p=>({...p}));
+    const result=await decide(game,text,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{assert.deepEqual(Object.keys(criteria),['describe-surroundings']);return 'describe-surroundings';})});
+    assert.equal(result?.source,'jev');assert.equal(result?.action.type,'describe');assert.equal(game.courier.direction,facing);assert.equal(game.courier.moving,false);assert.deepEqual(game.route,route);assert.equal(game.facts.homeSide,'north');
+    assert.deepEqual(perception(game).buildings.map(b=>b.id),before.buildings.map(b=>b.id));assert.deepEqual(perception(game).landmarks.map(l=>l.id),before.landmarks.map(l=>l.id));assert.equal(npcContext(game).orientation.facing,facing);assert.equal(npcContext(game).orientation.navigationFrame,'courier');
+  }
+  const game=active();assert.equal((await decide(game,'Look south.',undefined,offline))?.selected,'look:south');assert.equal(game.courier.direction,'south');
+});
+test('next left follows the matching pending home turn while next right asks instead of walking into a wall', async () => {
+  for(const text of ['Ah, sigue hasta la próxima izquierda.','Continue to the next left turn.']){
+    const game=active();await decide(game,'Mi portal está al sur.',undefined,offline);tickGame(game,SATURDAY_NOON+4_000,4);assert.equal(game.courier.direction,'south');
+    const result=await decide(game,text,undefined,{...offline,now:()=>game.updatedAt,key:'fixture',fetcher:mockJev(criteria=>{assert.deepEqual(Object.keys(criteria),['continue']);return 'continue';})});assert.equal(result?.source,'jev');assert.equal(game.route.length,1);
+    tickGame(game,SATURDAY_NOON+8_000,4);assert.deepEqual({x:game.courier.x,y:game.courier.y},{x:370,y:650});assert.equal(game.courier.direction,'east');assert.equal(publicGame(game).homeEntranceVisible,true);assert.equal(game.awaitingGuidance,true);
+  }
+  const game=active();await decide(game,'Mi portal está al sur.',undefined,offline);tickGame(game,SATURDAY_NOON+4_000,4);const result=await decide(game,'Sigue hasta la próxima derecha.',undefined,{...offline,now:()=>game.updatedAt});assert.equal(result?.selected,'clarify');assert.equal(game.route.length,0);assert.equal(game.courier.direction,'south');assert.equal(game.facts.homeSide,'south');
+  assert.equal((await decide(game,"Don't take the next left turn.",undefined,{...offline,now:()=>game.updatedAt}))?.selected,'clarify');assert.equal(game.route.length,0);
 });

@@ -3,6 +3,7 @@
 import { answerCall, canHandoff, createGame, handoff, moveResident, npcContext, publicGame, recordSpeech, tickGame } from './game.js';
 import { decide, resolveTimeout, type DecisionOptions } from './jev.js';
 import { generateDialogue, type DialogueResult } from './dialogue.js';
+import { decideDemo, scriptedDemoLine } from './demo.js';
 import { configureProviders } from './providers.js';
 import { WorkerVoice } from './worker-voice.js';
 import { recordUsage, usageSummary } from './usage.js';
@@ -23,11 +24,12 @@ interface VoiceTurn { sendPhrase(text: string): void; finish(): Promise<unknown>
 interface VoiceAdapter { prepare(): Promise<boolean>; createTurn(turnId: string, signal?: AbortSignal): Promise<VoiceTurn>; handle(message: Record<string, any>): void; dispose(): void }
 interface Dependencies {
   clock?: () => number; timers?: boolean; voice?: VoiceAdapter;
+  demoMode?: boolean;
   decisionOptions?: DecisionOptions;
   dialogue?: (context: unknown, decision: unknown, signal?: AbortSignal, onPhrase?: (phrase: string) => void) => Promise<DialogueResult>;
 }
 export interface RpcResult { status: number; result?: Record<string, unknown>; error?: string }
-interface Capability { v: 1; id: string; exp: number; issuedAt: number }
+interface Capability { v: 1; id: string; exp: number; issuedAt: number; demoMode?: boolean }
 const CAPABILITY_TTL = 10 * 60_000;
 const MAX_MESSAGE_BYTES = 64 * 1024;
 const securityHeaders = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Permissions-Policy': 'microphone=(self), geolocation=()' };
@@ -36,9 +38,10 @@ const json = (value: unknown, status = 200) => Response.json(value, { status, he
 function base64url(bytes: Uint8Array) { let raw = ''; for (const byte of bytes) raw += String.fromCharCode(byte); return btoa(raw).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
 function unbase64url(value: string) { const raw = atob(value.replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(raw, character => character.charCodeAt(0)); }
 async function hmacKey(secret: string) { return crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']); }
-export async function signCapability(id: string, secret: string, now = Date.now()) {
+export async function signCapability(id: string, secret: string, now = Date.now(), demoMode = false) {
   if (secret.length < 32) throw new Error('session_secret_not_configured');
-  const body = base64url(encoder.encode(JSON.stringify({ v: 1, id, exp: now + CAPABILITY_TTL, issuedAt: now } satisfies Capability)));
+  if (typeof demoMode !== 'boolean') throw new Error('invalid_demo_mode');
+  const body = base64url(encoder.encode(JSON.stringify({ v: 1, id, exp: now + CAPABILITY_TTL, issuedAt: now, ...(demoMode ? { demoMode: true } : {}) } satisfies Capability)));
   const signature = await crypto.subtle.sign('HMAC', await hmacKey(secret), encoder.encode(body));
   return `${body}.${base64url(new Uint8Array(signature))}`;
 }
@@ -50,7 +53,8 @@ export async function verifyCapability(token: string, secret: string, now = Date
     const value = JSON.parse(decoder.decode(unbase64url(body))) as Capability;
     if (value.v !== 1 || typeof value.id !== 'string' || !/^[a-f0-9-]{36}$/i.test(value.id)
       || !Number.isSafeInteger(value.exp) || !Number.isSafeInteger(value.issuedAt)
-      || value.issuedAt > now + 5_000 || value.exp <= now || value.exp - value.issuedAt !== CAPABILITY_TTL) return null;
+      || value.issuedAt > now + 5_000 || value.exp <= now || value.exp - value.issuedAt !== CAPABILITY_TTL
+      || value.demoMode !== undefined && typeof value.demoMode !== 'boolean') return null;
     return value;
   } catch { return null; }
 }
@@ -61,7 +65,7 @@ export function allowedOrigin(request: Request) {
 
 export function createWorkerSession(client: WorkerSocket, sessionId: string, env: WorkerEnv, weather: Weather, dependencies: Dependencies = {}) {
   const clock = dependencies.clock ?? Date.now;
-  const game = createGame(weather, clock()); game.id = sessionId;
+  const game = createGame(weather, clock()); game.id = sessionId; game.demoMode = dependencies.demoMode === true;
   let controller: AbortController | undefined, currentTurn: string | undefined, disposed = false;
   let dialogueLive: boolean | undefined, lastMove = clock(), lastActivity = clock(), timeoutRunning = false, arrival = 0;
   let turns = 0, pendingReply: string | undefined;
@@ -90,12 +94,19 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
     }
     signal.throwIfAborted();
     let words = '';
-    const reply = await (dependencies.dialogue ?? generateDialogue)({ ...npcContext(game, clock()), sessionId, turnId }, decision?.action ?? decision, signal, phrase => {
+    const context = { ...npcContext(game, clock()), sessionId, turnId };
+    const onPhrase = (phrase: string) => {
       if (disposed || signal.aborted || currentTurn !== turnId) return;
       words += (words ? ' ' : '') + phrase;
       recordSpeech(game, words, turnId, clock());
       if (speech) speech.sendPhrase(phrase); else send({ type: 'npc.caption', turnId, text: phrase });
-    });
+    };
+    let reply: DialogueResult;
+    if (game.demoMode) {
+      const text = scriptedDemoLine(context, decision?.action ?? decision);
+      signal.throwIfAborted(); onPhrase(text);
+      reply = { text, model: 'scripted-demo', live: false };
+    } else reply = await (dependencies.dialogue ?? generateDialogue)(context, decision?.action ?? decision, signal, onPhrase);
     if (disposed || signal.aborted || currentTurn !== turnId) throw new DOMException('Turn replaced', 'AbortError');
     dialogueLive = reply.live;
     send({ type: 'dialogue.status', turnId, live: reply.live, model: reply.model });
@@ -139,7 +150,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
     if (action === '/answer') {
       if (!answerCall(game, clock())) return { status: 200, result: { game: getState() } };
       const turnId = String(body.turnId ?? 'opening').slice(0, 80), signal = beginTurn(turnId);
-      void decide(game, '', signal, decisionOptions()).then(decision => {
+      void (game.demoMode ? Promise.resolve(decideDemo(game, '', clock())) : decide(game, '', signal, decisionOptions())).then(decision => {
         if (!decision?.discarded && !signal.aborted && game.phase === 'active') return speak(decision, turnId, signal);
       }).catch(() => {}).finally(() => finishReply(turnId));
       return { status: 200, result: { game: getState() } };
@@ -148,11 +159,12 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
       if (game.phase !== 'active') return { status: 409, error: 'The call window has ended.', result: { game: getState() } };
       const text = String(body.text ?? '').trim().slice(0, 500);
       if (!text) return { status: 400, error: 'Say or type a direction first.' };
+      if (game.demoMode && (game.courier.moving || game.route.length)) return { status: 200, result: { game: getState(), note: 'Wait until this short movement finishes before the next demo command.' } };
       if (turns >= 24) return { status: 429, error: 'Give the courier a moment to listen.' };
       turns++;
       const turnId = String(body.turnId ?? crypto.randomUUID()).slice(0, 80), signal = beginTurn(turnId), started = performance.now();
       try {
-        const decision = await decide(game, text, signal, decisionOptions());
+        const decision = game.demoMode ? decideDemo(game, text, clock()) : await decide(game, text, signal, decisionOptions());
         if (signal.aborted || currentTurn !== turnId || decision?.discarded) return { status: 409, error: 'A newer turn or world change replaced this direction.', result: { game: getState() } };
         tick();
         if (game.phase !== 'active') return { status: 200, result: { game: getState() } };
@@ -215,12 +227,20 @@ export default {
       headers.set('X-Content-Type-Options', 'nosniff'); headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
       return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
     }
-    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-context-route' });
+    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-scripted-demo' });
     if (url.pathname === '/api/weather') return json(await getWeather());
     if (url.pathname === '/api/session' && request.method === 'POST') {
       if (!env.EXPATIA_SESSION_SECRET || env.EXPATIA_SESSION_SECRET.length < 32) return json({ error: 'Game session signing is not configured.' }, 503);
+      let body: Record<string, unknown>;
+      try {
+        const text = await request.text();
+        if (text.length > 1_024) return json({ error: 'Invalid session request.' }, 400);
+        body = text ? JSON.parse(text) : {};
+        if (!body || typeof body !== 'object' || Array.isArray(body) || body.demoMode !== undefined && typeof body.demoMode !== 'boolean') throw new Error('invalid');
+      } catch { return json({ error: 'Invalid session request.' }, 400); }
       const game = createGame(await getWeather());
-      const token = await signCapability(game.id, env.EXPATIA_SESSION_SECRET);
+      game.demoMode = body.demoMode === true;
+      const token = await signCapability(game.id, env.EXPATIA_SESSION_SECRET, Date.now(), game.demoMode);
       return json({ game: publicGame(game), token, realtimeRpc: true, connectionOwned: true });
     }
     if (url.pathname === '/realtime') {
@@ -239,7 +259,7 @@ export default {
         if (!session) {
           if (initializing || packet.type !== 'hello' || packet.sessionId !== capability.id || (packet.token && packet.token !== token)) { server.close(1008, 'Invalid session'); return; }
           initializing = true; clearTimeout(helloTimeout);
-          session = createWorkerSession(server, capability.id, env, weather);
+          session = createWorkerSession(server, capability.id, env, weather, { demoMode: capability.demoMode === true });
           server.send(JSON.stringify({ type: 'ready', sessionId: capability.id, speechModel: 'eleven_v4_turbo', transcriptionModel: 'scribe_v2_realtime', realtimeRpc: true, connectionOwned: true }));
           void session.prepare().then(live => { if (server.readyState === 1) server.send(JSON.stringify({ type: 'voice.prepared', sessionId: capability.id, live })); }).catch(() => {});
           return;
@@ -259,6 +279,12 @@ export default {
       const headers = new Headers(asset.headers);
       if (url.pathname.endsWith('.webp')) headers.set('Content-Type', 'image/webp');
       headers.set('X-Content-Type-Options', 'nosniff');
+      return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
+    }
+    if (asset.headers.get('Content-Type')?.includes('text/html')) {
+      const headers = new Headers(asset.headers);
+      headers.set('Cache-Control', 'no-store');
+      headers.set('CDN-Cache-Control', 'no-store');
       return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
     }
     return asset;

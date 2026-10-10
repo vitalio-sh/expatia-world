@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { actionCandidates, answerCall, createGame, learnPlayerFacts, npcContext, recordHistory, recordSpeech } from '../src/server/game';
-import { courierGrounding, dialogueMessages, generateDialogue, fallbackLine, spanishLandmarkLabel, speechIsGrounded } from '../src/server/dialogue';
+import { cleanSpeech, courierGrounding, dialogueMessages, generateDialogue, fallbackLine, spanishLandmarkLabel, speechIsGrounded } from '../src/server/dialogue';
 import { deliveryCoachFlavor, deliveryOutcomeFlavor, deliveryPhrasebook } from '../src/shared/phrasebook';
 
 test('opening speech guard withholds sign, invented visual details and the hidden entrance', () => {
@@ -401,4 +401,63 @@ test('a bounded avanzo acknowledgement is not repeated after rejecting an extra 
   const result = await generateDialogue(context, action, undefined, phrase => { phrases.push(phrase); }, streamer);
   assert.deepEqual(phrases, [accepted]);
   assert.equal(result.text, accepted);
+});
+
+
+test('Spanish and English facing questions answer every actual cardinal heading without changing context', () => {
+  const questions = ['¿Hacia dónde miras?', '¿En qué dirección estás mirando?', '¿En qué dirección miras?', 'Which way are you facing?', 'What direction are you looking?'];
+  for (const [facing, spanish] of Object.entries({ north: 'norte', south: 'sur', east: 'este', west: 'oeste' })) for (const question of questions) {
+    const context = { ...richerContext, orientation: { facing }, position: { facing: 'north' }, history: [{ role: 'player', text: question }] };
+    const snapshot = JSON.stringify(context);
+    const line = fallbackLine(context, describe);
+    assert.match(line, new RegExp(`^Miro hacia el ${spanish}; veo`));
+    assert.doesNotMatch(line, /camino|avanzo|me dirijo|Bar Ponent/);
+    assert.equal(speechIsGrounded(line, context, describe), true);
+    assert.equal(JSON.stringify(context), snapshot);
+  }
+});
+
+test('heading statements cannot substitute landmark bearing for actual orientation', () => {
+  const context = { ...richerContext, orientation: { facing: 'west' }, history: [{ role: 'player', text: '¿Hacia dónde miras?' }] };
+  assert.equal(speechIsGrounded('Miro hacia el oeste.', context, describe), true);
+  assert.equal(speechIsGrounded('Estoy mirando al norte.', context, describe), false);
+  assert.equal(speechIsGrounded('Estoy orientado hacia el sur.', context, describe), false);
+  assert.equal(speechIsGrounded('Miro hacia el oeste y veo Fruita Fresca al sur.', context, describe), true);
+  assert.equal(speechIsGrounded('Miro hacia el oeste y veo Bar Ponent.', context, describe), false);
+});
+
+test('stationary look and useful stop explicitly state heading while preserving scoped discovery', () => {
+  const context = { ...richerContext, orientation: { facing: 'east', left: 'north', right: 'south' }, navigation: { moving: false, awaitingGuidance: true }, newlyVisibleLandmarks: [{ id: 'junction' }] };
+  const stop = fallbackLine(context, { id: 'visibility-stop', type: 'describe' });
+  assert.match(stop, /^Miro hacia el este; ahora veo el cruce de calles del este/);
+  assert.equal(stop.split('?').length - 1, 1);
+  const look = fallbackLine(context, { id: 'look:east', type: 'look', facing: 'east' });
+  assert.match(look, /^Miro hacia el este;/);
+  const messages = dialogueMessages(context, describe);
+  assert.match(messages[0].content, /relative to the courier current facing/);
+  assert.match(messages[0].content, /FIRST phrase.*actual orientation.facing/);
+});
+
+test('live captions missing or contradicting heading fall back before reaching the phrase callback', async () => {
+  for (const failed of ['Veo la esquina oeste del edificio.', 'Miro hacia el norte.']) {
+    const context = { ...richerContext, orientation: { facing: 'west' }, history: [{ role: 'player', text: '¿En qué dirección estás mirando?' }] };
+    const phrases: string[] = [];
+    const streamer = (async (_messages, onText) => { onText(failed); return { text: failed, model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+    const result = await generateDialogue(context, describe, undefined, phrase => { phrases.push(phrase); }, streamer);
+    assert.equal(result.live, false);
+    assert.deepEqual(phrases, [fallbackLine(context, describe)]);
+    assert.match(result.text, /^Miro hacia el oeste;/);
+  }
+});
+
+test('a heading answer with no current objects does not resurrect remembered landmarks', () => {
+  const context = { ...richerContext, orientation: { facing: 'north' }, observations: [], visibleLandmarks: [], history: [{ role: 'player', text: 'Which way are you facing?' }] };
+  const answer = fallbackLine(context, describe);
+  assert.equal(answer, 'Miro hacia el norte; no veo una referencia clara.');
+  assert.doesNotMatch(answer, /Fruita|Bar Ponent|esquina/);
+});
+
+test('structural English corner leakage is translated while preserving storefront names', () => {
+  assert.equal(cleanSpeech('Veo el noreste corner of Fruita Fresca cerca.'), 'Veo la esquina noreste de Fruita Fresca cerca.');
+  assert.equal(cleanSpeech('Veo the northeast corner of Bar Llevant.'), 'Veo la esquina noreste de Bar Llevant.');
 });

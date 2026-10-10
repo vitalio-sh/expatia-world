@@ -6,7 +6,7 @@ export interface DialogueResult { text: string; model: string; live: boolean; us
 export type PhraseCallback = (phrase: string) => void | Promise<void>;
 
 export function cleanSpeech(text: string): string {
-  return text.replace(/\[[^\]]*\]/g, '').replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+  return text.replace(/\b(?:(?:el|la|the)\s+)?(northwest|northeast|southwest|southeast|north|south|east|west|noroeste|noreste|suroeste|sureste|norte|sur|este|oeste)\s+corner of\b/gi, (_match, side: string) => `la esquina ${directionEs[side.toLowerCase()] || side.toLowerCase()} de`).replace(/\[[^\]]*\]/g, '').replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
 }
 
 const instructions = `You are Nico, a warm, practical parcel courier in Barcelona, speaking natural Castilian Spanish (es-ES) on a short phone call. ALL your spoken and written replies must be Spanish, even when the player or supplied context uses English. The player is an expat trying to receive a parcel. Translate generic landmarks and directions into Spanish, but preserve actual storefront proper names such as Fruita Fresca and Bar Llevant.
@@ -29,12 +29,45 @@ function isOpening(c: Record<string, any>) {
 
 const plain = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const movementTypes = ['move', 'continue', 'drop'];
+function currentFacing(c: Record<string, any>): string | null {
+  const value = c.orientation?.facing ?? c.position?.facing;
+  return ['north', 'south', 'east', 'west'].includes(value) ? value : null;
+}
+function latestPlayer(c: Record<string, any>): string {
+  return [...(c.history || [])].reverse().find((entry: any) => entry.role === 'player')?.text || '';
+}
+function facingQuestion(text: string): boolean {
+  const value = plain(text);
+  return /\b(?:hacia|a) (?:donde|que lado|que direccion) (?:miras|estas mirando|estas orientad[oa])\b|\ben que direccion (?:miras|estas mirando|estas orientad[oa])\b|\bcual es tu orientacion\b|\b(?:which|what) (?:way|direction).{0,25}\b(?:facing|looking)\b|\bwhere.{0,25}\b(?:facing|looking)\b|\b(?:your heading|your orientation)\b/.test(value);
+}
+function facingAssertions(text: string): string[] {
+  const value = plain(text).replace(/¿[^?]*\?/g, '').replace(/\bno (?:estoy )?(?:miro|mirando|orientad[oa])[^.!?;]*/g, '');
+  const translations: Record<string, string> = { norte: 'north', sur: 'south', este: 'east', oeste: 'west' };
+  return [...value.matchAll(/\b(?:miro|estoy mirando|estoy orientad[oa]|estoy de cara|i am facing|i'm facing|facing)\s+(?:(?:hacia|al?|el|la|the|to)\s+)*(norte|sur|este|oeste|north|south|east|west)\b/g)].map(match => translations[match[1]] || match[1]);
+}
+function withHeading(c: Record<string, any>, text: string): string {
+  const facing = currentFacing(c);
+  if (!facing) return text;
+  return `Miro hacia el ${directionEs[facing]}; ${text.charAt(0).toLowerCase()}${text.slice(1)}`;
+}
+function orientationLine(c: Record<string, any>): string {
+  const facing = currentFacing(c), facts = courierGrounding(c);
+  if (!facing) return 'No tengo clara mi orientación. ¿Qué dirección me indicas?';
+  const visible = facts.nearestVisible || facts.visible[0];
+  return visible ? withHeading(c, `Veo ${placeLine(visible)}.`) : `Miro hacia el ${directionEs[facing]}; no veo una referencia clara.`;
+}
+function requiresHeading(c: Record<string, any>, action: Record<string, any> | null): boolean {
+  return !isOpening(c) && !!currentFacing(c) && (facingQuestion(latestPlayer(c)) || ['look', 'describe'].includes(action?.type) || action?.id === 'visibility-stop');
+}
+
 function dialogueConflict(text: string, context: unknown, decision: unknown): boolean {
   const c = (context || {}) as Record<string, any>, d = (decision || {}) as Record<string, any>;
   const action = d.action || (d.type ? d : null), value = plain(text);
   const partialStep = c.navigation?.segmentReachesDestination === false || c.navigation?.awaitingGuidance === true || action?.id === 'visibility-stop';
   if (partialStep && /\b(?:estoy abajo|(?:he|ya he) llegado|estoy (?:en|junto a).{0,15}(?:tu portal|tu entrada|la entrada)|i (?:have arrived|am at your))\b/.test(value)) return true;
   if (partialStep && movementTypes.includes(action?.type) && /\b(?:voy|camino|sigo|me dirijo)\b.{0,45}\b(?:tu portal|tu entrada|la entrada|your entrance|your door)\b/.test(value)) return true;
+  const actualFacing = currentFacing(c);
+  if (actualFacing && facingAssertions(text).some(claim => claim !== actualFacing)) return true;
   const asserted = value.replace(/¿[^?]*\?/g, '');
   const stoppedForGuidance = (action?.id === 'visibility-stop' || c.navigation?.awaitingGuidance === true) && c.navigation?.moving !== true;
   const affirmative = asserted.replace(/\bno\s+(?:me\s+)?(?:avanzo|camino|sigo|dirijo|voy)\b/g, '');
@@ -131,8 +164,8 @@ function stopFocus(c: Record<string, any>): GroundedThing | null {
 
 function visibilityStopLine(c: Record<string, any>): string {
   const visible = stopFocus(c);
-  if (!visible) return 'He parado aquí. ¿Hacia dónde miro?';
-  return `Ahora veo ${placeLine(visible)}. ${visible.id === 'home-door' ? '¿Me acerco?' : '¿Sigo desde aquí?'}`;
+  if (!visible) return withHeading(c, 'He parado aquí. ¿Hacia dónde miro?');
+  return withHeading(c, `Ahora veo ${placeLine(visible)}. ${visible.id === 'home-door' ? '¿Me acerco?' : '¿Sigo desde aquí?'}`);
 }
 
 function surroundingsLine(c: Record<string, any>): string | null {
@@ -164,6 +197,7 @@ export function fallbackLine(context: unknown, decision: unknown): string {
   if (selectedAction?.id === 'arrival' && c?.parcel === 'drop') return 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.';
   if (/return/.test(action)) return 'No encuentro un lugar adecuado para dejarlo, así que me llevo el paquete de vuelta.';
   if (/drop/.test(action)) return c?.parcel === 'drop' ? 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.' : 'Voy a llevar el paquete a un punto de recogida adecuado. Tendrás que ir a buscarlo.';
+  if (c && facingQuestion(latestPlayer(c))) return orientationLine(c);
   if (selectedAction && movementTypes.includes(selectedAction.type)) return movementLine(c || {}, selectedAction);
   if (c && /clarify|ask/.test(action)) {
     const latest = [...(c.history || [])].reverse().find((h: any) => h.role === 'player')?.text || '';
@@ -173,7 +207,7 @@ export function fallbackLine(context: unknown, decision: unknown): string {
       return side ? `Recuerdo que tu portal está al ${directionEs[side] || side}. ¿Qué esquina o punto de referencia uso para llegar?` : 'Entendido, buscas tu portal. ¿En qué lado está la entrada?';
     }
   }
-  if (c && !isOpening(c) && /describe|clarify|ask|look/.test(action)) { const detail = surroundingsLine(c); if (detail) return detail; }
+  if (c && !isOpening(c) && /describe|clarify|ask|look/.test(action)) { const detail = surroundingsLine(c); if (detail) return /describe|look/.test(action) ? withHeading(c, detail) : detail; if (/describe|look/.test(action) && currentFacing(c)) return orientationLine(c); }
   if (/reveal/.test(action)) {
     const name = String(selectedAction?.label || '').match(/visible (.+?) sign/i)?.[1];
     if (name) return `El cartel pone ${name}. ¿Es el que dices?`;
@@ -258,14 +292,17 @@ export function dialogueMessages(context: unknown, decision: unknown) {
   const projection = { ...c, history: (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'event') };
   const followup = '\nWhen move or continue is selected, acknowledge only the selected physical leg. If navigation.segmentReachesDestination is false, you will walk only to the edge of the current visible area and STOP, awaiting a new resident command. Never promise to complete the whole route or arrive at the portal in this leg. Say briefly that you advance only as far as you can see and stop. Do not ask a question while this leg is moving. On visibility-stop, describe one currently visible object and ask ONE short next-step question, such as ¿Por dónde sigo? That stop is not entrance arrival. factsLearned.homeSide remains known: never ask its side again. If clarify is selected with a known side, acknowledge that side and ask only for the missing route reference; do not claim movement.';
   const mode = isOpening(c) ? '' : '\nThis is a follow-up directions turn, even if an interrupted greeting was never emitted. The first-line/greeting restrictions do not apply. Answer the latest resident turn and selected action.';
-  const stopInstruction = action?.id === 'visibility-stop' ? '\nFor this stationary stop, describe stopFocus first: prefer the now-visible home entrance, otherwise a newly visible intersection, crossing or corner. Do not repeat an old wall when a new useful landmark is supplied. Start Ahora veo, then ask one contextual short question: ¿Me acerco? for the visible entrance, otherwise ¿Sigo desde aquí? No movement assertion.' : action?.id === 'farewell' ? '\nThe resident physically received the parcel. Give ONLY a short friendly Spanish goodbye: ¡Aquí tienes! Gracias, ¡que tengas buen día! No new questions or navigation.' : '';
-  return [{ role: 'system', content: instructions + followup + mode + stopInstruction }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), ...(action?.id === 'visibility-stop' ? { stopFocus: stopFocus(c) } : {}), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
+  const stopInstruction = action?.id === 'visibility-stop' ? '\nFor this stationary stop, describe stopFocus first: prefer the now-visible home entrance, otherwise a newly visible intersection, crossing or corner. Do not repeat an old wall when a new useful landmark is supplied. State the actual orientation.facing first, then Ahora veo, and ask one contextual short question: ¿Me acerco? for the visible entrance, otherwise ¿Sigo desde aquí? No movement assertion.' : action?.id === 'farewell' ? '\nThe resident physically received the parcel. Give ONLY a short friendly Spanish goodbye: ¡Aquí tienes! Gracias, ¡que tengas buen día! No new questions or navigation.' : '';
+  const headingInstruction = isOpening(c) ? '' : '\nLeft/izquierda and right/derecha are relative to the courier current facing, using supplied orientation.left/right. Cardinal norte/sur/este/oeste remain absolute. For an orientation question or a stationary look/describe/stop, the FIRST phrase must explicitly state the actual orientation.facing (position.facing fallback): Miro hacia el norte/sur/este/oeste. Then describe only the current scoped view. Never infer heading from a landmark relative direction or claim a remembered object is visible.';
+  return [{ role: 'system', content: instructions + followup + mode + stopInstruction + headingInstruction }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), ...(action?.id === 'visibility-stop' ? { stopFocus: stopFocus(c) } : {}), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
 }
 
 /** Context must be npcContext(game), never the complete world or judge trace. */
 export async function generateDialogue(context: unknown, decision: unknown, signal?: AbortSignal, onPhrase?: PhraseCallback, streamer: typeof openRouterStream = openRouterStream): Promise<DialogueResult> {
   signal?.throwIfAborted();
   const meta = (context || {}) as { sessionId?: string; id?: string; turnId?: string | number };
+  const c = (context || {}) as Record<string, any>, d = (decision || {}) as Record<string, any>, action = d.action || (d.type ? d : null);
+  const needsHeading = requiresHeading(c, action);
   let pending = '', spoken = '', count = 0, guardFailed = false, actionConflict = false;
   const emits: Promise<void>[] = [];
   const emit = (raw: string) => {
@@ -274,6 +311,7 @@ export async function generateDialogue(context: unknown, decision: unknown, sign
     if (!phrase || signal?.aborted || guardFailed) return;
     // A later clarification question must survive a short acknowledgement and detail.
     if (count >= 2 && (isOpening((context || {}) as Record<string, any>) || count >= 3 || !/\?$/.test(phrase))) return;
+    if (count === 0 && needsHeading && !facingAssertions(phrase).includes(currentFacing(c)!)) { guardFailed = true; return; }
     if (!speechIsGrounded(phrase, context, decision)) { actionConflict ||= dialogueConflict(phrase, context, decision); guardFailed = true; return; }
     count++; spoken += `${spoken ? ' ' : ''}${phrase}`;
     emits.push(Promise.resolve(onPhrase?.(phrase)));

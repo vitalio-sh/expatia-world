@@ -1,13 +1,13 @@
 import {
   BUILDINGS, COURIER_SPEED, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, LANDMARKS, ROADS, SIGHT_RANGE, VIEW_ANGLE_DEGREES,
-  ROUND_MS, WORLD_MAP, barcelonaTime, directionBetween, distance, findRoute, isOpen,
+  ROUND_MS, WORLD_MAP, barcelonaTime, directionBetween, relativeDirection, distance, findRoute, isOpen,
   segmentClear, visiblePoint, visibleRouteLeg, walkable, insidePolygon, type ActionCandidate, type Decision, type Game,
   type HistoryEntry, type Observation, type LandmarkObservation, type Point, type Weather,
 } from '../shared/world.js';
 
 export function createGame(weather: Weather = DEFAULT_WEATHER, now = Date.now()): Game {
   const game: Game = {
-    id: globalThis.crypto.randomUUID(), phase: 'incoming', startedAt: null, deadline: null, resolvedAt: null, updatedAt: now,
+    id: globalThis.crypto.randomUUID(), phase: 'incoming', demoMode: false, demoStep: 0, startedAt: null, deadline: null, resolvedAt: null, updatedAt: now,
     courier: { x: 210, y: 250, direction: 'north', moving: false },
     resident: { ...RESIDENT_POSITION, direction: 'south', moving: false },
     route: [], routeTargetId: null, routeDestination: null, routeComplete: false, legEndsAtWaypoint: false, awaitingGuidance: false, previousDestination: null, parcel: 'courier', dropLocationId: null,
@@ -190,6 +190,13 @@ export function navigationText(text: string) {
 export function hasNegatedNavigation(text: string) {
   return /\b(?:not|don't|do not)\s+(?:go|walk|head|come|reach|approach|navigate|move|turn|look|face|wait|stop|mires|vayas|vengas|camines|gires|avances)\b/.test(navigationText(text));
 }
+export function isOrientationQuestion(text: string) {
+  const words = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const heading = /\b(facing|looking|face|look|miras|mirando|orientado|orientada)\b/.test(words);
+  const asksHeading = /\b(where|which\s+(?:way|direction)|what\s+direction|donde|direccion|(?:que|cual)\s+lado)\b/.test(words);
+  const asksCurrent = /\b(?:are\s+you\s+(?:facing|looking)|do\s+you\s+face|estas\s+(?:mirando|orientad[oa]))\b/.test(words) && /[?¿]/.test(words);
+  return heading && (asksHeading || asksCurrent);
+}
 function contextualEntranceStatement(game: Game, text: string) {
   const lastCourier = navigationText(game.history.filter(h => h.role === 'courier').at(-1)?.text ?? '');
   const statement = navigationText(text);
@@ -206,10 +213,25 @@ function contextualEntranceStatement(game: Game, text: string) {
     && !Object.values(game.knowledge).some(b => statement.includes(navigationText(b.name)))
     && !/[?¿]/.test(text);
 }
+function requestedNextTurn(text: string): 'left' | 'right' | null {
+  return navigationText(text).match(/\b(?:next|proxim[ao])\b[^.!?]{0,40}\b(left|right)\b/)?.[1] as 'left' | 'right' | undefined ?? null;
+}
+function pendingRouteTurns(game: Game, side: 'left' | 'right') {
+  if (!game.routeTargetId?.startsWith('home-') || game.routeComplete || !game.routeDestination) return false;
+  const forward = { north: {x:0,y:-1}, east:{x:1,y:0}, south:{x:0,y:1}, west:{x:-1,y:0} }[game.courier.direction];
+  let anchor = {x:game.courier.x,y:game.courier.y};
+  for (const point of findRoute(anchor, game.routeDestination) ?? []) {
+    const dx=point.x-anchor.x,dy=point.y-anchor.y,length=Math.hypot(dx,dy),turn=forward.x*dy-forward.y*dx;
+    if (Math.abs(turn)>length*0.25) return (turn<0?'left':'right')===side;
+    anchor=point;
+  }
+  return false;
+}
 export function learnPlayerFacts(game: Game, text: string) {
+  if (isOrientationQuestion(text)) return;
   // Learn an explicit side claim, rather than treating every direction elsewhere
   // in a multi-step instruction as an entrance coordinate. It remains a belief.
-  const mapping: Record<string, NonNullable<Game['facts']['homeSide']>> = { south: 'south', bottom: 'south', lower: 'south', back: 'south', north: 'north', top: 'north', upper: 'north', east: 'east', right: 'east', west: 'west', left: 'west' };
+  const mapping: Record<string, NonNullable<Game['facts']['homeSide']>> = { south: 'south', bottom: 'south', lower: 'south', back: 'south', north: 'north', top: 'north', upper: 'north', east: 'east', right: relativeDirection(game.courier.direction,'right'), west: 'west', left: relativeDirection(game.courier.direction,'left') };
   const lastCourier = navigationText(game.history.filter(entry => entry.role === 'courier').at(-1)?.text ?? '');
   const normalized = navigationText(text).replace(/\b(?:eh+|um+|uh+|em+|mmm+)\b/g, ' ').replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
   const shortAnswer = normalized.trim().replace(/[.!?¿¡]/g, '');
@@ -249,9 +271,9 @@ export function npcContext(game: Game, now = game.updatedAt) {
   const scopedBuilding = (b: typeof view.buildings[number] | Game['knowledge'][string]) => opening ? { category: b.category, direction: directionBetween(game.courier, b.entrance), distance: Math.round(distance(game.courier, b.entrance)), visible: view.buildings.some(v => v.id === b.id) } : { ...b, open: isOpen(b, now), visible: view.buildings.some(v => v.id === b.id) };
   return {
     premise: 'You are a human parcel courier helping an expat resident in Barcelona. The shops and hours are authored scenario facts. Respond in concise conversational Spanish.',
-    phase: game.phase, remainingMs: remainingMs(game, now), parcel: game.parcel,
+    phase: game.phase, demoMode: game.demoMode, demoStep: game.demoStep, remainingMs: remainingMs(game, now), parcel: game.parcel,
     position: { x: Math.round(game.courier.x), y: Math.round(game.courier.y), facing: game.courier.direction },
-    orientation: { facing: game.courier.direction, viewAngleDegrees: VIEW_ANGLE_DEGREES, sightRange: SIGHT_RANGE, navigationFrame: 'map', left: 'west', right: 'east' },
+    orientation: { facing: game.courier.direction, viewAngleDegrees: VIEW_ANGLE_DEGREES, sightRange: SIGHT_RANGE, navigationFrame: 'courier', left: relativeDirection(game.courier.direction,'left'), right: relativeDirection(game.courier.direction,'right') },
     visibleLandmarks: opening ? [] : view.landmarks.map(({ approach: _approach, crossTo: _crossTo, ...landmark }) => landmark),
     newlyVisibleLandmarks: opening ? [] : view.landmarks.filter(l => game.newlyVisibleLandmarkIds.includes(l.id)).map(({ approach: _approach, crossTo: _crossTo, ...landmark }) => landmark),
     newlyVisibleBuildings: opening ? [] : view.buildings.filter(b => game.newlyVisibleBuildingIds.includes(b.id)).map(scopedBuilding),
@@ -267,7 +289,7 @@ export function npcContext(game: Game, now = game.updatedAt) {
     activeDestination: game.routeTargetId, lastClarification: actualQuestion,
     policy: opening
       ? 'FIRST CLUE: describe your position near a BAR using category only. Do not say a shop name, sign, colour, left-versus-right distinguishing detail or the hidden home entrance. Ask for directions. No names have been exposed to you.'
-      : 'Describe current visible landmarks and their relative distances separately from remembered places. Navigation left/izquierda means map west and right/derecha means map east, regardless of facing. Forward/straight follows the current heading. Solid walls block sight; looking changes facing, walking changes position. Read a visible distinguishing sign when a clarifying question/selected reveal action calls for it. Follow the selected grounded decision; do not invent movement, handoff, unseen shops, or delivery success. A dropped parcel requires collection.',
+      : 'Describe current visible landmarks and their relative distances separately from remembered places. Navigation left/izquierda and right/derecha are relative to the courier current facing, as supplied in orientation. Forward/straight follows the current heading; compass directions remain absolute. A request for the next left/right turn follows the pending route only when its actual upcoming turn matches; do not immediately walk into a wall. Solid walls block sight; looking changes facing, walking changes position. Read a visible distinguishing sign when a clarifying question/selected reveal action calls for it. Follow the selected grounded decision; do not invent movement, handoff, unseen shops, or delivery success. A dropped parcel requires collection.',
     decision: game.decision ? { selected: game.decision.selected, action: { type: game.decision.action.type, label: game.decision.action.label, reason: game.decision.action.reason }, source: game.decision.source } : null,
   };
 }
@@ -291,6 +313,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
     return candidates;
   }
   candidates.push({ id: 'describe-surroundings', type: 'describe', label: 'Describe what is visible now, including nearest and furthest landmarks', reason: 'Answer environment, fruit, what-can-you-see and furthest-visible questions without moving; distinguish visible facts from memory.' });
+  if (isOrientationQuestion(playerText)) return [{ id: 'describe-surroundings', type: 'describe', label: `Describe currently facing ${game.courier.direction}`, reason: `Answer the courier's actual current heading (${game.courier.direction}) and scoped forward view. This is an orientation question, not a request to look, turn, walk or change the remembered entrance.` }];
   for (const facing of ['north', 'east', 'south', 'west'] as const) candidates.push({ id: `look:${facing}`, type: 'look', facing, label: `Look ${facing}`, reason: 'Turn to inspect the finite forward field of view; no walking or hidden map information.' });
   candidates.push({ id: 'look:around', type: 'look', label: 'Look around in all four directions', reason: 'Physically turn and observe each direction, then return to the original heading; no movement.' });
   candidates.push({ id: 'clarify', type: 'clarify', label: 'Ask for a clearer landmark or entrance side', reason: 'Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place.' });
@@ -331,7 +354,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   for (const [direction, vector] of Object.entries({ north: { x: 0, y: -1 }, south: { x: 0, y: 1 }, east: { x: 1, y: 0 }, west: { x: -1, y: 0 } })) {
     let target = { x: game.courier.x, y: game.courier.y };
     for (let step = 20; step <= SIGHT_RANGE + 20; step += 20) { const q = { x: game.courier.x + vector.x * step, y: game.courier.y + vector.y * step }; if (!segmentClear(game.courier, q)) break; target = q; }
-    if (distance(game.courier, target) > 15) candidates.push({ id: `walk:${direction}`, type: 'move', target, route: [target], label: `Walk ${direction} along the clear street`, reason: `Grounded cardinal movement; currently facing ${game.courier.direction}. Map-relative left/izquierda is always west and right/derecha always east, regardless of heading. Forward/straight follows the current heading. Stop before solid buildings.` });
+    if (distance(game.courier, target) > 15) candidates.push({ id: `walk:${direction}`, type: 'move', target, route: [target], label: `Walk ${direction} along the clear street`, reason: `Grounded cardinal movement; currently facing ${game.courier.direction}. Courier-relative left is ${relativeDirection(game.courier.direction,'left')} and right is ${relativeDirection(game.courier.direction,'right')}. Forward follows the current heading. Stop before solid buildings.` });
   }
   if (game.awaitingGuidance && game.routeComplete && game.routeTargetId?.startsWith('walk:')) {
     const next = candidates.find(c => c.id === game.routeTargetId);
@@ -360,9 +383,10 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
     if (destination) return candidates.filter(c => c === destination || ['clarify','wait','continue'].includes(c.id));
   }
   const instruction = navigationText(playerText);
-  const horizontal = /\bleft\b/.test(instruction) && !/\bright\b/.test(instruction) ? 'west' : /\bright\b/.test(instruction) && !/\bleft\b/.test(instruction) ? 'east' : null;
-  // Simple left/right commands use the map frame. Do not offer the opposite
-  // movement merely because the courier is facing a different direction.
+  const nextTurn=requestedNextTurn(playerText);
+  if(nextTurn) return candidates.filter(c=>c.id==='clarify'||c.id==='wait'||(c.id==='continue'&&!/\b(?:not|don't|do not)\b|[?¿]/.test(instruction)&&pendingRouteTurns(game,nextTurn)));
+  const horizontal = /\bleft\b/.test(instruction) && !/\bright\b/.test(instruction) ? relativeDirection(game.courier.direction,'left') : /\bright\b/.test(instruction) && !/\bleft\b/.test(instruction) ? relativeDirection(game.courier.direction,'right') : null;
+  // Simple left/right commands use the courier's actual facing.
   const simpleHorizontal = horizontal && !/\b(north|south|east|west|up|down|top|bottom|entrance|door|home|house|flat|apartment|building|bar|fruit|shop|bakery|supermarket|corner|intersection|crossing|crate|what|which|see|called|name|sign)\b/.test(instruction);
   if (simpleHorizontal) {
     const actionId = /\b(look|face)\b/.test(instruction) ? `look:${horizontal}` : `walk:${horizontal}`;
@@ -374,12 +398,15 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
 /** Explicit legal user commands do not require a fresh entrance interrogation. */
 export function explicitNavigationAction(game: Game, candidates: ActionCandidate[], text: string): ActionCandidate | null {
   const normalized = navigationText(text), byId = (id: string) => candidates.find(c=>c.id===id) ?? null;
+  if (isOrientationQuestion(text)) return byId('describe-surroundings');
+  const nextTurn=requestedNextTurn(text);
+  if(nextTurn) return !/\b(?:not|don't|do not)\b|[?¿]/.test(normalized) && pendingRouteTurns(game,nextTurn) ? byId('continue') : byId('clarify');
   const requestsPlace = Object.values(game.knowledge).some(b=>normalized.includes(navigationText(b.name))) || /\b(bar|fruit|shop|bakery|supermarket|greengrocer|mercat|forn)\b/.test(normalized);
   if (hasNegatedNavigation(text)) return null;
   const asksInformation = /\b(what|which|name|called|see|describe|where)\b/.test(normalized.replace(/\b(?:creo|pienso|think|believe)\s+what\b/g, ''));
   const verb = /\b(go|walk|head|come|reach|approach|navigate|around|move|turn)\b/.test(normalized);
   if (/\b(stop|wait|stay|hold on)\b/.test(normalized)) return byId('wait');
-  const directions = [...normalized.matchAll(/\b(north|south|east|west|left|right|top|bottom|up|down)\b/g)].map(m=>({north:'north',south:'south',east:'east',west:'west',left:'west',right:'east',top:'north',bottom:'south',up:'north',down:'south'}[m[0]]!));
+  const directions = [...normalized.matchAll(/\b(north|south|east|west|left|right|top|bottom|up|down)\b/g)].map(m=>({north:'north',south:'south',east:'east',west:'west',left:relativeDirection(game.courier.direction,'left'),right:relativeDirection(game.courier.direction,'right'),top:'north',bottom:'south',up:'north',down:'south'}[m[0]]!));
   const uniqueDirections = [...new Set(directions)];
   if (/\b(look|face)\b/.test(normalized)) return uniqueDirections.length===1 ? byId(`look:${uniqueDirections[0]}`) : /\baround\b/.test(normalized) ? byId('look:around') : null;
   if (/\bcontinue\b/.test(normalized) && uniqueDirections.length === 0 && !verb && !requestsPlace && !/[?¿]/.test(text) && !/\b(not|cross|look|face)\b/.test(normalized)) {
@@ -412,7 +439,8 @@ export function applyDecision(game: Game, decision: Decision, now = game.updated
   tickGame(game, now, 0);
   if (decision.discarded || decision.sequence !== game.sequence || (decision.trigger === 'timeout' ? game.phase !== 'timeout' : game.phase !== 'active')) return false;
   // Rebuild the legal set after the async provider returns. No arbitrary targets.
-  const legal = actionCandidates(game, decision.trigger, now).find(option => option.id === decision.selected);
+  const lastPlayerQuote = game.history.filter(h => h.role === 'player').at(-1)?.text ?? '';
+  const legal = actionCandidates(game, decision.trigger, now, decision.trigger === 'directions' && !game.demoMode ? lastPlayerQuote : '').find(option => option.id === decision.selected);
   if (!legal) return false;
   decision.action = legal; game.decision = decision; game.decisions.push(decision);
   if (legal.type === 'move' || legal.type === 'drop' || (legal.type === 'continue' && legal.route)) {
@@ -446,7 +474,7 @@ export function applyDecision(game: Game, decision: Decision, now = game.updated
 export function publicGame(game: Game, now = Date.now()) {
   const view = perception(game, now);
   return {
-    id: game.id, phase: game.phase, startedAt: game.startedAt, deadline: game.deadline, resolvedAt: game.resolvedAt,
+    id: game.id, phase: game.phase, demoMode: game.demoMode, demoStep: game.demoStep, startedAt: game.startedAt, deadline: game.deadline, resolvedAt: game.resolvedAt,
     serverNow: now, remainingMs: remainingMs(game, now), courier: { ...game.courier }, resident: { ...game.resident },
     route: game.route.map(p => ({ ...p })), routeTargetId: game.routeTargetId, routeDestination: game.routeDestination ? { ...game.routeDestination } : null, routeComplete: game.routeComplete, awaitingGuidance: game.awaitingGuidance, parcel: game.parcel, facts: { ...game.facts },
     dropLocationId: game.dropLocationId, outcome: game.outcome, history: game.history.map(h => ({ ...h })),

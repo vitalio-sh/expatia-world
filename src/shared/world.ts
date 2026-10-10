@@ -35,7 +35,7 @@ export interface ActionCandidate {
 }
 export interface Decision {
   id: string; sequence: number; trigger: 'opening' | 'directions' | 'timeout';
-  source: 'jev' | 'fallback'; model: string | null; selected: string;
+  source: 'jev' | 'fallback' | 'demo'; model: string | null; selected: string;
   action: ActionCandidate; candidates: ActionCandidate[];
   probabilities: Record<string, number> | null; confidence: number | null;
   evidence: string[]; reason: string; elapsedMs: number; discarded: boolean;
@@ -44,6 +44,7 @@ export interface Decision {
 export interface Outcome { kind: 'received' | 'collection' | 'returned'; title: string; detail: string; feedback: string }
 export interface Game {
   id: string; phase: 'incoming' | 'active' | 'timeout' | 'resolved';
+  demoMode: boolean; demoStep: number;
   startedAt: number | null; deadline: number | null; resolvedAt: number | null; updatedAt: number;
   courier: Actor; resident: Actor; route: Point[]; routeTargetId: string | null;
   previousDestination: Point | null; routeDestination: Point | null; routeComplete: boolean; legEndsAtWaypoint: boolean; awaitingGuidance: boolean; parcel: 'courier' | 'resident' | 'drop' | 'returned';
@@ -120,6 +121,10 @@ export const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y)
 export function directionBetween(a: Point, b: Point): Direction {
   const dx = b.x - a.x, dy = b.y - a.y;
   return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'east' : 'west') : (dy > 0 ? 'south' : 'north');
+}
+export function relativeDirection(facing: Direction, side: 'left' | 'right'): Direction {
+  const headings: Direction[] = ['north', 'east', 'south', 'west'];
+  return headings[(headings.indexOf(facing) + (side === 'left' ? 3 : 1)) % 4];
 }
 export function insidePolygon(p: Point, polygon: readonly Point[]) {
   let inside = false;

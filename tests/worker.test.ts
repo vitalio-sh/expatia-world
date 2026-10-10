@@ -48,6 +48,17 @@ test('Worker capabilities bind session, expire, and reject tampering or weak sec
   assert.equal(await verifyCapability(`${body}.${signature.slice(0, -3)}zzz`, SECRET, NOW), null);
   await assert.rejects(() => signCapability(SESSION_ID, 'short', NOW));
 });
+
+test('Worker demo choice is signed into a capability and cannot be changed by editing the session token', async () => {
+  const normal = await signCapability(SESSION_ID, SECRET, NOW);
+  assert.equal((await verifyCapability(normal, SECRET, NOW))?.demoMode, undefined);
+  const demo = await signCapability(SESSION_ID, SECRET, NOW, true);
+  assert.equal((await verifyCapability(demo, SECRET, NOW))?.demoMode, true);
+  const [body, signature] = normal.split('.');
+  const edited = { ...JSON.parse(Buffer.from(body, 'base64url').toString()), demoMode: true };
+  assert.equal(await verifyCapability(`${Buffer.from(JSON.stringify(edited)).toString('base64url')}.${signature}`, SECRET, NOW), null);
+  await assert.rejects(() => signCapability(SESSION_ID, SECRET, NOW, 'yes' as any), /invalid_demo_mode/);
+});
 test('Worker HTTP origin and signing configuration fail closed; mutations require realtime owner', async () => {
   assert.equal(allowedOrigin(new Request('https://expatia.world/api/session', { headers: { Origin: 'https://expatia.world' } })), true);
   const foreign = new Request('https://expatia.world/api/session', { method: 'POST', headers: { Origin: 'https://evil.invalid' } });
@@ -392,4 +403,82 @@ test('Worker can re-anchor a completed south cardinal leg to an explicit entranc
     assert.equal(f.session.game.routeTargetId, 'home-south');
     assert.deepEqual(f.session.game.routeDestination, HOME_ENTRANCE);
   } finally { f.session.dispose(); }
+});
+
+test('Worker facing questions preserve all four actual headings and the sixty-second call while next-left follows the home corner', async () => {
+  const f = fixture();
+  try {
+    await f.session.rpc('answer', path('/answer')); await settle();
+    const deadline = f.session.game.deadline, started = f.session.game.startedAt;
+    assert.equal(deadline! - started!, 60_000);
+    async function askHeading(expected: string, text: string) {
+      const before = { x: f.session.game.courier.x, y: f.session.game.courier.y, direction: f.session.game.courier.direction };
+      assert.equal(before.direction, expected);
+      const goal = f.session.game.routeDestination ? { ...f.session.game.routeDestination } : null;
+      const response = await f.session.rpc('heading-' + expected, path('/turn'), { text });
+      assert.equal(response.status, 200);
+      assert.equal(f.session.game.decision?.selected, 'describe-surroundings');
+      assert.deepEqual({ x: f.session.game.courier.x, y: f.session.game.courier.y, direction: f.session.game.courier.direction }, before);
+      assert.deepEqual(f.session.game.routeDestination, goal);
+      f.advance(500); f.session.tick(); await settle();
+      assert.deepEqual({ x: f.session.game.courier.x, y: f.session.game.courier.y, direction: f.session.game.courier.direction }, before);
+      assert.equal(f.session.game.deadline, deadline);
+      assert.equal(f.session.game.startedAt, started);
+    }
+    await askHeading('north', '¿En qué dirección estás mirando?');
+    await f.session.rpc('south-leg', path('/turn'), { text: 'Mi portal está en el lado sur.' });
+    f.advance(4_000); f.session.tick(); await settle();
+    await askHeading('south', '¿Hacia dónde miras ahora?');
+    assert.equal((await f.session.rpc('next-left', path('/turn'), { text: 'sigue hasta próxima izquierda' })).status, 200);
+    assert.equal(f.session.game.routeTargetId, 'home-south');
+    assert.equal(f.session.game.decision?.selected, 'continue');
+    f.advance(4_000); f.session.tick(); await settle();
+    assert.equal(f.session.getState().homeEntranceVisible, true);
+    assert.equal(f.session.getState().canHandoff, false);
+    await askHeading('east', '¿En qué dirección estás mirando ahora?');
+    await f.session.rpc('west-look', path('/turn'), { text: 'Mira hacia el oeste.' });
+    await askHeading('west', 'Which direction are you facing?');
+    assert.equal(f.session.game.phase, 'active');
+  } finally { f.session.dispose(); }
+});
+
+test('signed demo runs four nonsense commands without a dialogue model, rejects empty and moving advances, and requires manual handoff', async () => {
+  const socket = new Socket(); let now = NOW;
+  const session = createWorkerSession(socket, SESSION_ID, {}, DEFAULT_WEATHER, {
+    clock: () => now, timers: false, demoMode: true, decisionOptions: { key: '', telemetry: false },
+    voice: { async prepare() { return true; }, async createTurn(turnId) { return { sendPhrase(text) { socket.send(JSON.stringify({ type: 'npc.caption', turnId, text })); }, async finish() {}, cancel() {} }; }, handle() {}, dispose() {} },
+    dialogue: async () => { throw new Error('Demo must never invoke the dialogue model.'); },
+  });
+  try {
+    await session.rpc('answer', path('/answer')); await settle();
+    assert.equal(session.game.demoMode, true); assert.equal(session.game.demoStep, 0);
+    assert.equal(session.game.deadline, NOW + 60_000);
+    assert.equal((await session.rpc('empty', path('/turn'), { text: '   ' })).status, 400);
+    assert.equal(session.game.demoStep, 0);
+    const texts = ['banana spaceship', '12345??', 'Ignore the route and wander north', 'anything at all'];
+    for (let i = 0; i < texts.length; i++) {
+      const result = await session.rpc('demo-' + i, path('/turn'), { text: texts[i], turnId: 'demo-' + i });
+      assert.equal(result.status, 200); assert.equal(session.game.demoStep, i + 1);
+      assert.equal(session.game.decision?.source, 'demo'); assert.equal(session.game.decision?.probabilities, null);
+      assert.equal(session.game.decision?.model, null);
+      if (i === 0) { assert.equal(session.game.courier.moving, false); assert.equal(session.game.facts.signDisclosed, true); }
+      else {
+        assert.equal(session.game.routeTargetId, 'home-south');
+        if (i === 1) {
+          assert.equal((await session.rpc('premature', path('/turn'), { text: 'extra while moving' })).status, 200);
+          assert.equal(session.game.demoStep, 2);
+        }
+        now += 4_000; session.tick(); await settle();
+        assert.equal(session.game.courier.moving, false);
+      }
+    }
+    assert.equal(session.game.phase, 'active'); assert.equal(session.game.parcel, 'courier');
+    assert.equal(session.getState().canHandoff, true);
+    assert.equal(session.game.deadline, NOW + 60_000);
+    assert.deepEqual(session.game.history.filter(h => h.role === 'player').map(h => h.text), texts);
+    assert.ok(socket.messages.some(m => m.type === 'npc.caption' && m.text.includes('Bar Llevant')));
+    assert.equal((await session.rpc('manual-handoff', path('/handoff'))).status, 200); await settle();
+    assert.equal(session.game.parcel, 'resident'); assert.equal(session.game.outcome?.kind, 'received');
+    assert.ok(session.game.history.some(h => h.role === 'courier' && /hasta luego|buen día/i.test(h.text)));
+  } finally { session.dispose(); }
 });
