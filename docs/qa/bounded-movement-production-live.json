@@ -1,0 +1,831 @@
+{
+  "at": "2026-10-10T13:22:25.308Z",
+  "url": "https://expatia.world",
+  "expectedBuild": "2026-10-10-visible-steps",
+  "scope": "Actual signed Worker websocket with real JEV and generated Spanish courier captions. Authoritative wall-clock movement, bounded stop, idle period and explicit continuation. No human microphone or hardware audio claim; no keys, session capabilities or provider token data.",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-visible-steps"
+  },
+  "openingCaptionsBeforeInterrupt": 0,
+  "initial": {
+    "stage": "initial",
+    "atMs": 941,
+    "position": {
+      "x": 210,
+      "y": 250
+    },
+    "moving": false,
+    "phase": "active",
+    "homeSide": null,
+    "route": [],
+    "routeTargetId": null,
+    "routeDestination": null,
+    "routeComplete": false,
+    "awaitingGuidance": false,
+    "canHandoff": false,
+    "arrivalSequence": 0
+  },
+  "firstCommand": {
+    "text": "Mi portal, eh, está en la de sur.",
+    "turnId": "bounded-first",
+    "selected": "home:south",
+    "action": {
+      "id": "home:south",
+      "type": "move",
+      "targetId": "home-south",
+      "target": {
+        "x": 480,
+        "y": 645
+      },
+      "label": "Walk one visible leg toward the reported south entrance",
+      "reason": "Turn to face south, then walk only 305.9 map units inside the current departure-position view and collision-clear first leg. Stop at the visible leg boundary and await a NEW resident command. The semantic destination remains remembered; no queued turns or automatic route continuation.",
+      "facing": "south",
+      "routeComplete": false
+    },
+    "state": {
+      "stage": "bounded-first",
+      "atMs": 2262,
+      "position": {
+        "x": 232.2854609002926,
+        "y": 361.4273045014625
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    "playerHistory": [
+      "Mi portal, eh, está en la de sur."
+    ],
+    "spokenHistory": [
+      {
+        "text": "Avanzo solo hasta donde veo, pasando cerca de Fruita Fresca, y me detengo. Vale, avanzo hasta el límite de lo que veo y paro.",
+        "turnId": "bounded-first"
+      }
+    ]
+  },
+  "firstStop": {
+    "stage": "first-stop",
+    "atMs": 3917,
+    "position": {
+      "x": 270,
+      "y": 550
+    },
+    "moving": false,
+    "phase": "active",
+    "homeSide": "south",
+    "route": [],
+    "routeTargetId": "home-south",
+    "routeDestination": {
+      "x": 480,
+      "y": 645
+    },
+    "routeComplete": false,
+    "awaitingGuidance": true,
+    "canHandoff": false,
+    "arrivalSequence": 1
+  },
+  "firstDisplacementUnits": 305.9411708155671,
+  "firstStopDistanceFromEntrance": 230.4886114323222,
+  "idleMs": 2263,
+  "stopCaptionsBeforeContinue": [
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-1",
+      "text": "Veo la esquina suroeste del edificio al sur. ¿Por dónde sigo?",
+      "atMs": 4807
+    }
+  ],
+  "continueCommand": {
+    "text": "Sí, sigue.",
+    "turnId": "bounded-continue",
+    "selected": "continue",
+    "action": {
+      "id": "continue",
+      "type": "continue",
+      "target": {
+        "x": 480,
+        "y": 645
+      },
+      "targetId": "home-south",
+      "label": "Walk one visible leg toward the reported south entrance",
+      "reason": "Turn to face south, then walk only 141.4 map units inside the current departure-position view and collision-clear first leg. Stop at the visible leg boundary and await a NEW resident command. The semantic destination remains remembered; no queued turns or automatic route continuation.",
+      "facing": "south",
+      "routeComplete": false
+    },
+    "state": {
+      "stage": "bounded-continue",
+      "atMs": 7444,
+      "position": {
+        "x": 346.93038936597145,
+        "y": 626.9303893659716
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 370,
+          "y": 650
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    "playerHistory": [
+      "Mi portal, eh, está en la de sur.",
+      "Sí, sigue."
+    ],
+    "spokenHistory": [
+      {
+        "text": "Avanzo solo hasta donde veo, pasando cerca de Fruita Fresca, y me detengo. Vale, avanzo hasta el límite de lo que veo y paro.",
+        "turnId": "bounded-first"
+      },
+      {
+        "text": "Veo la esquina suroeste del edificio al sur. ¿Por dónde sigo?",
+        "turnId": "arrival-1"
+      },
+      {
+        "text": "Avanzo solo hasta donde veo, pasando cerca de la esquina suroeste del edificio, y me detengo. Veo el cruce de calles más adelante. Vale, avanzo hasta el límite de lo que veo y paro.",
+        "turnId": "bounded-continue"
+      }
+    ]
+  },
+  "secondStop": {
+    "stage": "second-stop",
+    "atMs": 7701,
+    "position": {
+      "x": 370,
+      "y": 650
+    },
+    "moving": false,
+    "phase": "active",
+    "homeSide": "south",
+    "route": [],
+    "routeTargetId": "home-south",
+    "routeDestination": {
+      "x": 480,
+      "y": 645
+    },
+    "routeComplete": false,
+    "awaitingGuidance": true,
+    "canHandoff": false,
+    "arrivalSequence": 2
+  },
+  "secondDisplacementUnits": 141.4213562373095,
+  "finalHistory": [
+    {
+      "role": "event",
+      "text": "The resident answered the incoming delivery call. The 60-second delivery window began."
+    },
+    {
+      "role": "player",
+      "text": "Mi portal, eh, está en la de sur."
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "374662f8-bff7-469f-886f-bc4ca14fcb6d"
+    },
+    {
+      "role": "courier",
+      "text": "Avanzo solo hasta donde veo, pasando cerca de Fruita Fresca, y me detengo. Vale, avanzo hasta el límite de lo que veo y paro.",
+      "turnId": "bounded-first"
+    },
+    {
+      "role": "event",
+      "text": "The courier stopped at the end of the current visible movement leg. The intended destination remains remembered, but has not been reached. The courier awaits a new resident command and does not start another leg automatically."
+    },
+    {
+      "role": "courier",
+      "text": "Veo la esquina suroeste del edificio al sur. ¿Por dónde sigo?",
+      "turnId": "arrival-1"
+    },
+    {
+      "role": "player",
+      "text": "Sí, sigue."
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "f8570060-e4f2-48e8-aded-e08781391648"
+    },
+    {
+      "role": "courier",
+      "text": "Avanzo solo hasta donde veo, pasando cerca de la esquina suroeste del edificio, y me detengo. Veo el cruce de calles más adelante. Vale, avanzo hasta el límite de lo que veo y paro.",
+      "turnId": "bounded-continue"
+    },
+    {
+      "role": "event",
+      "text": "The courier stopped at the end of the current visible movement leg. The intended destination remains remembered, but has not been reached. The courier awaits a new resident command and does not start another leg automatically."
+    }
+  ],
+  "validation": {
+    "healthBuildVerified": true,
+    "southLearnedAndRetained": true,
+    "firstLegMoved": true,
+    "firstLegBoundedByDepartureView": true,
+    "firstStopAwayFromEntrance": true,
+    "firstStopAwaitsGuidance": true,
+    "semanticDestinationRemembered": true,
+    "noAutomaticIdleMovement": true,
+    "stopReportedOnce": true,
+    "explicitContinueAdvances": true,
+    "secondLegBoundedByNewDepartureView": true,
+    "secondStopConsistent": true,
+    "exactCommandsInHistory": true,
+    "truthfulStationaryStopCaption": true
+  },
+  "passed": true,
+  "events": [
+    {
+      "type": "npc.cancel",
+      "turnId": "bounded-opening",
+      "atMs": 985
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "bounded-first",
+      "text": "Avanzo solo hasta donde veo, pasando cerca de Fruita Fresca, y me detengo.",
+      "atMs": 2054
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "bounded-first",
+      "text": "Vale, avanzo hasta el límite de lo que veo y paro.",
+      "atMs": 2261
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "bounded-first",
+      "atMs": 3830
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "bounded-first",
+      "atMs": 3831
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-1",
+      "text": "Veo la esquina suroeste del edificio al sur. ¿Por dónde sigo?",
+      "atMs": 4807
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-1",
+      "atMs": 6218
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "arrival-1",
+      "atMs": 6250
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "bounded-continue",
+      "text": "Avanzo solo hasta donde veo, pasando cerca de la esquina suroeste del edificio, y me detengo.",
+      "atMs": 7295
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "bounded-continue",
+      "text": "Veo el cruce de calles más adelante.",
+      "atMs": 7295
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "bounded-continue",
+      "text": "Vale, avanzo hasta el límite de lo que veo y paro.",
+      "atMs": 7444
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "bounded-continue",
+      "atMs": 7700
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "bounded-continue",
+      "atMs": 7701
+    }
+  ],
+  "samples": [
+    {
+      "stage": "initial",
+      "atMs": 941,
+      "position": {
+        "x": 210,
+        "y": 250
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": null,
+      "route": [],
+      "routeTargetId": null,
+      "routeDestination": null,
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "bounded-first",
+      "atMs": 2262,
+      "position": {
+        "x": 232.2854609002926,
+        "y": 361.4273045014625
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "first-leg",
+      "atMs": 2309,
+      "position": {
+        "x": 235.039323669903,
+        "y": 375.1966183495145
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "first-leg",
+      "atMs": 2600,
+      "position": {
+        "x": 241.03302499199617,
+        "y": 405.1651249599805
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "first-leg",
+      "atMs": 2848,
+      "position": {
+        "x": 247.79040254431746,
+        "y": 438.95201272158704
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "first-leg",
+      "atMs": 3109,
+      "position": {
+        "x": 253.85352897824956,
+        "y": 469.26764489124764
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "first-leg",
+      "atMs": 3352,
+      "position": {
+        "x": 259.6852383727186,
+        "y": 498.426191863593
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "first-leg",
+      "atMs": 3684,
+      "position": {
+        "x": 265.65579799086544,
+        "y": 528.2789899543275
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 0
+    },
+    {
+      "stage": "first-leg",
+      "atMs": 3917,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "first-stop",
+      "atMs": 3917,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "idle",
+      "atMs": 4313,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "idle",
+      "atMs": 4693,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "idle",
+      "atMs": 4996,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "idle",
+      "atMs": 5278,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "idle",
+      "atMs": 5561,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "idle",
+      "atMs": 5841,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "idle",
+      "atMs": 6180,
+      "position": {
+        "x": 270,
+        "y": 550
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "bounded-continue",
+      "atMs": 7444,
+      "position": {
+        "x": 346.93038936597145,
+        "y": 626.9303893659716
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 370,
+          "y": 650
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "second-leg",
+      "atMs": 7472,
+      "position": {
+        "x": 352.35389837767224,
+        "y": 632.3538983776724
+      },
+      "moving": true,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [
+        {
+          "x": 370,
+          "y": 650
+        }
+      ],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": false,
+      "canHandoff": false,
+      "arrivalSequence": 1
+    },
+    {
+      "stage": "second-leg",
+      "atMs": 7701,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 2
+    },
+    {
+      "stage": "second-stop",
+      "atMs": 7701,
+      "position": {
+        "x": 370,
+        "y": 650
+      },
+      "moving": false,
+      "phase": "active",
+      "homeSide": "south",
+      "route": [],
+      "routeTargetId": "home-south",
+      "routeDestination": {
+        "x": 480,
+        "y": 645
+      },
+      "routeComplete": false,
+      "awaitingGuidance": true,
+      "canHandoff": false,
+      "arrivalSequence": 2
+    }
+  ],
+  "totalMs": 7753,
+  "captionReview": {
+    "reviewed": true,
+    "actualStationaryStopCaption": "Veo la esquina suroeste del edificio al sur. ¿Por dónde sigo?",
+    "describesCurrentObject": true,
+    "asksForNextDirection": true,
+    "noPresentWalkingClaim": true
+  }
+}
