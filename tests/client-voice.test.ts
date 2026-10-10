@@ -257,7 +257,7 @@ test('partial diagnostics cannot fill input; valid uncertainty is preserved and 
 });
 
 
-test('courier audio plays at 1.25 speed with continuous chunk scheduling and interruption', async () => {
+test('courier audio plays at normal speed with continuous chunk scheduling and interruption', async () => {
   const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
   const sources: { playbackRate: { value: number }; startAt: number; stopped: boolean; buffer: any; connect(): void; disconnect(): void; start(at: number): void; stop(): void }[] = [];
   class AudioClock {
@@ -273,16 +273,16 @@ test('courier audio plays at 1.25 speed with continuous chunk scheduling and int
   Object.defineProperty(globalThis, 'window', { configurable: true, value: { AudioContext: AudioClock } });
   const player = new PcmPlayer();
   try {
-    await player.unlock(); player.beginTurn('fast-courier');
+    await player.unlock(); player.beginTurn('normal-courier');
     const second = Buffer.alloc(48_000).toString('base64');
-    assert.equal(player.enqueueBase64(second, 'fast-courier'), true);
-    assert.equal(player.enqueueBase64(second, 'fast-courier'), true);
-    assert.equal(COURIER_PLAYBACK_RATE, 1.25);
-    assert.ok(sources.every(source => source.playbackRate.value === 1.25));
-    assert.ok(Math.abs(sources[1].startAt - sources[0].startAt - 0.8) < 0.0001);
-    assert.ok(Math.abs(player.queuedSeconds - 1.625) < 0.0001);
+    assert.equal(player.enqueueBase64(second, 'normal-courier'), true);
+    assert.equal(player.enqueueBase64(second, 'normal-courier'), true);
+    assert.equal(COURIER_PLAYBACK_RATE, 1);
+    assert.ok(sources.every(source => source.playbackRate.value === 1));
+    assert.ok(Math.abs(sources[1].startAt - sources[0].startAt - 1) < 0.0001);
+    assert.ok(Math.abs(player.queuedSeconds - 2.025) < 0.0001);
     player.stop(); assert.ok(sources.every(source => source.stopped));
-    assert.equal(player.enqueueBase64(second, 'fast-courier'), false);
+    assert.equal(player.enqueueBase64(second, 'normal-courier'), false);
     assert.equal(player.queuedSeconds, 0);
   } finally {
     await player.dispose();

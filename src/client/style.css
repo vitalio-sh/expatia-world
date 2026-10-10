@@ -13,7 +13,10 @@
 
 /* Authorship follows the lab's cream paper, red seal and condensed type. */
 @font-face{font-family:'JSL Oswald';font-style:normal;font-weight:200 700;font-display:swap;src:url('/assets/oswald-latin.woff2') format('woff2')}
-.brand-lockup{display:flex;align-items:center;gap:24px;min-width:0}
+.brand-lockup{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.brand-tagline{font-size:11px;line-height:1.4;color:#78806f;letter-spacing:.1px}
+.intro{padding-top:0}.intro h1{margin-top:6px}.intro>p{margin-top:18px;max-width:340px}
+.site-credits{width:100%;padding-bottom:22px}.site-credits>.maker-credit{margin:14px auto 0}
 .maker-credit{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;color:#272922;text-decoration:none;min-height:28px}
 .maker-credit:focus-visible,.hackathon-wordmark:focus-visible{outline:3px solid #c32c25;outline-offset:4px}
 .lab-stamp{display:grid;place-items:center;width:27px;height:27px;border:1.5px solid #c32c25;border-radius:50%;color:#c32c25;font:bold 10px/1 Georgia,serif;transform:rotate(-12deg);flex:none;background:#f1eedf}
@@ -23,16 +26,15 @@
 .credit-arrow{font-size:14px;color:#c32c25}
 .maker-credit:hover .lab-name{text-decoration:underline;text-underline-offset:3px}
 .welcome header{flex-wrap:wrap;gap:12px}
-.welcome .brand-lockup{display:contents}
-.welcome .brand{order:0}.welcome .city-chip{order:1}.welcome .maker-credit{order:2;flex-basis:100%}
+.welcome header{align-items:flex-start}.welcome .city-chip{margin-top:5px}
 .event-credit{display:flex;align-items:center;justify-content:center;gap:22px;border-top:1px solid #c9c9b8;margin-top:18px;padding:18px 0 6px;color:#242720}
 .event-dedication{display:flex;flex-direction:column;gap:5px;font:700 10px/1.4 'Courier New',monospace;letter-spacing:1px}
 .event-dedication small{font-size:9px;font-weight:400;letter-spacing:.2px;color:#535b4e;white-space:nowrap}
 .hackathon-wordmark{display:flex;flex-direction:column;gap:0;color:inherit;text-decoration:none;font:900 20px/.95 Arial,Helvetica,sans-serif;letter-spacing:-.8px;white-space:nowrap}
 .hackathon-wordmark i{font:400 15px Arial,sans-serif;margin-left:5px}
 .hackathon-wordmark:hover{color:#294c36}
-.welcome .event-credit{margin-top:0;padding-bottom:24px;gap:16px}
-@media(max-width:760px){.game-header{display:grid;grid-template-columns:1fr auto;gap:3px 8px;padding-bottom:5px}.game-header .brand-lockup{display:contents}.game-header .brand{grid-column:1;grid-row:1}.game-header .header-tools{grid-column:2;grid-row:1}.game-header .maker-credit{grid-column:1/-1;grid-row:2}.lab-stamp{width:22px;height:22px;font-size:9px}.maker-credit{min-height:25px;gap:5px}.lab-name{font-size:12px}.event-credit{gap:15px;margin-top:12px;padding-top:15px}.hackathon-wordmark{font-size:18px}.event-dedication{font-size:9px}.event-dedication small{font-size:8px}}
+.welcome .event-credit{margin-top:0;padding-bottom:6px;gap:16px}
+@media(max-width:760px){.game-header{display:grid;grid-template-columns:1fr auto;gap:3px 8px;padding-bottom:5px}.game-header .brand-lockup{grid-column:1;grid-row:1}.game-header .brand{grid-column:1;grid-row:1}.game-header .header-tools{grid-column:2;grid-row:1}.lab-stamp{width:22px;height:22px;font-size:9px}.maker-credit{min-height:25px;gap:5px}.lab-name{font-size:12px}.event-credit{gap:15px;margin-top:12px;padding-top:15px}.hackathon-wordmark{font-size:18px}.event-dedication{font-size:9px}.event-dedication small{font-size:8px}}
 @media(max-width:760px){.welcome .city-chip{font-size:8px;letter-spacing:.4px;padding:6px 8px}}
 .speech-language{display:flex;align-items:center;gap:7px;color:#354b38;font-size:11px;line-height:1.3;margin-bottom:8px;text-align:left}.speech-language select{font:600 12px 'DM Sans',sans-serif;color:#294c36;background:#fffdf7;border:1px solid #9da995;border-radius:6px;padding:5px 24px 5px 8px;min-height:32px;max-width:120px}.speech-language select:focus-visible{outline:3px solid #3772c3;outline-offset:2px}.speech-language small{font-size:9px;color:#606e57;margin-left:auto}.incoming .speech-language{margin:0}.speech-language select:disabled{opacity:.6}@media(max-width:760px){.speech-language{font-size:10px;gap:5px;margin-bottom:5px}.speech-language select{font-size:11px;min-height:30px;padding-block:4px}.speech-language small{font-size:8px}.voice-note{color:#596b50}}
 

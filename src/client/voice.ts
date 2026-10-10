@@ -1,6 +1,6 @@
 export type TurnId = string | number;
 export type SpeechLanguage = 'es' | 'en';
-export const COURIER_PLAYBACK_RATE = 1.25;
+export const COURIER_PLAYBACK_RATE = 1;
 export interface VoiceCallbacks {
   onCaption?(text: string, turnId: TurnId): void;
   onTranscript?(text: string, final: boolean, turnId: TurnId): void;
