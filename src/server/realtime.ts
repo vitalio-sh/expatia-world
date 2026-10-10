@@ -9,40 +9,51 @@ export interface RealtimeOptions {
   onInterrupt?(sessionId: string, turnId?: TurnId): void;
   onTranscript?(sessionId: string, turnId: TurnId, text: string): void;
   onPlaybackTiming?(sessionId: string, turnId: TurnId, timings: Record<string, number>): void;
+  connectTranscription?(url: string, options: WebSocket.ClientOptions): WebSocket;
 }
-type SttState = { socket: WebSocket; turnId: TurnId; bytes: number; started: number; endedAt?: number; queue: string[]; ready: boolean; committed: boolean; timeout: ReturnType<typeof setTimeout> };
+type SttState = { socket: WebSocket; turnId: TurnId; language: 'es' | 'en'; bytes: number; started: number; endedAt?: number; queue: string[]; segments: string[]; ready: boolean; committed: boolean; commitSent: boolean; timeout: ReturnType<typeof setTimeout> };
 
 export function attachRealtime(server: Server, options: RealtimeOptions) {
   const wss = new WebSocketServer({ server, path: '/realtime', maxPayload: 64 * 1024 });
   const clients = new Map<string, WebSocket>();
   wss.on('connection', (client, request) => {
-    let sessionId: string | undefined, stt: SttState | undefined, lastStart = 0;
+    let sessionId: string | undefined, stt: SttState | undefined, lastStart = -1000;
     const helloTimer = setTimeout(() => { if (!sessionId) client.close(1008, 'Session required'); }, 5_000);
-    const stopStt = () => { if (stt) { clearTimeout(stt.timeout); stt.socket.terminate(); stt = undefined; } };
+    const stopStt = () => { const old = stt; stt = undefined; if (old) { clearTimeout(old.timeout); old.socket.terminate(); } };
     const failStt = (turnId: TurnId, error: string) => { relay(client, { type: 'stt.error', sessionId, turnId, error }); stopStt(); };
     const flushStt = () => {
       if (!stt?.ready) return;
-      while (stt.queue.length) stt.socket.send(stt.queue.shift()!);
+      while (stt.queue.length) {
+        const frame = stt.queue.shift()!;
+        if (JSON.parse(frame).commit) stt.commitSent = true;
+        stt.socket.send(frame);
+      }
     };
-    const startStt = (turnId: TurnId) => {
+    const startStt = (turnId: TurnId, language: 'es' | 'en') => {
       if (!sessionId || !process.env.ELEVENLABS_API_KEY) { failStt(turnId, 'Microphone transcription is unavailable. Please type instead.'); return; }
       stopStt(); cancelSpeech(sessionId); options.onInterrupt?.(sessionId, turnId);
       const started = performance.now();
-      const socket = new WebSocket('wss://api.elevenlabs.io/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual', { headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }, handshakeTimeout: 8_000, maxPayload: 1024 * 1024 });
-      const state: SttState = { socket, turnId, bytes: 0, started, queue: [], ready: false, committed: false, timeout: setTimeout(() => failStt(turnId, 'Recording timed out. Please try a shorter message.'), 18_000) };
+      const url = `wss://api.elevenlabs.io/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual&language_code=${language}`;
+      const socketOptions = { headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }, handshakeTimeout: 8_000, maxPayload: 1024 * 1024 };
+      const socket = options.connectTranscription ? options.connectTranscription(url, socketOptions) : new WebSocket(url, socketOptions);
+      const state: SttState = { socket, turnId, language, bytes: 0, started, queue: [], segments: [], ready: false, committed: false, commitSent: false, timeout: setTimeout(() => { if (stt === state) failStt(turnId, 'Recording timed out. Please try a shorter message.'); }, 18_000) };
       stt = state;
       socket.on('message', frame => {
         if (stt !== state) return;
         try {
           const message = JSON.parse(frame.toString());
           const type = message.message_type;
-          if (type === 'session_started') { state.ready = true; flushStt(); relay(client, { type: 'stt.ready', sessionId, turnId }); }
-          else if (type === 'partial_transcript') relay(client, { type: 'stt.partial', sessionId, turnId, text: message.text || '' });
+          if (type === 'session_started') { state.ready = true; flushStt(); relay(client, { type: 'stt.ready', sessionId, turnId, language }); }
+          else if (type === 'partial_transcript') relay(client, { type: 'stt.partial', sessionId, turnId, text: [...state.segments, String(message.text || '').trim()].filter(Boolean).join(' ') });
           else if (type === 'committed_transcript' || type === 'committed_transcript_with_timestamps') {
-            const text = String(message.text || '').trim();
+            const segment = String(message.text || '').trim();
+            if (segment) state.segments.push(segment);
+            const text = state.segments.join(' ');
+            // A provider segment is not the end of the player's push-to-talk turn.
+            if (!state.commitSent) { relay(client, { type: 'stt.partial', sessionId, turnId, text }); return; }
             const elapsedMs = performance.now() - (state.endedAt || state.started);
             recordUsage({ provider: 'elevenlabs', operation: 'stt-realtime', model: 'scribe_v2_realtime', sessionId, turnId, audioSeconds: state.bytes / 32000, elapsedMs, live: true, outcome: text ? 'complete' : 'empty', estimatedCostUsd: state.bytes / 32000 / 3600 * .39 });
-            relay(client, { type: 'stt.final', sessionId, turnId, text, elapsedMs, live: true, model: 'scribe_v2_realtime' });
+            relay(client, { type: 'stt.final', sessionId, turnId, text, language, elapsedMs, live: true, model: 'scribe_v2_realtime' });
             if (text) options.onTranscript?.(sessionId!, turnId, text);
             stopStt();
           } else if (String(type || '').includes('error') || message.error || ['auth_error', 'quota_exceeded', 'unaccepted_terms', 'resource_exhausted', 'rate_limited'].includes(type)) {
@@ -50,7 +61,7 @@ export function attachRealtime(server: Server, options: RealtimeOptions) {
           }
         } catch { failStt(turnId, 'Invalid transcription event. Please type instead.'); }
       });
-      socket.on('unexpected-response', (_req, response) => failStt(turnId, `Transcription access failed (${response.statusCode}). Please type instead.`));
+      socket.on('unexpected-response', (_req, response) => { if (stt === state) failStt(turnId, `Transcription access failed (${response.statusCode}). Please type instead.`); });
       socket.on('error', () => { if (stt === state) failStt(turnId, 'Microphone connection failed. Please type instead.'); });
       socket.on('close', () => { if (stt === state) failStt(turnId, 'Microphone connection closed. Please type instead.'); });
     };
@@ -70,10 +81,12 @@ export function attachRealtime(server: Server, options: RealtimeOptions) {
       }
       if (!sessionId || (message.sessionId && message.sessionId !== sessionId)) return;
       if (message.type === 'interrupt') { cancelSpeech(sessionId); stopStt(); options.onInterrupt?.(sessionId, message.turnId); }
+      else if (message.type === 'stt.cancel') stopStt();
       else if (message.type === 'voice.prepare') void prewarmSpeech(sessionId);
       else if (message.type === 'stt.start') {
+        if (message.language !== undefined && message.language !== 'es' && message.language !== 'en') { relay(client, { type: 'stt.error', sessionId, turnId: message.turnId, error: 'Unsupported speech language. Choose Spanish or English.' }); return; }
         if (performance.now() - lastStart < 800 || !['string', 'number'].includes(typeof message.turnId)) return;
-        lastStart = performance.now(); startStt(message.turnId);
+        lastStart = performance.now(); startStt(message.turnId, message.language ?? 'es');
       } else if (message.type === 'stt.audio' && stt && !stt.committed && message.turnId === stt.turnId) {
         const base64 = String(message.audio || '');
         if (base64.length > 48_000 || !/^[A-Za-z0-9+/=]*$/.test(base64)) return;
@@ -83,6 +96,9 @@ export function attachRealtime(server: Server, options: RealtimeOptions) {
         stt.queue.push(JSON.stringify({ message_type: 'input_audio_chunk', audio_base_64: base64, sample_rate: 16000, commit: false })); flushStt();
       } else if (message.type === 'stt.commit' && stt && !stt.committed && message.turnId === stt.turnId) {
         stt.committed = true; stt.endedAt = performance.now();
+        clearTimeout(stt.timeout);
+        const state = stt;
+        state.timeout = setTimeout(() => { if (stt === state) failStt(state.turnId, 'Transcription timed out. Please try again.'); }, 10_000);
         // Scribe starts processing after two seconds of audio. Pad brief turns with silence.
         const silence = Buffer.alloc(Math.max(1600, 64_000 - stt.bytes));
         stt.bytes += silence.length;

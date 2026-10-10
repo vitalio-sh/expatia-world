@@ -128,3 +128,69 @@ test('server cancellation admits spontaneous arrival speech and rejects cancelle
     assert.deepEqual(f.captions, ['I have arrived at your entrance.']);
   } finally { f.cleanup(); }
 });
+
+test('microphone defaults to Spanish and sends an explicit English selection per recording', async () => {
+  const f = await fixture(async () => microphone().stream);
+  try {
+    await f.voice.startRecording('spanish-default');
+    assert.equal(f.socket.sent.find(message => message.type === 'stt.start').language, 'es');
+    f.voice.interrupt();
+    await f.voice.startRecording('english-selected', 'en');
+    assert.equal(f.socket.sent.filter(message => message.type === 'stt.start').at(-1).language, 'en');
+    f.voice.interrupt();
+    await f.voice.startRecording('invalid-language', 'ar' as any);
+    assert.equal(f.socket.sent.filter(message => message.type === 'stt.start').at(-1).language, 'es');
+  } finally { f.cleanup(); }
+});
+
+test('recording limit delivers the final transcript once instead of silently losing the turn', async t => {
+  const f = await fixture(async () => microphone().stream);
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const received: any[] = [];
+  (f.voice as any).callbacks.onAutoTranscript = (result: any) => received.push(result);
+  try {
+    await f.voice.startRecording('automatic-finish');
+    t.mock.timers.tick(14_000);
+    assert.equal(f.voice.isRecording, false);
+    assert.equal(f.socket.sent.filter(message => message.type === 'stt.commit').length, 1);
+    f.socket.emit({ type: 'stt.final', turnId: 'automatic-finish', text: 'Mi portal está al sur.', model: 'scribe_v2_realtime', live: true, elapsedMs: 90 });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(received.map(result => [result.turnId,result.text]), [['automatic-finish','Mi portal está al sur.']]);
+    f.socket.emit({ type: 'stt.final', turnId: 'automatic-finish', text: 'Duplicate', live: true });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(received.length, 1);
+  } finally { f.cleanup(); t.mock.timers.reset(); }
+});
+
+test('a manual finish does not double-submit through the recording limit callback', async t => {
+  const f = await fixture(async () => microphone().stream);
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  let auto = 0;
+  (f.voice as any).callbacks.onAutoTranscript = () => auto++;
+  try {
+    await f.voice.startRecording('manual-finish');
+    const final = f.voice.stopRecording();
+    f.socket.emit({ type: 'stt.final', turnId: 'manual-finish', text: 'Al sur.', live: true });
+    assert.equal((await final).text, 'Al sur.');
+    t.mock.timers.tick(14_000);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(auto, 0);
+    assert.equal(f.socket.sent.filter(message => message.type === 'stt.commit').length, 1);
+  } finally { f.cleanup(); t.mock.timers.reset(); }
+});
+
+test('deadline cancels microphone work without cancelling spontaneous courier speech', async () => {
+  const f=await fixture(async()=>microphone().stream);
+  try {
+    await f.voice.startRecording('mic-at-deadline');
+    const final=f.voice.stopRecording();
+    const priorInterrupts=f.socket.sent.filter(m=>m.type==='interrupt').length;
+    f.voice.cancelRecording();
+    await assert.rejects(final,/Recording cancelled/);
+    assert.equal(f.socket.sent.filter(m=>m.type==='interrupt').length,priorInterrupts);
+    assert.equal(f.socket.sent.at(-1).type,'stt.cancel');
+    f.socket.emit({type:'npc.audio_begin',turnId:'timeout-drop'});
+    f.socket.emit({type:'npc.caption',turnId:'timeout-drop',text:'Dejaré el paquete en el punto de recogida.'});
+    assert.deepEqual(f.captions,['Dejaré el paquete en el punto de recogida.']);
+  }finally{f.cleanup();}
+});

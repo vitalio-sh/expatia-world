@@ -1,0 +1,214 @@
+{
+  "at": "2026-10-10T12:40:39.078Z",
+  "scope": "Actual JEV and dialogue requests with authored opening fixture, frozen clock and explicit physical movement advancement.",
+  "pass": true,
+  "rows": [
+    {
+      "input": "¿Cómo se llama el bar?",
+      "selected": "reveal:bar-llevant",
+      "source": "jev",
+      "intentMatched": true,
+      "speech": "Estoy junto a Bar Llevant. ¿Por dónde sigo?",
+      "speechLive": true,
+      "grounded": true,
+      "side": null,
+      "lastClarification": "Estoy junto a Bar Llevant. ¿Por dónde sigo?"
+    },
+    {
+      "input": "La entrada está al norte.",
+      "selected": "home:north",
+      "source": "jev",
+      "intentMatched": true,
+      "speech": "Voy hacia el norte para buscar tu portal. A ver si le ahorramos al paquete una visita turística.",
+      "speechLive": true,
+      "grounded": true,
+      "side": "north",
+      "lastClarification": null
+    },
+    {
+      "input": "No, ese no es mi portal. Estoy en casa.",
+      "selected": "clarify",
+      "source": "jev",
+      "intentMatched": true,
+      "speech": "Vaya, entonces me he equivocado de lado. ¿En qué lado está tu portal?",
+      "speechLive": true,
+      "grounded": true,
+      "side": null,
+      "lastClarification": "Vaya, entonces me he equivocado de lado. ¿En qué lado está tu portal?"
+    },
+    {
+      "input": "Por el sur.",
+      "selected": "home:south",
+      "source": "jev",
+      "intentMatched": true,
+      "speech": "Voy hacia el sur para rodear el edificio y llegar a tu portal.",
+      "speechLive": true,
+      "grounded": true,
+      "side": "south",
+      "lastClarification": null
+    },
+    {
+      "input": "Sí, continúa adelante.",
+      "selected": "continue",
+      "source": "jev",
+      "intentMatched": true,
+      "speech": "Sigo avanzando hacia el sur para llegar a tu portal.",
+      "speechLive": true,
+      "grounded": true,
+      "side": "south",
+      "lastClarification": null
+    },
+    {
+      "input": "¿Qué ves ahora?",
+      "selected": "describe-surroundings",
+      "source": "jev",
+      "intentMatched": true,
+      "speech": "Veo Fruita Fresca más adelante, con el muro del edificio a la izquierda y el rincón suroeste al fondo.",
+      "speechLive": true,
+      "grounded": true,
+      "side": "south",
+      "lastClarification": null
+    }
+  ],
+  "eligible": true,
+  "received": true,
+  "history": [
+    {
+      "role": "event",
+      "text": "The resident answered the incoming delivery call. The 60-second delivery window began.",
+      "at": 1791636032203
+    },
+    {
+      "role": "courier",
+      "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+      "at": 1791636032203,
+      "turnId": "opening-fixture"
+    },
+    {
+      "role": "player",
+      "text": "¿Cómo se llama el bar?",
+      "at": 1791636032203
+    },
+    {
+      "role": "event",
+      "text": "The courier read the currently visible sign: Bar Llevant.",
+      "at": 1791636032203,
+      "turnId": "6e747ed5-dea9-45e2-838d-90b12106d4b0"
+    },
+    {
+      "role": "courier",
+      "text": "Estoy junto a Bar Llevant. ¿Por dónde sigo?",
+      "at": 1791636032203,
+      "turnId": "6e747ed5-dea9-45e2-838d-90b12106d4b0"
+    },
+    {
+      "role": "player",
+      "text": "La entrada está al norte.",
+      "at": 1791636032203
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Navigate around the apartment walls to the reported north entrance destination. Arrival and handoff have not yet happened.",
+      "at": 1791636032203,
+      "turnId": "5c3a0130-9175-4b27-a5ca-50d8f8088cbf"
+    },
+    {
+      "role": "courier",
+      "text": "Voy hacia el norte para buscar tu portal. A ver si le ahorramos al paquete una visita turística.",
+      "at": 1791636032203,
+      "turnId": "5c3a0130-9175-4b27-a5ca-50d8f8088cbf"
+    },
+    {
+      "role": "event",
+      "text": "The courier arrived at the requested waypoint. The parcel remains with the courier until a physical handoff.",
+      "at": 1791636035203
+    },
+    {
+      "role": "player",
+      "text": "No, ese no es mi portal. Estoy en casa.",
+      "at": 1791636035203
+    },
+    {
+      "role": "event",
+      "text": "The resident retracted the reported entrance; the courier stopped the old entrance route and needs the corrected side.",
+      "at": 1791636035203
+    },
+    {
+      "role": "courier",
+      "text": "Vaya, entonces me he equivocado de lado. ¿En qué lado está tu portal?",
+      "at": 1791636035203,
+      "turnId": "12a4c9c2-c472-4a62-9620-f05061b20bc2"
+    },
+    {
+      "role": "player",
+      "text": "Por el sur.",
+      "at": 1791636035203
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Navigate around the apartment walls to the reported south entrance destination. Arrival and handoff have not yet happened.",
+      "at": 1791636035203,
+      "turnId": "6673963b-9ef0-4411-a53f-ff78d01de0f2"
+    },
+    {
+      "role": "courier",
+      "text": "Voy hacia el sur para rodear el edificio y llegar a tu portal.",
+      "at": 1791636035203,
+      "turnId": "6673963b-9ef0-4411-a53f-ff78d01de0f2"
+    },
+    {
+      "role": "player",
+      "text": "Sí, continúa adelante.",
+      "at": 1791636036203
+    },
+    {
+      "role": "courier",
+      "text": "Sigo avanzando hacia el sur para llegar a tu portal.",
+      "at": 1791636036203,
+      "turnId": "fd4789d0-43ca-446b-ba83-3d3cf77a3064"
+    },
+    {
+      "role": "player",
+      "text": "¿Qué ves ahora?",
+      "at": 1791636037203
+    },
+    {
+      "role": "courier",
+      "text": "Veo Fruita Fresca más adelante, con el muro del edificio a la izquierda y el rincón suroeste al fondo.",
+      "at": 1791636037203,
+      "turnId": "093631bd-773f-46ad-bb9c-0a87c4d02d41"
+    },
+    {
+      "role": "event",
+      "text": "The courier arrived at the entrance described by the resident. The parcel remains with the courier until a physical handoff.",
+      "at": 1791636047203
+    },
+    {
+      "role": "event",
+      "text": "The courier physically reached the apartment entrance and the resident accepted the parcel.",
+      "at": 1791636047203
+    }
+  ],
+  "usage": {
+    "calls": 12,
+    "liveCalls": 12,
+    "inputTokens": 72144,
+    "outputTokens": 2342,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 74486,
+    "unreportedTokenCalls": 0,
+    "returnedCostUsd": 0.0087569,
+    "estimatedCostUsd": 0.001841532,
+    "voiceCharacters": 0,
+    "audioSeconds": 0,
+    "providers": {
+      "jev": 6,
+      "openrouter": 6
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  }
+}

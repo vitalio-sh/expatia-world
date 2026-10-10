@@ -12,7 +12,7 @@ class Socket implements WorkerSocket {
   close() { this.closed = true; this.readyState = 3; }
   addEventListener() {}
 }
-function fixture() {
+function fixture(replyPhrases?: string[]) {
   let now = NOW, dialogueCalls = 0, voiceMessages = 0, disposed = false;
   const socket = new Socket();
   const voice = {
@@ -28,7 +28,9 @@ function fixture() {
     dialogue: async (_context, _decision, signal, onPhrase) => {
       signal?.throwIfAborted(); dialogueCalls++;
       const text = dialogueCalls === 1 ? 'I am beside a bar. Which way should I come?' : `Courier reply number ${dialogueCalls}.`;
-      onPhrase?.(text); return { text, model: 'test-fixture', live: false };
+      const phrases = dialogueCalls > 1 && replyPhrases ? replyPhrases : [text];
+      for (const phrase of phrases) onPhrase?.(phrase);
+      return { text: phrases.join(' '), model: 'test-fixture', live: false };
     },
   });
   return { session, socket, advance: (ms: number) => { now += ms; }, clock: () => now, counts: () => ({ dialogueCalls, voiceMessages, disposed }) };
@@ -142,4 +144,20 @@ test('Worker interrupt rejects a late direction and disconnect tears down provid
   assert.equal((await pending).status, 409);
   assert.ok(!session.game.history.some(entry => entry.turnId === 'pending' && entry.role === 'courier'));
   session.dispose(); assert.equal(disposed, true); assert.equal((await session.rpc('closed', path())).status, 410);
+});
+
+
+test('Worker streaming retains the final clarification and one coherent courier turn', async () => {
+  const phrases = ['Vale.', 'Recuerdo tu edificio.', '¿En qué lado está tu portal?'];
+  const f = fixture(phrases);
+  try {
+    await f.session.rpc('answer', path('/answer')); await settle();
+    await f.session.rpc('question', path('/turn'), {text:'Ven a mi portal.',turnId:'clarification'});
+    const entries=f.session.game.history.filter(h=>h.role==='courier'&&h.turnId==='clarification');
+    assert.equal(entries.length,1);
+    assert.equal(entries[0].text,phrases.join(' '));
+    assert.equal(f.session.game.facts.lastClarification,phrases.join(' '));
+    await f.session.rpc('side', path('/turn'), {text:'Por el sur.',turnId:'south-answer'});
+    assert.equal(f.session.game.routeTargetId,'home-south');
+  } finally {f.session.dispose();}
 });

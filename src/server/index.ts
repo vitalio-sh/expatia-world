@@ -35,8 +35,7 @@ async function speak(s:Session,decision:Partial<Decision>|null,turnId:string,sig
   if(signal.aborted||s.turnId!==turnId)return;
   words+=(words?' ':'')+phrase;
   // Store precisely the emitted phrases immediately, so an interruption preserves what was said.
-  const entry=s.game.history.find(h=>h.role==='courier'&&h.turnId===turnId);
-  if(entry)entry.text=words;else recordSpeech(s.game,phrase,turnId);
+  recordSpeech(s.game,words,turnId);
   if(speech)speech.sendPhrase(phrase);else relay(client,{type:'npc.caption',sessionId:s.game.id,turnId,text:phrase});
  });
  if(signal.aborted||s.turnId!==turnId)throw new DOMException('Cancelled','AbortError');

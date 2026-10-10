@@ -91,8 +91,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
     const reply = await (dependencies.dialogue ?? generateDialogue)({ ...npcContext(game, clock()), sessionId, turnId }, decision?.action ?? decision, signal, phrase => {
       if (disposed || signal.aborted || currentTurn !== turnId) return;
       words += (words ? ' ' : '') + phrase;
-      const existing = game.history.find(entry => entry.role === 'courier' && entry.turnId === turnId);
-      if (existing) existing.text = words; else recordSpeech(game, phrase, turnId, clock());
+      recordSpeech(game, words, turnId, clock());
       if (speech) speech.sendPhrase(phrase); else send({ type: 'npc.caption', turnId, text: phrase });
     });
     if (disposed || signal.aborted || currentTurn !== turnId) throw new DOMException('Turn replaced', 'AbortError');
@@ -184,7 +183,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
     if (disposed || (packet.sessionId && packet.sessionId !== sessionId)) return;
     if (packet.type === 'rpc') { void rpc(String(packet.requestId ?? ''), packet.path, packet.body ?? {}).catch(() => send({ type: 'rpc.result', requestId: packet.requestId, status: 500, error: 'The call connection paused.' })); return; }
     if (packet.type === 'interrupt') { controller?.abort(); game.sequence++; }
-    if (String(packet.type).startsWith('stt.') && game.phase !== 'active') { send({ type: 'stt.error', turnId: packet.turnId, error: 'Answer the call before recording directions.' }); return; }
+    if (String(packet.type).startsWith('stt.') && packet.type !== 'stt.cancel' && game.phase !== 'active') { send({ type: 'stt.error', turnId: packet.turnId, error: 'Answer the call before recording directions.' }); return; }
     voice.handle(packet);
   }
   let ticker: ReturnType<typeof setInterval> | undefined;
@@ -209,7 +208,7 @@ export default {
       headers.set('X-Content-Type-Options', 'nosniff'); headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
       return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
     }
-    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-spanish-demo' });
+    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-spanish-input-context' });
     if (url.pathname === '/api/weather') return json(await getWeather());
     if (url.pathname === '/api/session' && request.method === 'POST') {
       if (!env.EXPATIA_SESSION_SECRET || env.EXPATIA_SESSION_SECRET.length < 32) return json({ error: 'Game session signing is not configured.' }, 503);

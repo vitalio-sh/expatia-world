@@ -309,3 +309,40 @@ test('timeout fallback compares walking route lengths rather than Euclidean targ
   const near={id:'drop:near',type:'drop' as const,label:'near but detour',reason:'fixture',target:{x:220,y:250},route:[{x:210,y:500},{x:220,y:500},{x:220,y:250}]};
   assert.equal(fallbackChoice(game,[near,far],'timeout','').id,'drop:far');
 });
+
+test('streamed speech upserts one accumulated turn and learns the actual final Spanish question', async () => {
+  const game=active();const id='stream-question';
+  recordSpeech(game,'Vale, te escucho.',id,SATURDAY_NOON);
+  assert.equal(game.facts.lastClarification,null);
+  recordSpeech(game,'Vale, te escucho. ¿En qué lado está tu portal?',id,SATURDAY_NOON+10);
+  assert.equal(game.history.filter(h=>h.turnId===id).length,1);
+  assert.equal(game.facts.lastClarification,'Vale, te escucho. ¿En qué lado está tu portal?');
+  assert.equal(npcContext(game).lastClarification,game.facts.lastClarification);
+  const result=await decide(game,'Por el sur.',undefined,offline);
+  assert.equal(game.facts.homeSide,'south');assert.equal(result?.selected,'home:south');
+});
+test('Spanish preposition para does not stop navigation and accented confirmation preserves the active route', async () => {
+  const game=active();
+  const route=await decide(game,'Para llegar a mi portal, la entrada está al sur.',undefined,offline);
+  assert.equal(route?.selected,'home:south');const destination=game.route.at(-1);
+  const confirmation=await decide(game,'Sí, continúa adelante.',undefined,offline);
+  assert.equal(confirmation?.selected,'continue');assert.deepEqual(game.route.at(-1),destination);
+  await decide(game,'Para aquí.',undefined,offline);assert.equal(game.route.length,0);
+});
+test('a wrong-side correction and Spanish short answer recover without resetting heard facts', async () => {
+  const game=active();await decide(game,'La entrada está al norte.',undefined,offline);
+  tickGame(game,SATURDAY_NOON+2_000,2);assert.ok(game.courier.y<=250);
+  recordSpeech(game,'¿En qué lado está tu portal?', 'actual-side',SATURDAY_NOON+2_000);
+  const answer=await decide(game,'No, perdón, por el sur.',undefined,{...offline,now:()=>SATURDAY_NOON+2_000});
+  assert.equal(game.facts.homeSide,'south');assert.equal(answer?.selected,'home:south');
+  tickGame(game,SATURDAY_NOON+12_000,10);assert.ok(canHandoff(game,SATURDAY_NOON+12_000));
+});
+
+test('explicit retraction clears the wrong entrance hypothesis and pauses that route until corrected', async () => {
+  const game=active();await decide(game,'La entrada está al norte.',undefined,offline);
+  await decide(game,'No, ese no es mi portal.',undefined,offline);
+  assert.equal(game.facts.homeSide,null);assert.equal(game.route.length,0);assert.equal(game.courier.moving,false);
+  recordSpeech(game,'¿En qué lado está tu portal?', 'correction-question',SATURDAY_NOON);
+  assert.equal((await decide(game,'Por el sur.',undefined,offline))?.selected,'home:south');
+  assert.equal(game.facts.homeSide,'south');
+});

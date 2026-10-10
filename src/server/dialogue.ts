@@ -11,7 +11,7 @@ export function cleanSpeech(text: string): string {
 
 const instructions = `You are Nico, a warm, practical parcel courier in Barcelona, speaking natural Castilian Spanish (es-ES) on a short phone call. ALL your spoken and written replies must be Spanish, even when the player or supplied context uses English. The player is an expat trying to receive a parcel. Translate generic landmarks and directions into Spanish, but preserve actual storefront proper names such as Fruita Fresca and Bar Llevant.
 Your ONLY knowledge is the supplied courier projection: current observations, remembered facts, exact conversation, weather, remaining time, and the validated JEV decision. Never infer a hidden shop, entrance, address, player position, map geometry, or delivery success. Physical visibility limits apply even when uncertain. A name omitted from the projection is unknown. Do not announce a destination, direction or completed action contrary to JEV.
-Voice the selected action and its useful consequence in one or two short sentences, at most 35 words. Speak in first person, naturally. Answer the latest question and follow corrections. If the decision requests clarification, acknowledge relevant known facts first, then ask one precise question. Never invent colours, door appearances, awnings, businesses, names or signs. An arrival means waiting for an explicit handoff; say the parcel was received ONLY when the supplied parcel state is resident. A drop action starts a route: while parcel=courier use future tense; while parcel=drop state collection is necessary.
+Voice the selected action and its useful consequence in one or two short sentences, at most 35 words. Speak in first person, naturally. Use the actual preceding user/assistant turns to resolve corrections and short follow-ups. Remember an entrance side already supplied; do not reset to a generic landmark question. If the resident corrects the landmark, acknowledge the correction. When the missing information is the entrance side, ask specifically '¿En qué lado está tu portal?' so a short answer can complete the route. Answer the latest question and follow corrections. If the decision requests clarification, acknowledge relevant known facts first, then ask one precise question. Never invent colours, door appearances, awnings, businesses, names or signs. An arrival means waiting for an explicit handoff; say the parcel was received ONLY when the supplied parcel state is resident. A drop action starts a route: while parcel=courier use future tense; while parcel=drop state collection is necessary.
 Use perceptionSummary to answer questions about fruit, corners, streets, crossings, trees and objects. Fruit shop, produce shop, greengrocer and frutería refer to an observed fruit-shop category. A building corner is an esquina where its wall turns; an intersection/junction is a cruce de calles; a pedestrian crossing is a paso de peatones. Keep these distinct. Do not deny supplied facts or claim a building corner is visible merely because a street junction is visible. visible means you can see it NOW; remembered means you observed it EARLIER and cannot necessarily see it now. Say "Recuerdo" for a place out of view, never "Veo". Facing direction limits sight; turning to look is different from walking. After a look action describe the new view, without claiming you walked. For nearest/furthest questions compare relevant visible objects by supplied distance, never invent an unseen object beyond the view. Answer surroundings questions concretely. Distances are authored scenario units, not metres or steps; normally say cerca, más cerca or más lejos. Do not fabricate real street names. A solid wall is an obstruction: go around a supplied building corner, never through a wall. The resident stays inside; directions move the courier.
 For the very first courier line: in at most 24 words use exactly TWO sentences: combine any greeting with having the parcel and being near a bar in the FIRST sentence, then ask directions in the SECOND. Example: "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?" Never use a separate greeting sentence, because only two sentences can be spoken. Do not add people, drinks, sounds, street details, time, weather, colours, sign/name/awning details, or a proposed cardinal direction. On a later clarification reveal only an observed or remembered detail the decision permits. Do not propose movement after a reveal action. Do not say the target entrance is south unless that fact was learned.
 Use familiar parcel-call phrases only when truthful: "Hola, buenas", "Vale", "¿Dónde estás?"; "Estoy abajo" ONLY after the validated physical entrance arrival. "Punto de recogida" still requires collection. No real NIE request. Keep humor gentle and secondary to clear directions.
@@ -100,6 +100,13 @@ export function fallbackLine(context: unknown, decision: unknown): string {
   if (selectedAction?.id === 'arrival' && c?.parcel === 'drop') return 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.';
   if (/return/.test(action)) return 'No encuentro un lugar adecuado para dejarlo, así que me llevo el paquete de vuelta.';
   if (/drop/.test(action)) return c?.parcel === 'drop' ? 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.' : 'Voy a llevar el paquete a un punto de recogida adecuado. Tendrás que ir a buscarlo.';
+  if (c && /clarify|ask/.test(action)) {
+    const latest = [...(c.history || [])].reverse().find((h: any) => h.role === 'player')?.text || '';
+    if (/\b(home|house|apartment|flat|entrance|door|building|casa|portal|entrada|puerta|edificio|piso)\b/i.test(latest)) {
+      const side = c.factsLearned?.homeSide;
+      return side ? `Recuerdo que tu entrada está al ${directionEs[side] || side}. ¿Quieres que siga hacia esa entrada?` : 'Entendido, buscas tu portal. ¿En qué lado está la entrada?';
+    }
+  }
   if (c && !isOpening(c) && /describe|clarify|ask|look/.test(action)) { const detail = surroundingsLine(c); if (detail) return detail; }
   if (/reveal/.test(action)) {
     const name = String(selectedAction?.label || '').match(/visible (.+?) sign/i)?.[1];
@@ -158,7 +165,8 @@ export function speechIsGrounded(text: string, context: unknown, decision: unkno
   if (/\b(it is raining|it's raining|it’s raining|rain is falling)\b/i.test(text) && !c.weather?.isRain) return false;
   if (/\b(llueve|est[aá] lloviendo)\b/i.test(text) && !c.weather?.isRain) return false;
   if (action?.type && !['move', 'continue', 'drop'].includes(action.type) && /\bI(?: am|['’]m) (?:walking|heading|going|moving)\b/i.test(text)) return false;
-  if (action?.type && !['move', 'continue', 'drop'].includes(action.type) && /\b(?:estoy caminando|voy caminando|me dirijo|voy hacia|estoy yendo)\b/i.test(text)) return false;
+  const assertedSpanish = text.replace(/¿[^?]*\?/g, '');
+  if (action?.type && !['move', 'continue', 'drop'].includes(action.type) && /\b(?:estoy caminando|voy caminando|me dirijo|voy hacia|estoy yendo)\b/i.test(assertedSpanish)) return false;
   for (const name of text.match(/\b(?:Bar|Forn|Mercat|Fruita|Perruqueria)\s+[A-ZÀ-Ý][\p{L}À-ÿ-]+(?:\s+(?:de|del|la|el|[A-ZÀ-Ý][\p{L}À-ÿ-]+))*/gu) || []) if (!facts.includes(name.toLowerCase())) return false;
   if (c.parcel !== 'resident' && /\b(delivered|handed (?:it|the parcel) (?:over|to you)|your parcel is (?:safe|safely) with you|you (?:have|received) (?:your|the) parcel|here you go)\b/i.test(text)) return false;
   if (c.parcel !== 'resident' && /\b(?:ya tienes (?:tu|el) paquete|te he entregado|he entregado (?:tu|el) paquete|paquete entregado|has recibido (?:tu|el) paquete|aqu[ií] tienes)\b/i.test(text)) return false;
@@ -178,28 +186,32 @@ export function dialogueMessages(context: unknown, decision: unknown) {
   const c = (context || {}) as Record<string, any>;
   const humor = !isOpening(c) && (c.remainingMs === undefined || c.remainingMs > 20_000) && ['clarify', 'move', 'continue'].includes(action?.type)
     ? deliveryPhrasebook.courier[action?.type === 'clarify' ? 'clarify' : 'move'] : c.parcel === 'resident' ? deliveryPhrasebook.courier.received : null;
-  return [{ role: 'system', content: instructions }, { role: 'user', content: JSON.stringify({ courierContext: context, perceptionSummary: courierGrounding(context), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
+  const conversation = (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'player' || entry.role === 'courier').map((entry: any) => ({ role: entry.role === 'player' ? 'user' : 'assistant', content: String(entry.text) }));
+  const projection = { ...c, history: (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'event') };
+  return [{ role: 'system', content: instructions }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
 }
 
 /** Context must be npcContext(game), never the complete world or judge trace. */
-export async function generateDialogue(context: unknown, decision: unknown, signal?: AbortSignal, onPhrase?: PhraseCallback): Promise<DialogueResult> {
+export async function generateDialogue(context: unknown, decision: unknown, signal?: AbortSignal, onPhrase?: PhraseCallback, streamer: typeof openRouterStream = openRouterStream): Promise<DialogueResult> {
   signal?.throwIfAborted();
   const meta = (context || {}) as { sessionId?: string; id?: string; turnId?: string | number };
   let pending = '', spoken = '', count = 0, guardFailed = false;
   const emits: Promise<void>[] = [];
   const emit = (raw: string) => {
     const phrase = cleanSpeech(raw);
-    if (!phrase || signal?.aborted || count >= 2 || guardFailed) return;
+    if (!phrase || signal?.aborted || guardFailed) return;
+    // A later clarification question must survive a short acknowledgement and detail.
+    if (count >= 2 && (isOpening((context || {}) as Record<string, any>) || count >= 3 || !/\?$/.test(phrase))) return;
     if (!speechIsGrounded(phrase, context, decision)) { guardFailed = true; return; }
     count++; spoken += `${spoken ? ' ' : ''}${phrase}`;
     emits.push(Promise.resolve(onPhrase?.(phrase)));
   };
   try {
-    const result = await openRouterStream(dialogueMessages(context, decision), delta => {
+    const result = await streamer(dialogueMessages(context, decision), delta => {
       pending += delta;
       // Wait for natural phrase boundaries. Decimal punctuation does not terminate a phrase.
-      const match = pending.match(/^([\s\S]*?[.!?](?:["”])?)(?:\s|$)/);
-      if (match && match[1].length > 8) { emit(match[1]); pending = pending.slice(match[1].length).trimStart(); }
+      let match: RegExpMatchArray | null;
+      while ((match = pending.match(/^([\s\S]*?[.!?](?:["”])?)(?:\s|$)/))) { emit(match[1]); pending = pending.slice(match[1].length).trimStart(); }
     }, signal, { sessionId: meta.sessionId || meta.id, turnId: meta.turnId, operation: 'courier-dialogue' });
     signal?.throwIfAborted();
     emit(pending);

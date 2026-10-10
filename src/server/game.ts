@@ -24,10 +24,13 @@ export function recordHistory(game: Game, entry: HistoryEntry) {
   game.history.push({ ...entry, text: entry.text.slice(0, 2_000) });
 }
 export function recordSpeech(game: Game, text: string, turnId?: string, now = Date.now()) {
-  if (!text.trim()) return;
-  recordHistory(game, { role: 'courier', text: text.trim(), at: now, turnId });
+  const accumulated = text.trim().slice(0, 2_000);
+  if (!accumulated) return;
+  const existing = turnId ? game.history.find(h => h.role === 'courier' && h.turnId === turnId) : undefined;
+  if (existing) existing.text = accumulated;
+  else recordHistory(game, { role: 'courier', text: accumulated, at: now, turnId });
   game.facts.firstClueSpoken = true;
-  game.facts.lastClarification = text.includes('?') ? text.trim() : null;
+  game.facts.lastClarification = accumulated.includes('?') ? accumulated : null;
 }
 export function answerCall(game: Game, now = Date.now()) {
   if (game.phase !== 'incoming') return false;
@@ -142,8 +145,9 @@ export function tickGame(game: Game, now = Date.now(), dt = Math.max(0, (now - g
 
 /** Deterministic navigation vocabulary only. Original player quotes stay in history. */
 export function navigationText(text: string) {
-  const vocabulary: Record<string,string> = { no:'not', que:'what', cual:'which', como:'how', llama:'called', ves:'see', ve:'go', ven:'come', mira:'look', cruza:'cross', rodea:'go around', edificio:'building', fruteria:'fruit shop', frutas:'fruit', fruta:'fruit', calle:'street', interseccion:'intersection', cruce:'intersection', esquina:'corner', entrada:'entrance', portal:'door', puerta:'door', casa:'home', apartamento:'apartment', piso:'flat', lado:'side', sur:'south', norte:'north', este:'east', oeste:'west', abajo:'bottom', arriba:'top', derecha:'right', izquierda:'left', recto:'straight', delante:'forward', atras:'back', espera:'wait', para:'stop', detente:'stop', hacia:'toward', esta:'is', en:'on', al:'on the', el:'the', la:'the', mi:'my', tu:'your' };
+  const vocabulary: Record<string,string> = { no:'not', es:'is', ese:'that', esa:'that', si:'yes', vale:'okay', sigue:'continue', siga:'continue', continua:'continue', continue:'continue', adelante:'forward', gira:'turn', gire:'turn', girar:'turn', vuelve:'go back', vuelva:'go back', vete:'go', vaya:'go', camina:'walk', camine:'walk', anda:'walk', andando:'walking', bajar:'go south', baja:'go south', perdon:'sorry', otro:'other', otra:'other', que:'what', cual:'which', como:'how', llama:'called', ves:'see', ve:'go', ven:'come', mira:'look', cruza:'cross', rodea:'go around', edificio:'building', fruteria:'fruit shop', frutas:'fruit', fruta:'fruit', calle:'street', interseccion:'intersection', cruce:'intersection', esquina:'corner', entrada:'entrance', portal:'door', puerta:'door', casa:'home', apartamento:'apartment', piso:'flat', lado:'side', sur:'south', norte:'north', este:'east', oeste:'west', abajo:'bottom', arriba:'top', derecha:'right', izquierda:'left', recto:'straight', delante:'forward', atras:'back', espera:'wait', detente:'stop', hacia:'toward', esta:'is', en:'on', al:'on the', el:'the', la:'the', mi:'my', tu:'your' };
   return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/^\s*para(?:te)?(?:\s+(?:aqui|ahi|un momento|por favor))?[.!?]*\s*$/, 'stop')
     .replace(/\bpaso de peatones\b/g,'pedestrian crossing')
     .replace(/\b[a-z]+\b/g, word=>vocabulary[word]??word)
     .replace(/\bside\s+(north|south|east|west)\b/g,'$1 side')
@@ -156,7 +160,16 @@ export function learnPlayerFacts(game: Game, text: string) {
   const lastCourier = navigationText(game.history.filter(entry => entry.role === 'courier').at(-1)?.text ?? '');
   const normalized = navigationText(text);
   const shortAnswer = normalized.trim().replace(/[.!?¿¡]/g, '');
-  if (mapping[shortAnswer] && /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier.toLowerCase())) game.facts.homeSide = mapping[shortAnswer];
+  const priorSide = game.facts.homeSide;
+  const retractsEntrance = /\b(?:is not|isn't|not is)\s+(?:my|the|your)\s+(?:entrance|door)|\bwrong\s+(?:entrance|door)/.test(normalized);
+  const retractsSide = priorSide && new RegExp(`\\b(?:entrance|door)\\b[^.!?;]{0,30}\\bnot\\b[^.!?;]{0,20}\\b${priorSide}\\b`).test(normalized);
+  if (priorSide && (retractsEntrance || retractsSide)) {
+    game.facts.homeSide = null;
+    if (game.routeTargetId === `home-${priorSide}`) { game.route = []; game.routeTargetId = null; game.courier.moving = false; recordHistory(game, { role: 'event', text: 'The resident retracted the reported entrance; the courier stopped the old entrance route and needs the corrected side.', at: game.updatedAt }); }
+  }
+  const answerSides = shortAnswer.match(/\b(south|north|east|west|left|right|bottom|back|top)\b/g) ?? [];
+  const answeringSide = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier);
+  if (answeringSide && answerSides.length === 1 && shortAnswer.split(/\s+/).length <= 7 && !/\b(go|walk|head|turn|cross|look|around|continue)\b/.test(shortAnswer)) game.facts.homeSide = mapping[answerSides[0]];
   for (const clause of normalized.split(/[.!?;,]/)) {
     if (!/\b(entrance|door|home|house|flat|apartment)\b/.test(clause)) continue;
     const positions: { side: string; index: number }[] = [];
@@ -174,6 +187,9 @@ export function npcContext(game: Game, now = game.updatedAt) {
   const view = perception(game, now), opening = !game.facts.firstClueSpoken;
   const visibleFacts = [...view.landmarks.map(l => ({ id: l.id, label: l.label, type: l.type as string, distance: l.distance, direction: l.direction })), ...view.buildings.map(b => ({ id: b.id, label: b.name, type: b.category, distance: b.distance, direction: b.direction }))].sort((a, b) => a.distance - b.distance);
   const road = ROADS.find(r => insidePolygon(game.courier, r.footprint));
+  const lastCourier = game.history.filter(h => h.role === 'courier').at(-1)?.text ?? '';
+  const actualQuestion = lastCourier.includes('?') ? lastCourier : null;
+  const destination = game.routeTargetId ? { id: game.routeTargetId, label: game.routeTargetId.startsWith('home-') ? `reported ${game.routeTargetId.slice(5)} entrance` : game.knowledge[game.routeTargetId]?.name ?? game.landmarkKnowledge[game.routeTargetId]?.label ?? game.routeTargetId.replace(':',' ') } : null;
   const scopedBuilding = (b: typeof view.buildings[number] | Game['knowledge'][string]) => opening ? { category: b.category, direction: directionBetween(game.courier, b.entrance), distance: Math.round(distance(game.courier, b.entrance)), visible: view.buildings.some(v => v.id === b.id) } : { ...b, open: isOpen(b, now), visible: view.buildings.some(v => v.id === b.id) };
   return {
     premise: 'You are a human parcel courier helping an expat resident in Barcelona. The shops and hours are authored scenario facts. Respond in concise conversational Spanish.',
@@ -187,9 +203,10 @@ export function npcContext(game: Game, now = game.updatedAt) {
     observations: view.buildings.map(scopedBuilding), rememberedPlaces: opening ? [] : Object.values(game.knowledge).map(scopedBuilding),
     residentVisible: view.residentVisible, residentPosition: view.residentVisible ? { x: game.resident.x, y: game.resident.y } : null,
     homeEntranceVisible: view.homeEntranceVisible, homeEntrance: view.homeEntranceVisible ? HOME_ENTRANCE : null,
-    walkableDirections: view.directions, factsLearned: { ...game.facts },
+    walkableDirections: view.directions, factsLearned: { ...game.facts, lastClarification: actualQuestion },
+    navigation: opening ? null : { destination, moving: game.courier.moving, remainingRouteUnits: Math.round(routeDistance(game.courier, game.route)), arrived: !!destination && game.route.length === 0 },
     history: game.history.map(entry => ({ ...entry })), time: barcelonaTime(now), weather: { ...game.weather },
-    activeDestination: game.routeTargetId, lastClarification: game.facts.lastClarification,
+    activeDestination: game.routeTargetId, lastClarification: actualQuestion,
     policy: opening
       ? 'FIRST CLUE: describe your position near a BAR using category only. Do not say a shop name, sign, colour, left-versus-right distinguishing detail or the hidden home entrance. Ask for directions. No names have been exposed to you.'
       : 'Describe current visible landmarks and their relative distances separately from remembered places. Solid walls block sight; looking changes facing, walking changes position. Read a visible distinguishing sign when a clarifying question/selected reveal action calls for it. Follow the selected grounded decision; do not invent movement, handoff, unseen shops, or delivery success. A dropped parcel requires collection.',

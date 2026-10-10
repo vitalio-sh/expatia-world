@@ -1,10 +1,12 @@
 export type TurnId = string | number;
+export type SpeechLanguage = 'es' | 'en';
 export interface VoiceCallbacks {
   onCaption?(text: string, turnId: TurnId): void;
   onTranscript?(text: string, final: boolean, turnId: TurnId): void;
   onStatus?(status: string, detail?: string): void;
   onTiming?(timing: Record<string, number>, turnId: TurnId): void;
   onState?(state: any): void;
+  onAutoTranscript?(transcript: Transcript): void;
 }
 export interface Transcript { text: string; model: string; live: boolean; elapsedMs: number; turnId: TurnId }
 
@@ -140,6 +142,16 @@ export class RealtimeVoice {
     });
   }
   setMuted(muted: boolean) { this.player.setMuted(muted); }
+  /** End microphone work without cancelling the courier's deadline/drop-off turn. */
+  cancelRecording() {
+    const pending = this.isRecording || this.resolveTranscript !== null;
+    this.cancelMicrophone(new Error('Recording cancelled.'));
+    if (pending) {
+      if (this.currentTurn !== null) this.cancelledTurns.add(this.currentTurn);
+      this.currentTurn = null;
+    }
+    this.send({ type: 'stt.cancel' });
+  }
   beginTurn(turnId: TurnId) {
     if (this.currentTurn !== null && this.currentTurn !== turnId) this.cancelledTurns.add(this.currentTurn);
     this.currentTurn = turnId; this.turnBegan = performance.now(); this.firstAudioReceived = 0; this.player.beginTurn(turnId);
@@ -151,7 +163,7 @@ export class RealtimeVoice {
     this.callbacks.onTiming?.({ interruptionStopMs: performance.now() - began }, 'interruption');
   }
   prepare() { this.send({ type: 'voice.prepare' }); }
-  async startRecording(turnId: TurnId): Promise<boolean> {
+  async startRecording(turnId: TurnId, language: SpeechLanguage = 'es'): Promise<boolean> {
     this.interrupt(); this.awaitingMic = true;
     const epoch = ++this.captureEpoch;
     let context: AudioContext;
@@ -176,7 +188,7 @@ export class RealtimeVoice {
     const source = context.createMediaStreamSource(stream), processor = context.createScriptProcessor(2048, 1, 1), mute = context.createGain(); mute.gain.value = 0;
     const recording = { stream, source, processor, mute, turnId, samples: [] as number[], resampleBuffer: [] as number[], resampleOffset: 0, context };
     this.recording = recording;
-    this.send({ type: 'stt.start', turnId });
+    this.send({ type: 'stt.start', turnId, language: language === 'en' ? 'en' : 'es' });
     processor.onaudioprocess = event => {
       if (this.recording !== recording) return;
       const input = event.inputBuffer.getChannelData(0);
@@ -192,7 +204,13 @@ export class RealtimeVoice {
       if (recording.samples.length >= 1600) this.flushCapture(recording);
     };
     source.connect(processor); processor.connect(mute); mute.connect(context.destination);
-    this.recordingTimer = setTimeout(() => { void this.stopRecording().catch(() => {}); }, 14_000);
+    this.recordingTimer = setTimeout(() => {
+      void this.stopRecording().then(result => {
+        if (epoch === this.captureEpoch) this.callbacks.onAutoTranscript?.(result);
+      }).catch(error => {
+        if (epoch === this.captureEpoch) this.callbacks.onStatus?.('transcription-error', error.message);
+      });
+    }, 14_000);
     this.callbacks.onStatus?.('recording');
     return true;
   }

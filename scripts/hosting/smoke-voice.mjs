@@ -68,7 +68,8 @@ try {
   report.ttd = { model: 'eleven_v4_turbo', firstReceivedMs: Math.round(firstAudioAt - answeredAt), audioBytes: pcm.length, audioSeconds: pcm.length / 48_000, serverTimings: ended.timings, live: ended.live, completeTextCharacters: openingText.length };
   const sttReady = waitFor(m => m.type === 'stt.ready' && m.turnId === micTurn);
   const sttFinal = waitFor(m => m.turnId === micTurn && ['stt.final', 'stt.error'].includes(m.type));
-  send({ type: 'stt.start', turnId: micTurn }); await sttReady;
+  send({ type: 'stt.start', turnId: micTurn }); const sttReadyMessage = await sttReady;
+  if (sttReadyMessage.language !== 'es') throw new Error('Spanish is not the default recognition language.');
   const source = new Int16Array(pcm.buffer, pcm.byteOffset, Math.floor(pcm.length / 2));
   const sampled = Buffer.alloc(Math.floor(source.length / 1.5) * 2);
   for (let i = 0; i < sampled.length / 2; i++) {
@@ -80,12 +81,12 @@ try {
   const transcript = await sttFinal;
   if (transcript.type === 'stt.error') throw new Error(transcript.error);
   const normalize = text => text.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
-  report.stt = { model: transcript.model, live: transcript.live, commitToFinalMs: Math.round(performance.now() - sttCommittedAt), serverCommitToFinalMs: transcript.elapsedMs, transcriptMatchesGeneratedWords: normalize(transcript.text) === normalize(openingText), transmittedPcmSeconds: sampled.length / 32_000, silencePaddingIncludedByServer: true };
+  report.stt = { language: transcript.language, defaultLanguageConfirmed: sttReadyMessage.language === 'es', model: transcript.model, live: transcript.live, commitToFinalMs: Math.round(performance.now() - sttCommittedAt), serverCommitToFinalMs: transcript.elapsedMs, transcriptMatchesGeneratedWords: normalize(transcript.text) === normalize(openingText), transmittedPcmSeconds: sampled.length / 32_000, silencePaddingIncludedByServer: true };
   const state = await rpc(`/api/session/${sessionId}`);
   report.jev = { status: state.game.inspector?.status || state.game.inspector?.source, selected: state.game.inspector?.selected, probabilities: state.game.inspector?.probabilities };
   report.usage = state.game.usage;
   await rpc(`/api/session/${sessionId}/end`);
-  report.passed = report.stt.live && report.stt.transcriptMatchesGeneratedWords && report.ttd.live;
+  report.passed = report.stt.language === 'es' && report.stt.defaultLanguageConfirmed && report.stt.live && report.stt.transcriptMatchesGeneratedWords && report.ttd.live;
 } catch (error) { report.passed = false; report.error = error.message; process.exitCode = 1; }
 finally {
   socket.close();

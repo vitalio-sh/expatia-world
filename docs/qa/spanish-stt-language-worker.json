@@ -1,0 +1,66 @@
+{
+  "at": "2026-10-10T12:38:13.231Z",
+  "url": "http://localhost:3318",
+  "scope": "Real native Worker TTD and Scribe relay, synthetic speech from its opening PCM. Timings are measured by this Node client; no browser/hardware audibility or human microphone claim.",
+  "connection": {
+    "realtimeRpc": true,
+    "speechPrepared": true,
+    "elapsedMs": 732
+  },
+  "ttd": {
+    "model": "eleven_v4_turbo",
+    "firstReceivedMs": 1264,
+    "audioBytes": 234240,
+    "audioSeconds": 4.88,
+    "serverTimings": {
+      "connectMs": 1,
+      "firstAudioMs": 110,
+      "elapsedMs": 2458
+    },
+    "live": true,
+    "completeTextCharacters": 71
+  },
+  "stt": {
+    "language": "es",
+    "defaultLanguageConfirmed": true,
+    "model": "scribe_v2_realtime",
+    "live": true,
+    "commitToFinalMs": 617,
+    "serverCommitToFinalMs": 610,
+    "transcriptMatchesGeneratedWords": true,
+    "transmittedPcmSeconds": 4.88,
+    "silencePaddingIncludedByServer": true
+  },
+  "jev": {
+    "status": "jev",
+    "selected": "describe",
+    "probabilities": {
+      "describe": 1
+    }
+  },
+  "usage": {
+    "calls": 4,
+    "liveCalls": 4,
+    "inputTokens": 3552,
+    "outputTokens": 43,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 3595,
+    "unreportedTokenCalls": 0,
+    "returnedCostUsd": 0.0005323,
+    "estimatedCostUsd": 0.003415395333333334,
+    "voiceCharacters": 70,
+    "audioSeconds": 9.809999999999999,
+    "providers": {
+      "jev": 1,
+      "openrouter": 1,
+      "elevenlabs": 2
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  },
+  "passed": true,
+  "totalMs": 4517
+}

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { actionCandidates, answerCall, createGame, npcContext, recordSpeech } from '../src/server/game';
-import { courierGrounding, dialogueMessages, fallbackLine, spanishLandmarkLabel, speechIsGrounded } from '../src/server/dialogue';
+import { courierGrounding, dialogueMessages, generateDialogue, fallbackLine, spanishLandmarkLabel, speechIsGrounded } from '../src/server/dialogue';
 import { deliveryCoachFlavor, deliveryOutcomeFlavor, deliveryPhrasebook } from '../src/shared/phrasebook';
 
 test('opening speech guard withholds sign, invented visual details and the hidden entrance', () => {
@@ -39,12 +39,12 @@ test('dialogue receives the selected action projection without route candidates 
     selected: 'reveal', trigger: 'directions', action: { type: 'reveal', label: 'Read the visible Bar Llevant sign', reason: 'Sign is visible', target: { x: 123, y: 456 } },
     candidates: [{ label: 'Unselected route' }], probabilities: { reveal: .9, route: .1 },
   });
-  const projection = JSON.parse(messages[1].content).selectedDecision;
+  const projection = JSON.parse(messages.at(-1)!.content).selectedDecision;
   assert.equal(projection.action.type, 'reveal');
   assert.equal(projection.action.target, undefined);
   assert.equal(projection.candidates, undefined);
   assert.equal(projection.probabilities, undefined);
-  assert.equal(dialogueMessages({}, { type: 'wait', label: 'Wait for handoff', reason: 'Arrived' })[1].content.includes('Wait for handoff'), true);
+  assert.equal(dialogueMessages({}, { type: 'wait', label: 'Wait for handoff', reason: 'Arrived' }).at(-1)!.content.includes('Wait for handoff'), true);
 });
 
 const richerContext = {
@@ -159,11 +159,11 @@ test('first clue still hides all rich landmarks and urgent dialogue skips option
   assert.deepEqual(summary.visible, []); assert.deepEqual(summary.remembered, []);
   assert.equal(summary.currentRoad, null);
   assert.equal(speechIsGrounded('I am near a bar and a fruit shop.', opening, describe), false);
-  const stable = JSON.parse(dialogueMessages(richerContext, { type: 'move', label: 'Follow the clear street' })[1].content);
+  const stable = JSON.parse(dialogueMessages(richerContext, { type: 'move', label: 'Follow the clear street' }).at(-1)!.content);
   assert.equal(stable.optionalHumor.cue, deliveryPhrasebook.courier.move);
-  const urgent = JSON.parse(dialogueMessages({ ...richerContext, remainingMs: 10_000 }, { type: 'move' })[1].content);
+  const urgent = JSON.parse(dialogueMessages({ ...richerContext, remainingMs: 10_000 }, { type: 'move' }).at(-1)!.content);
   assert.equal(urgent.optionalHumor, null);
-  assert.equal(JSON.parse(dialogueMessages(opening, describe)[1].content).optionalHumor, null);
+  assert.equal(JSON.parse(dialogueMessages(opening, describe).at(-1)!.content).optionalHumor, null);
 });
 
 test('curated bilingual delivery flavor keeps collection distinct from successful receipt', () => {
@@ -172,4 +172,24 @@ test('curated bilingual delivery flavor keeps collection distinct from successfu
   assert.equal(deliveryOutcomeFlavor('collection').spanish, 'Punto de recogida');
   assert.match(deliveryOutcomeFlavor('collection').note, /still need to collect/);
   assert.notEqual(deliveryOutcomeFlavor('returned').note, deliveryOutcomeFlavor('received').note);
+});
+
+test('dialogue gets real Spanish conversation roles and targets a missing entrance side', () => {
+  const context={...richerContext,history:[{role:'player',text:'No, perdón, voy a mi casa.'},{role:'courier',text:'¿En qué lado está tu portal?'},{role:'player',text:'Por el sur.'}],factsLearned:{firstClueSpoken:true,homeSide:'south'}};
+  const messages=dialogueMessages(context,{type:'move',label:'Go to reported south entrance'});
+  assert.deepEqual(messages.slice(1,-1).map(m=>({role:m.role,content:m.content})),[{role:'user',content:'No, perdón, voy a mi casa.'},{role:'assistant',content:'¿En qué lado está tu portal?'},{role:'user',content:'Por el sur.'}]);
+  assert.match(fallbackLine({...context,history:[{role:'player',text:'Ven a mi casa.'}],factsLearned:{firstClueSpoken:true}}, {type:'clarify'}), /¿En qué lado está la entrada/);
+  assert.equal(speechIsGrounded('¿Voy hacia tu entrada?',context,{type:'clarify'}),true);
+  assert.equal(speechIsGrounded('Voy hacia tu entrada.',context,{type:'clarify'}),false);
+});
+test('streaming emits short acknowledgements promptly and retains the essential clarification question', async () => {
+  const phrases:string[]=[];
+  const streamer=(async(_messages,onText)=>{
+    onText('Vale. ');assert.deepEqual(phrases,['Vale.']);
+    onText('Recuerdo Bar Ponent. ¿En qué lado está tu portal?');
+    return {text:'Vale. Recuerdo Bar Ponent. ¿En qué lado está tu portal?',model:'fixture',live:true,timings:{firstTextMs:0,elapsedMs:1},usage:undefined};
+  }) as Parameters<typeof generateDialogue>[4];
+  const result=await generateDialogue(richerContext,{type:'clarify'},undefined,p=>{phrases.push(p);},streamer);
+  assert.equal(phrases.length,3);assert.equal(phrases.at(-1),'¿En qué lado está tu portal?');
+  assert.ok(result.text.includes('¿En qué lado está tu portal?'));assert.equal(result.live,true);
 });

@@ -13,7 +13,7 @@ export interface WorkerVoiceCallbacks {
   onTranscript?(turnId: TurnId, text: string): void;
 }
 type Prepared = { socket: NativeSocket; at: number; heartbeat: ReturnType<typeof setInterval>; expiry: ReturnType<typeof setTimeout> };
-type Stt = { socket: NativeSocket | null; turnId: TurnId; bytes: number; started: number; endedAt?: number; committed: boolean; ready: boolean; queue: string[]; timeout: ReturnType<typeof setTimeout> };
+type Stt = { socket: NativeSocket | null; turnId: TurnId; language: 'es' | 'en'; bytes: number; started: number; endedAt?: number; committed: boolean; commitSent: boolean; ready: boolean; queue: string[]; segments: string[]; timeout: ReturnType<typeof setTimeout> };
 
 function pcmSilenceBase64(bytes: number) { return btoa('\0'.repeat(bytes)); }
 function base64Bytes(text: string) { return Math.floor(text.length * .75) - (text.endsWith('==') ? 2 : text.endsWith('=') ? 1 : 0); }
@@ -120,8 +120,13 @@ export class WorkerVoice {
   handle(message: Record<string, any>) {
     if (this.disposed || (message.sessionId && message.sessionId !== this.sessionId)) return;
     if (message.type === 'interrupt') { this.active?.cancel(); this.stopStt(); this.callbacks.onInterrupt?.(message.turnId); }
+    else if (message.type === 'stt.cancel') this.stopStt();
     else if (message.type === 'voice.prepare') void this.prepare();
-    else if (message.type === 'stt.start' && ['string', 'number'].includes(typeof message.turnId) && performance.now() - this.lastStart >= 800) { this.lastStart = performance.now(); void this.startStt(message.turnId); }
+    else if (message.type === 'stt.start') {
+      if (message.language !== undefined && message.language !== 'es' && message.language !== 'en') { this.send({ type: 'stt.error', turnId: message.turnId, error: 'Unsupported speech language. Choose Spanish or English.' }); return; }
+      if (!['string', 'number'].includes(typeof message.turnId) || performance.now() - this.lastStart < 800) return;
+      this.lastStart = performance.now(); void this.startStt(message.turnId, message.language ?? 'es');
+    }
     else if (message.type === 'stt.audio' && this.stt && message.turnId === this.stt.turnId && !this.stt.committed) {
       const base64 = String(message.audio || ''); if (base64.length > 48_000 || !/^[A-Za-z0-9+/=]*$/.test(base64)) return;
       const count = base64Bytes(base64);
@@ -129,6 +134,9 @@ export class WorkerVoice {
       this.stt.bytes += count; this.stt.queue.push(JSON.stringify({ message_type: 'input_audio_chunk', audio_base_64: base64, sample_rate: 16000, commit: false })); this.flushStt();
     } else if (message.type === 'stt.commit' && this.stt && message.turnId === this.stt.turnId && !this.stt.committed) {
       this.stt.committed = true; this.stt.endedAt = performance.now();
+      clearTimeout(this.stt.timeout);
+      const state = this.stt;
+      state.timeout = setTimeout(() => { if (this.stt === state) this.failStt('Transcription timed out. Please try again.'); }, 10_000);
       const padding = Math.max(1600, 64_000 - this.stt.bytes); this.stt.bytes += padding;
       this.stt.queue.push(JSON.stringify({ message_type: 'input_audio_chunk', audio_base_64: pcmSilenceBase64(padding), sample_rate: 16000, commit: true })); this.flushStt();
     } else if (message.type === 'playback.timing' && message.turnId !== undefined && message.timings) {
@@ -137,24 +145,28 @@ export class WorkerVoice {
       this.callbacks.onPlaybackTiming?.(message.turnId, timings);
     }
   }
-  private async startStt(turnId: TurnId) {
+  private async startStt(turnId: TurnId, language: 'es' | 'en') {
     this.active?.cancel(); this.stopStt(); this.callbacks.onInterrupt?.(turnId);
-    const state: Stt = { socket: null, turnId, bytes: 0, started: performance.now(), committed: false, ready: false, queue: [], timeout: setTimeout(() => this.failStt('Recording timed out. Please type instead.'), 18_000) };
+    const state: Stt = { socket: null, turnId, language, bytes: 0, started: performance.now(), committed: false, commitSent: false, ready: false, queue: [], segments: [], timeout: setTimeout(() => { if (this.stt === state) this.failStt('Recording timed out. Please type instead.'); }, 18_000) };
     this.stt = state;
     try {
-      const socket = await this.connect('/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual');
+      const socket = await this.connect(`/v1/speech-to-text/realtime?model_id=scribe_v2_realtime&audio_format=pcm_16000&commit_strategy=manual&language_code=${language}`);
       if (this.stt !== state || this.disposed) { socket.close(); return; }
       state.socket = socket;
       socket.addEventListener('message', event => {
         if (this.stt !== state) return;
         try {
           const message = JSON.parse(String(event.data)), type = message.message_type;
-          if (type === 'session_started') { state.ready = true; this.flushStt(); this.send({ type: 'stt.ready', turnId }); }
-          else if (type === 'partial_transcript') this.send({ type: 'stt.partial', turnId, text: message.text || '' });
+          if (type === 'session_started') { state.ready = true; this.flushStt(); this.send({ type: 'stt.ready', turnId, language }); }
+          else if (type === 'partial_transcript') this.send({ type: 'stt.partial', turnId, text: [...state.segments, String(message.text || '').trim()].filter(Boolean).join(' ') });
           else if (type === 'committed_transcript' || type === 'committed_transcript_with_timestamps') {
-            const text = String(message.text || '').trim(), elapsedMs = performance.now() - (state.endedAt || state.started);
+            const segment = String(message.text || '').trim();
+            if (segment) state.segments.push(segment);
+            const text = state.segments.join(' ');
+            if (!state.commitSent) { this.send({ type: 'stt.partial', turnId, text }); return; }
+            const elapsedMs = performance.now() - (state.endedAt || state.started);
             recordUsage({ provider: 'elevenlabs', operation: 'stt-worker-realtime', model: 'scribe_v2_realtime', sessionId: this.sessionId, turnId, audioSeconds: state.bytes / 32_000, elapsedMs, live: true, outcome: text ? 'complete' : 'empty', estimatedCostUsd: state.bytes / 32_000 / 3600 * .39 });
-            this.send({ type: 'stt.final', turnId, text, elapsedMs, live: true, model: 'scribe_v2_realtime' });
+            this.send({ type: 'stt.final', turnId, text, language, elapsedMs, live: true, model: 'scribe_v2_realtime' });
             if (text) this.callbacks.onTranscript?.(turnId, text); this.stopStt();
           } else if (String(type || '').includes('error') || message.error || ['auth_error', 'quota_exceeded', 'unaccepted_terms', 'resource_exhausted', 'rate_limited'].includes(type)) this.failStt(`Transcription unavailable (${String(type || 'provider_error').slice(0, 40)}). Please type instead.`);
         } catch { this.failStt('Invalid transcription event. Please type instead.'); }
@@ -163,7 +175,7 @@ export class WorkerVoice {
       socket.addEventListener('close', () => { if (this.stt === state) this.failStt('Microphone connection closed. Please type instead.'); });
     } catch { if (this.stt === state) this.failStt('Transcription connection is unavailable. Please type instead.'); }
   }
-  private flushStt() { const stt = this.stt; if (!stt?.ready || !stt.socket) return; while (stt.queue.length) stt.socket.send(stt.queue.shift()!); }
+  private flushStt() { const stt = this.stt; if (!stt?.ready || !stt.socket) return; while (stt.queue.length) { const frame = stt.queue.shift()!; if (JSON.parse(frame).commit) stt.commitSent = true; stt.socket.send(frame); } }
   private failStt(error: string) { if (this.stt) this.send({ type: 'stt.error', turnId: this.stt.turnId, error }); this.stopStt(); }
   private stopStt() { const stt = this.stt; this.stt = null; if (stt) { clearTimeout(stt.timeout); try { stt.socket?.close(); } catch { /* disconnected */ } } }
   cancel() { this.active?.cancel(); }
