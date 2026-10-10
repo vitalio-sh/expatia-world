@@ -1,0 +1,393 @@
+{
+  "at": "2026-10-10T12:23:25.771Z",
+  "frozenScenarioTime": "2026-10-10T12:23:25.267Z",
+  "barcelonaTime": "Sat, 14:23",
+  "scope": "Five actual JEV requests. Authored QA fixture relocation preserves legitimately observed initial bar memory; production timeout scan and legal-route distance select candidates. Chosen routes are physically advanced by 14 simulated authoritative seconds. No browser latency, live movement or invoice claim.",
+  "weatherScope": "Default offline weather fixture, no asserted real rain.",
+  "distinctDropLocations": [
+    "bar-llevant",
+    "mercat",
+    "forn"
+  ],
+  "pass": true,
+  "cases": [
+    {
+      "name": "northwest start",
+      "authoredFixturePosition": {
+        "x": 210,
+        "y": 250
+      },
+      "initiallyObserved": [
+        "bar-llevant",
+        "bar-ponent"
+      ],
+      "knownAfterTimeoutScan": [
+        "bar-llevant",
+        "bar-ponent",
+        "fruita"
+      ],
+      "availableDrops": [
+        {
+          "id": "drop:bar-llevant",
+          "targetId": "bar-llevant",
+          "label": "Leave for collection at Bar Llevant",
+          "routeDistance": 96.04686356149273
+        }
+      ],
+      "nearestEligibleDrop": "drop:bar-llevant",
+      "selected": "drop:bar-llevant",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "probabilities": {
+        "drop:bar-llevant": 0.99,
+        "return": 0.01
+      },
+      "elapsedMs": 484,
+      "selectedNearestEligible": true,
+      "chosenRouteDistance": 96.04686356149273,
+      "routeLegal": true,
+      "parcelBeforeTravel": "courier",
+      "physicallyReachedTarget": true,
+      "actualDropLocation": "bar-llevant",
+      "parcelAfterTravel": "drop",
+      "outcome": {
+        "kind": "collection",
+        "title": "Parcel waiting for collection",
+        "detail": "The courier reached Bar Llevant and left your parcel there. You still need to collect it from the shop.",
+        "feedback": "The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance."
+      },
+      "usage": {
+        "calls": 1,
+        "liveCalls": 1,
+        "inputTokens": 5790,
+        "outputTokens": 41,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 5831,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0,
+        "estimatedCostUsd": 0.00024318,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "northeast",
+      "authoredFixturePosition": {
+        "x": 730,
+        "y": 250
+      },
+      "initiallyObserved": [
+        "bar-llevant",
+        "bar-ponent"
+      ],
+      "knownAfterTimeoutScan": [
+        "bar-llevant",
+        "bar-ponent",
+        "mercat",
+        "forn"
+      ],
+      "availableDrops": [
+        {
+          "id": "drop:mercat",
+          "targetId": "mercat",
+          "label": "Leave for collection at Mercat del Barri",
+          "routeDistance": 90.13878188659973
+        },
+        {
+          "id": "drop:forn",
+          "targetId": "forn",
+          "label": "Leave for collection at Forn de la Plaça",
+          "routeDistance": 212.89668856043767
+        },
+        {
+          "id": "drop:bar-llevant",
+          "targetId": "bar-llevant",
+          "label": "Leave for collection at Bar Llevant",
+          "routeDistance": 589.1020675743395
+        }
+      ],
+      "nearestEligibleDrop": "drop:mercat",
+      "selected": "drop:mercat",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "probabilities": {
+        "drop:mercat": 0.98,
+        "drop:forn": 0.01,
+        "drop:bar-llevant": 0,
+        "return": 0.01
+      },
+      "elapsedMs": 463,
+      "selectedNearestEligible": true,
+      "chosenRouteDistance": 90.13878188659973,
+      "routeLegal": true,
+      "parcelBeforeTravel": "courier",
+      "physicallyReachedTarget": true,
+      "actualDropLocation": "mercat",
+      "parcelAfterTravel": "drop",
+      "outcome": {
+        "kind": "collection",
+        "title": "Parcel waiting for collection",
+        "detail": "The courier reached Mercat del Barri and left your parcel there. You still need to collect it from the shop.",
+        "feedback": "The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance."
+      },
+      "usage": {
+        "calls": 1,
+        "liveCalls": 1,
+        "inputTokens": 6021,
+        "outputTokens": 59,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 6080,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0,
+        "estimatedCostUsd": 0.000252882,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "east",
+      "authoredFixturePosition": {
+        "x": 730,
+        "y": 460
+      },
+      "initiallyObserved": [
+        "bar-llevant",
+        "bar-ponent"
+      ],
+      "knownAfterTimeoutScan": [
+        "bar-llevant",
+        "bar-ponent",
+        "mercat",
+        "forn"
+      ],
+      "availableDrops": [
+        {
+          "id": "drop:forn",
+          "targetId": "forn",
+          "label": "Leave for collection at Forn de la Plaça",
+          "routeDistance": 35
+        },
+        {
+          "id": "drop:mercat",
+          "targetId": "mercat",
+          "label": "Leave for collection at Mercat del Barri",
+          "routeDistance": 289.35272592460575
+        },
+        {
+          "id": "drop:bar-llevant",
+          "targetId": "bar-llevant",
+          "label": "Leave for collection at Bar Llevant",
+          "routeDistance": 751.1152572675198
+        }
+      ],
+      "nearestEligibleDrop": "drop:forn",
+      "selected": "drop:forn",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "probabilities": {
+        "drop:forn": 0.95,
+        "drop:mercat": 0.03,
+        "drop:bar-llevant": 0,
+        "return": 0.02
+      },
+      "elapsedMs": 463,
+      "selectedNearestEligible": true,
+      "chosenRouteDistance": 35,
+      "routeLegal": true,
+      "parcelBeforeTravel": "courier",
+      "physicallyReachedTarget": true,
+      "actualDropLocation": "forn",
+      "parcelAfterTravel": "drop",
+      "outcome": {
+        "kind": "collection",
+        "title": "Parcel waiting for collection",
+        "detail": "The courier reached Forn de la Plaça and left your parcel there. You still need to collect it from the shop.",
+        "feedback": "The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance."
+      },
+      "usage": {
+        "calls": 1,
+        "liveCalls": 1,
+        "inputTokens": 5948,
+        "outputTokens": 59,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 6007,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0,
+        "estimatedCostUsd": 0.000249816,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "southeast",
+      "authoredFixturePosition": {
+        "x": 730,
+        "y": 640
+      },
+      "initiallyObserved": [
+        "bar-llevant",
+        "bar-ponent"
+      ],
+      "knownAfterTimeoutScan": [
+        "bar-llevant",
+        "bar-ponent",
+        "forn",
+        "mercat"
+      ],
+      "availableDrops": [
+        {
+          "id": "drop:forn",
+          "targetId": "forn",
+          "label": "Leave for collection at Forn de la Plaça",
+          "routeDistance": 183.3712082089225
+        },
+        {
+          "id": "drop:bar-llevant",
+          "targetId": "bar-llevant",
+          "label": "Leave for collection at Bar Llevant",
+          "routeDistance": 898.660161710354
+        }
+      ],
+      "nearestEligibleDrop": "drop:forn",
+      "selected": "drop:forn",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "probabilities": {
+        "drop:forn": 0.99,
+        "drop:bar-llevant": 0,
+        "return": 0.01
+      },
+      "elapsedMs": 438,
+      "selectedNearestEligible": true,
+      "chosenRouteDistance": 183.3712082089225,
+      "routeLegal": true,
+      "parcelBeforeTravel": "courier",
+      "physicallyReachedTarget": true,
+      "actualDropLocation": "forn",
+      "parcelAfterTravel": "drop",
+      "outcome": {
+        "kind": "collection",
+        "title": "Parcel waiting for collection",
+        "detail": "The courier reached Forn de la Plaça and left your parcel there. You still need to collect it from the shop.",
+        "feedback": "The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance."
+      },
+      "usage": {
+        "calls": 1,
+        "liveCalls": 1,
+        "inputTokens": 5603,
+        "outputTokens": 49,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 5652,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0,
+        "estimatedCostUsd": 0.00023532600000000003,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "name": "south home entrance",
+      "authoredFixturePosition": {
+        "x": 480,
+        "y": 645
+      },
+      "initiallyObserved": [
+        "bar-llevant",
+        "bar-ponent"
+      ],
+      "knownAfterTimeoutScan": [
+        "bar-llevant",
+        "bar-ponent",
+        "fruita"
+      ],
+      "availableDrops": [
+        {
+          "id": "drop:bar-llevant",
+          "targetId": "bar-llevant",
+          "label": "Leave for collection at Bar Llevant",
+          "routeDistance": 648.6348773306981
+        }
+      ],
+      "nearestEligibleDrop": "drop:bar-llevant",
+      "selected": "drop:bar-llevant",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "probabilities": {
+        "drop:bar-llevant": 0.76,
+        "return": 0.24
+      },
+      "elapsedMs": 429,
+      "selectedNearestEligible": true,
+      "chosenRouteDistance": 648.6348773306981,
+      "routeLegal": true,
+      "parcelBeforeTravel": "courier",
+      "physicallyReachedTarget": true,
+      "actualDropLocation": "bar-llevant",
+      "parcelAfterTravel": "drop",
+      "outcome": {
+        "kind": "collection",
+        "title": "Parcel waiting for collection",
+        "detail": "The courier reached Bar Llevant and left your parcel there. You still need to collect it from the shop.",
+        "feedback": "The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance."
+      },
+      "usage": {
+        "calls": 1,
+        "liveCalls": 1,
+        "inputTokens": 4236,
+        "outputTokens": 41,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 4277,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0,
+        "estimatedCostUsd": 0.00017791200000000001,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      },
+      "pass": true
+    }
+  ]
+}

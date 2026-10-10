@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, WALLS, LANDMARKS, barcelonaTime, distance, findRoute, isOpen, segmentClear, visiblePoint, walkable } from '../src/shared/world.js';
 import { actionCandidates, answerCall, canHandoff, createGame, handoff, moveResident, npcContext, perception, publicGame, recordSpeech, rememberObservations, tickGame } from '../src/server/game.js';
-import { buildJevRequest, decide, queryJev, resolveTimeout } from '../src/server/jev.js';
+import { buildJevRequest, decide, fallbackChoice, queryJev, resolveTimeout } from '../src/server/jev.js';
 
 const SATURDAY_NOON = Date.parse('2026-10-10T10:00:00Z');
 const fresh = () => createGame(DEFAULT_WEATHER, SATURDAY_NOON);
@@ -290,4 +290,22 @@ test('Spanish entrance-side beliefs, negation and short answers remain conversat
   recordSpeech(game,'¿En qué lado está tu portal?','side-question',SATURDAY_NOON);
   await decide(game,'Norte.',undefined,offline);assert.equal(game.facts.homeSide,'north');
   assert.deepEqual(game.route.at(-1),{x:480,y:200});
+});
+
+test('timeout scans current surroundings and chooses the nearest eligible physical walking route', async () => {
+  for(const fixture of [{x:210,y:250,shop:'bar-llevant'},{x:730,y:250,shop:'mercat'},{x:730,y:460,shop:'forn'},{x:730,y:640,shop:'forn'}]){
+    const game=active();Object.assign(game.courier,{x:fixture.x,y:fixture.y,direction:'west'});
+    tickGame(game,SATURDAY_NOON+60_000,0);
+    const decision=await resolveTimeout(game,undefined,{...offline,now:()=>SATURDAY_NOON+60_000});
+    assert.equal(decision?.selected,`drop:${fixture.shop}`);assert.equal(game.courier.direction,'west');
+    assert.ok(game.knowledge[fixture.shop]);assert.ok(decision?.action.reason.includes('Walking-distance rank 1'));
+    let anchor={x:game.courier.x,y:game.courier.y};for(const p of game.route){assert.ok(segmentClear(anchor,p));anchor=p;}
+    tickGame(game,SATURDAY_NOON+72_000,12);assert.equal(game.dropLocationId,fixture.shop);assert.equal(game.parcel,'drop');assert.equal(game.outcome?.kind,'collection');
+  }
+});
+test('timeout fallback compares walking route lengths rather than Euclidean target distance', () => {
+  const game=active();
+  const far={id:'drop:far',type:'drop' as const,label:'far straight line',reason:'fixture',target:{x:250,y:250},route:[{x:250,y:250}]};
+  const near={id:'drop:near',type:'drop' as const,label:'near but detour',reason:'fixture',target:{x:220,y:250},route:[{x:210,y:500},{x:220,y:500},{x:220,y:250}]};
+  assert.equal(fallbackChoice(game,[near,far],'timeout','').id,'drop:far');
 });

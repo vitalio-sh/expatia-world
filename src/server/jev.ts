@@ -1,4 +1,4 @@
-import { actionCandidates, applyDecision, enterTimeout, learnPlayerFacts, navigationText, npcContext, perception, recordHistory, rememberObservations, tickGame } from './game.js';
+import { actionCandidates, applyDecision, enterTimeout, learnPlayerFacts, navigationText, npcContext, perception, recordHistory, rememberObservations, routeDistance, scanSurroundings, tickGame } from './game.js';
 import { barcelonaTime, distance, type ActionCandidate, type Decision, type Game } from '../shared/world.js';
 import { recordUsage } from './usage.js';
 
@@ -26,7 +26,7 @@ export function buildJevRequest(game: Game, candidates: ActionCandidate[], trigg
           'For cross street choose a cross:crossing candidate via the nearest observed zebra stripes; for cross intersection choose cross:intersection. Go to a corner/intersection/fruit crates selects its landmark candidate; go around a building selects an observed corner or the communicated entrance side. Approach an observed building selects go:<building>. Relative left/right/forward refer to current courier facing; never assume map east is right.',
           'For sign/name/which-bar clarification choose the reveal candidate for the closest relevant currently visible bar; no movement is needed. A vague instruction to go to a bar may plausibly select one of the observed bars. Corrections and the other bar refer to actual history.',
           'When the resident explicitly asks to reach an entrance on a communicated side, select the corresponding home candidate: it already navigates around solid walls to the complete destination. Intermediate corners must never replace a clearly requested entrance destination. When the resident explicitly describes a home entrance side, prefer the corresponding home candidate rather than a lone cardinal step. A wrong reported side remains a hypothesis and must not be silently corrected. For simple street directions choose a cardinal movement. Wait only for a stop/wait request.',
-          'At timeout prefer a nearby open accessible shop that explicitly accepts parcels and is suitable for weather. A drop is for later collection, not received delivery. Choose return if none is suitable.',
+          'At timeout select the CLOSEST eligible collection candidate by supplied Walking-distance rank and current-position walking route length. Use actual navigable walking distance, not straight-line distance, initial spawn position, remembered insertion order or the opening bar. Every listed collection candidate already satisfies open/accessibility/parcel/weather checks. Ties may use either equal shortest route. Never prefer the starting bar unless it is actually closest now. A drop is for later collection, not received delivery. Choose return if none is suitable.',
         ],
         criteria: Object.fromEntries(candidates.map(candidate => [candidate.id, { action: candidate.label, evidence: candidate.reason }])),
       },
@@ -72,7 +72,7 @@ export async function queryJev(body: ReturnType<typeof buildJevRequest>, key: st
 export function fallbackChoice(game: Game, candidates: ActionCandidate[], trigger: Decision['trigger'], text: string): ActionCandidate {
   const byId = (id: string) => candidates.find(option => option.id === id);
   if (trigger === 'opening') return candidates[0];
-  if (trigger === 'timeout') return candidates.filter(c => c.type === 'drop').sort((a, b) => distance(game.courier, a.target!) - distance(game.courier, b.target!))[0] ?? byId('return')!;
+  if (trigger === 'timeout') return candidates.filter(c => c.type === 'drop').sort((a, b) => routeDistance(game.courier, a.route) - routeDistance(game.courier, b.route))[0] ?? byId('return')!;
   const normalized = navigationText(text);
   if (/\b(stop|wait|stay|hold on)\b/.test(normalized)) return byId('wait')!;
   if (/\b(go|come|turn) back\b|wrong way|backtrack/.test(normalized) && byId('go-back')) return byId('go-back')!;
@@ -161,5 +161,7 @@ export async function resolveTimeout(game: Game, signal?: AbortSignal, options: 
   if (game.phase !== 'timeout' || !game.timeoutPending) return null;
   // Mark ownership now so polling cannot submit the same paid timeout decision.
   game.timeoutPending = false;
+  scanSurroundings(game, now);
+  recordHistory(game, { role: 'event', text: 'The courier looked in all four directions from the current position to check physically visible collection alternatives, then returned to the original heading.', at: now });
   return evaluate(game, 'timeout', '', signal, options);
 }

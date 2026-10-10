@@ -62,6 +62,15 @@ export function rememberObservations(game: Game, now = game.updatedAt) {
     game.landmarkKnowledge[observed.id] = known;
   }
 }
+/** A physical stationary scan learns only range/LOS-visible facts, then restores heading. */
+export function scanSurroundings(game: Game, now = game.updatedAt) {
+  const original = game.courier.direction;
+  for (const facing of ['north','east','south','west'] as const) { game.courier.direction = facing; rememberObservations(game, now); }
+  game.courier.direction = original;
+}
+export function routeDistance(start: Point, route: Point[] | undefined) {
+  return route?.reduce((sum, p, i) => sum + distance(i ? route[i - 1] : start, p), 0) ?? Infinity;
+}
 /** The resident stays inside the apartment; legacy movement messages are inert. */
 export function moveResident(game: Game, _dx: number, _dy: number, _dt: number) {
   Object.assign(game.resident, RESIDENT_POSITION, { moving: false });
@@ -197,10 +206,12 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
     for (const known of Object.values(game.knowledge)) {
       if (!known.acceptsParcels || !known.accessible || !isOpen(known, now) || (game.weather.isRain && !known.sheltered)) continue;
       const route = findRoute(game.courier, known.entrance);
-      const length = route?.reduce((sum, p, i) => sum + distance(i ? route[i - 1] : game.courier, p), 0) ?? Infinity;
+      const length = routeDistance(game.courier, route ?? undefined);
       if (!route || length > COURIER_SPEED * 14) continue;
-      candidates.push({ id: `drop:${known.id}`, type: 'drop', targetId: known.id, target: known.entrance, route, label: `Leave for collection at ${known.name}`, reason: `Previously observed ${known.category}; open now, accepts parcels, accessible, ${known.sheltered ? 'sheltered' : 'unsheltered'}, route ${Math.round(length)} units. The resident must collect it.` });
+      candidates.push({ id: `drop:${known.id}`, type: 'drop', targetId: known.id, target: known.entrance, route, label: `Leave for collection at ${known.name}`, reason: `Previously observed ${known.category}; open now, accepts parcels, accessible, ${known.sheltered ? 'sheltered' : 'unsheltered'}, current-position walking route ${length.toFixed(1)} map units. The resident must collect it.` });
     }
+    candidates.sort((a, b) => routeDistance(game.courier, a.route) - routeDistance(game.courier, b.route));
+    candidates.forEach((candidate, index) => { candidate.reason = `Walking-distance rank ${index + 1} of ${candidates.length}; ${index === 0 ? 'CLOSEST eligible collection location from the courier current position. ' : ''}${candidate.reason}`; });
     candidates.push({ id: 'return', type: 'return', label: 'Keep parcel for return to depot', reason: 'Use if no observed open accessible parcel-accepting place is appropriate; never invent an unseen collection location.' });
     return candidates;
   }
@@ -273,7 +284,7 @@ export function applyDecision(game: Game, decision: Decision, now = game.updated
   } else if (legal.type === 'look') {
     game.route = []; game.courier.moving = false;
     const original = game.courier.direction;
-    if (legal.id === 'look:around') for (const facing of ['north','east','south','west'] as const) { game.courier.direction = facing; rememberObservations(game, now); }
+    if (legal.id === 'look:around') scanSurroundings(game, now);
     game.courier.direction = legal.facing ?? original; rememberObservations(game, now);
     recordHistory(game, { role: 'event', text: `Courier ${legal.id === 'look:around' ? 'looked around and returned to the original heading' : `turned to face ${legal.facing}`}. The parcel remains with the courier.`, at: now, turnId: decision.id });
   } else if (legal.type === 'reveal') {
