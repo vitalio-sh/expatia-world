@@ -118,9 +118,9 @@ export class RealtimeVoice {
       socket.onclose = () => {
         clearTimeout(timer);
         if (this.socket === socket) {
-          this.socket = null; this.connectionPromise = null; this.stopCapture();
+          this.socket = null; this.connectionPromise = null;
           const detail = this.realtimeRpc ? 'Call connection closed. Start another call.' : 'Voice connection closed. You can still type.';
-          reject(new Error(detail)); this.rejectTranscript?.(new Error(detail)); this.rejectTranscript = null;
+          this.cancelMicrophone(new Error(detail)); reject(new Error(detail));
           for (const pending of this.rpc.values()) { clearTimeout(pending.timeout); pending.reject(new Error(detail)); } this.rpc.clear();
           this.callbacks.onStatus?.('disconnected', detail);
         }
@@ -146,21 +146,27 @@ export class RealtimeVoice {
   }
   interrupt() {
     if (this.currentTurn !== null) this.cancelledTurns.add(this.currentTurn);
-    const began = performance.now(); this.player.stop(); this.currentTurn = null;
+    const began = performance.now(); this.cancelMicrophone(new Error('Recording cancelled.')); this.player.stop(); this.currentTurn = null;
     this.send({ type: 'interrupt' });
     this.callbacks.onTiming?.({ interruptionStopMs: performance.now() - began }, 'interruption');
   }
   prepare() { this.send({ type: 'voice.prepare' }); }
-  async startRecording(turnId: TurnId) {
-    this.interrupt(); this.stopCapture(); this.awaitingMic = true;
+  async startRecording(turnId: TurnId): Promise<boolean> {
+    this.interrupt(); this.awaitingMic = true;
     const epoch = ++this.captureEpoch;
-    const context = await this.player.unlock();
-    if (!navigator.mediaDevices?.getUserMedia) throw new Error('Microphone requires HTTPS. Please type instead.');
+    let context: AudioContext;
+    try { context = await this.player.unlock(); }
+    catch (error) { if (epoch !== this.captureEpoch) return false; this.awaitingMic = false; throw error; }
+    if (epoch !== this.captureEpoch || !this.awaitingMic) return false;
+    if (!navigator.mediaDevices?.getUserMedia) { this.awaitingMic = false; throw new Error('Microphone requires HTTPS. Please type instead.'); }
     this.callbacks.onStatus?.('requesting-microphone');
     let stream: MediaStream;
     try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 }, video: false }); }
-    catch { this.awaitingMic = false; this.callbacks.onStatus?.('microphone-denied', 'Microphone permission was denied. You can still type.'); throw new Error('Microphone permission was denied. Please type instead.'); }
-    if (epoch !== this.captureEpoch || !this.awaitingMic) { stream.getTracks().forEach(track => track.stop()); return; }
+    catch {
+      if (epoch !== this.captureEpoch || !this.awaitingMic) return false;
+      this.awaitingMic = false; this.callbacks.onStatus?.('microphone-denied', 'Microphone permission was denied. You can still type.'); throw new Error('Microphone permission was denied. Please type instead.');
+    }
+    if (epoch !== this.captureEpoch || !this.awaitingMic) { stream.getTracks().forEach(track => track.stop()); return false; }
     this.awaitingMic = false;
     if (this.socket?.readyState !== WebSocket.OPEN) { stream.getTracks().forEach(track => track.stop()); throw new Error('Voice is not connected. Please type instead.'); }
     this.currentTurn = turnId;
@@ -188,6 +194,7 @@ export class RealtimeVoice {
     source.connect(processor); processor.connect(mute); mute.connect(context.destination);
     this.recordingTimer = setTimeout(() => { void this.stopRecording().catch(() => {}); }, 14_000);
     this.callbacks.onStatus?.('recording');
+    return true;
   }
   async stopRecording(): Promise<Transcript> {
     if (this.awaitingMic) { this.awaitingMic = false; this.captureEpoch++; throw new Error('Recording cancelled before microphone was ready.'); }
@@ -208,6 +215,11 @@ export class RealtimeVoice {
     const recording = this.recording; this.recording = null;
     if (!recording) return;
     recording.processor.onaudioprocess = null; recording.source.disconnect(); recording.processor.disconnect(); recording.mute.disconnect(); recording.stream.getTracks().forEach(track => track.stop());
+  }
+  private cancelMicrophone(error: Error) {
+    this.awaitingMic = false; this.captureEpoch++; this.stopCapture();
+    if (this.transcriptTimer) clearTimeout(this.transcriptTimer); this.transcriptTimer = null;
+    this.rejectTranscript?.(error); this.resolveTranscript = null; this.rejectTranscript = null; this.transcriptPromise = null;
   }
   private receive(message: any) {
     if (message.type === 'rpc.result') {
@@ -238,8 +250,7 @@ export class RealtimeVoice {
   }
   private send(message: Record<string, unknown>) { if (this.socket?.readyState === WebSocket.OPEN) this.socket.send(JSON.stringify({ ...message, sessionId: this.sessionId })); }
   disconnect() {
-    this.awaitingMic = false; this.captureEpoch++; this.stopCapture(); this.player.stop(); this.currentTurn = null;
-    if (this.transcriptTimer) clearTimeout(this.transcriptTimer); this.transcriptTimer = null;
+    this.cancelMicrophone(new Error('The game connection closed.')); this.player.stop(); this.currentTurn = null;
     const socket = this.socket; this.socket = null; socket?.close(); this.connectionPromise = null;
     for (const pending of this.rpc.values()) { clearTimeout(pending.timeout); pending.reject(new Error('The game connection closed.')); } this.rpc.clear();
   }

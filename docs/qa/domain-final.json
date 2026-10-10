@@ -1,0 +1,236 @@
+{
+  "at": "2026-10-10T11:11:17.908Z",
+  "siteVersion": 4,
+  "commitSha": "503ba1c093fc48624db17c5502bf43f1238d1b19",
+  "health": [
+    {
+      "origin": "https://expatia.world",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "product": "Expatia World",
+        "speech": "eleven_v4_turbo",
+        "deployment": "connection-owned-worker",
+        "build": "0.1.0"
+      },
+      "tls": "Verified by default Node HTTPS validation"
+    },
+    {
+      "origin": "https://www.expatia.world",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "product": "Expatia World",
+        "speech": "eleven_v4_turbo",
+        "deployment": "connection-owned-worker",
+        "build": "0.1.0"
+      },
+      "tls": "Verified by default Node HTTPS validation"
+    }
+  ],
+  "weather": {
+    "httpStatus": 200,
+    "temperature": 20.7,
+    "description": "Clear sky",
+    "code": null,
+    "isRain": false,
+    "retrievedAt": "2026-10-10T11:11:15.170Z",
+    "checkedAt": "2026-10-10T11:11:14.944Z",
+    "validAt": "2026-10-10T11:00:00Z",
+    "modelUpdatedAt": "2026-10-10T09:17:19Z",
+    "source": "MET Norway",
+    "dataKind": "current-forecast",
+    "cacheExpiresAt": "2026-10-10T11:32:02.000Z",
+    "status": "live",
+    "timeZone": "Europe/Madrid",
+    "diagnostics": [
+      {
+        "source": "Open-Meteo",
+        "outcome": "http_error",
+        "elapsedMs": 44,
+        "status": 429
+      },
+      {
+        "source": "MET Norway",
+        "outcome": "live",
+        "elapsedMs": 182,
+        "status": 200
+      }
+    ]
+  },
+  "assets": [
+    {
+      "path": "/art/barcelona-map.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 491322,
+      "sha256": "7bc1e05e6f620a1a6612ef29a6f5577e7f81621fbe64ef88f148caa71625d226",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-south-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 152508,
+      "sha256": "6af38190a6c45bf2fa7ac51686b29154868c16b075c6a5bda321840cce171cb7",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-south-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 163462,
+      "sha256": "2b024e27871527c405aca9be181c904dbd2e9bcf64e418f99f93dd1430d3009b",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-west-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 120248,
+      "sha256": "9d8edb39f5adb68873abc021a0089ded96facb3d2153cd641755ec2c21457862",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-west-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 143824,
+      "sha256": "75a35e29bc03464c62e6a401904069cc67fec81143e8aa357948026044313d23",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-north-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 130978,
+      "sha256": "fd09ae14daf2b3662985f4affe59145e8b990c40e3e5783c05726c5d9d9f8d42",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-north-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 135246,
+      "sha256": "b910967178c7f3b60e5c2795cb7b3c2c1b3ff7e5ee2bb17375199d8e4ac3eeb1",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-east-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 119000,
+      "sha256": "b20287099cb294ba44879504e7311e992d5a5ae52a383512b79c072ebe2d68c2",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/courier-east-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 141228,
+      "sha256": "ec294b5fabdef700e1dea6881568ef3691ee9c32f36f57472badb74e21031475",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-south-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 165056,
+      "sha256": "e7867078b9a7b4a0d91de4a4157604887ba7febc2f38e7843234716016219301",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-south-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 70068,
+      "sha256": "534329b8274eae136cc8ab830ab641d7f3330cab5ae07b14d85ad7e676b53e23",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-west-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 144494,
+      "sha256": "1d4145a42910f0c9396e010e17ef1e4e555a01b965fac95f9a1896793d839cc5",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-west-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 95946,
+      "sha256": "06f72aa551793971a6ab6921c17196206a52bdd7167f85ddabdac598fcfdb142",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-north-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 150184,
+      "sha256": "be426786fbe3d9ba4d7fd3e0717a46dd2faf4f94838a77998f57e5c9faec0dc7",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-north-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 41256,
+      "sha256": "492342b7ed88af5be1286fa06ed0d243a4d9106df138b93ef2f223d06a4d1ecd",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-east-idle-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 145870,
+      "sha256": "c43dd41b8d7eb2ff3515238f181f0a97cf7c25f7029d18dad797ea0a5e219441",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/characters/resident-east-walk-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 99400,
+      "sha256": "fca479bfb49f30a4aaa3612d40cd8d5fcb0dee3b8e842bc862a5944efd62568c",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/environment/orange-tree-sheet.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 340080,
+      "sha256": "5fc84397b5d530e93dd69ca0c2169c8884a9ce1bc83013eac934436461f963f5",
+      "matchesLocal": true,
+      "expectedType": "image/webp"
+    },
+    {
+      "path": "/art/parcel.png",
+      "status": 200,
+      "contentType": "image/png",
+      "bytes": 10172,
+      "sha256": "211ac11e135f70febbd36e093d6fe0e822d8b51e0a582a83146f4194ac16c963",
+      "matchesLocal": true,
+      "expectedType": null
+    }
+  ],
+  "missingArtStatus": 404,
+  "passed": true
+}

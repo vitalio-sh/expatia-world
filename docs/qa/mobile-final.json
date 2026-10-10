@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-10T11:12:36.674Z",
+  "url": "https://expatia.world/",
+  "siteVersion": 4,
+  "canvas": {
+    "height": 267.8359375,
+    "width": 267.8359375
+  },
+  "directions": [
+    {
+      "height": 44,
+      "label": "Move up",
+      "width": 44
+    },
+    {
+      "height": 44,
+      "label": "Move left",
+      "width": 44
+    },
+    {
+      "height": 44,
+      "label": "Move down",
+      "width": 44
+    },
+    {
+      "height": 44,
+      "label": "Move right",
+      "width": 44
+    }
+  ],
+  "outcome": "Parcel received!",
+  "pageWidth": 445,
+  "viewport": {
+    "height": 837,
+    "width": 460
+  },
+  "method": "Real browser UI: onboarding, scenario selection, six Move down taps before Answer, typed south entrance direction, live JEV choice, visible courier arrival, enabled Receive parcel, clicked handoff and verified Parcel received.",
+  "limitations": [
+    "Viewport emulation, not a physical phone. No human microphone or hardware audibility result."
+  ]
+}

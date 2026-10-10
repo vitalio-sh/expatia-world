@@ -11,31 +11,115 @@
         "total_tokens": 0
       },
       "end": {
-        "input_tokens": 424444,
-        "cached_input_tokens": 368896,
+        "input_tokens": 30286215,
+        "cached_input_tokens": 29756288,
         "cache_write_input_tokens": 0,
-        "output_tokens": 4478,
-        "reasoning_output_tokens": 683,
-        "total_tokens": 428922
+        "output_tokens": 79928,
+        "reasoning_output_tokens": 27036,
+        "total_tokens": 30366143
       },
       "delta": {
-        "input_tokens": 424444,
-        "cached_input_tokens": 368896,
+        "input_tokens": 30286215,
+        "cached_input_tokens": 29756288,
         "cache_write_input_tokens": 0,
-        "output_tokens": 4478,
-        "reasoning_output_tokens": 683,
-        "total_tokens": 428922
+        "output_tokens": 79928,
+        "reasoning_output_tokens": 27036,
+        "total_tokens": 30366143
       },
-      "measuredThrough": "2026-10-10T10:03:12.346Z"
+      "measuredThrough": "2026-10-10T11:22:14.499Z"
+    },
+    {
+      "threadId": "01a12543-908a-7910-b9a6-c7231806eff9",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 13057948,
+        "cached_input_tokens": 12801280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 85448,
+        "reasoning_output_tokens": 23758,
+        "total_tokens": 13143396
+      },
+      "delta": {
+        "input_tokens": 13057948,
+        "cached_input_tokens": 12801280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 85448,
+        "reasoning_output_tokens": 23758,
+        "total_tokens": 13143396
+      },
+      "measuredThrough": "2026-10-10T11:11:29.716Z"
+    },
+    {
+      "threadId": "01a12543-b845-7e63-b24d-94c7c3e68fe0",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 16258515,
+        "cached_input_tokens": 15994112,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 67472,
+        "reasoning_output_tokens": 17118,
+        "total_tokens": 16325987
+      },
+      "delta": {
+        "input_tokens": 16258515,
+        "cached_input_tokens": 15994112,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 67472,
+        "reasoning_output_tokens": 17118,
+        "total_tokens": 16325987
+      },
+      "measuredThrough": "2026-10-10T11:19:59.158Z"
+    },
+    {
+      "threadId": "01a12543-e1d9-7c70-a19f-15b9b82dc507",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 4622827,
+        "cached_input_tokens": 4513280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34068,
+        "reasoning_output_tokens": 10781,
+        "total_tokens": 4656895
+      },
+      "delta": {
+        "input_tokens": 4622827,
+        "cached_input_tokens": 4513280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34068,
+        "reasoning_output_tokens": 10781,
+        "total_tokens": 4656895
+      },
+      "measuredThrough": "2026-10-10T10:23:38.619Z"
     }
   ],
   "sumDeltas": {
-    "input_tokens": 424444,
-    "cached_input_tokens": 368896,
+    "input_tokens": 64225505,
+    "cached_input_tokens": 63064960,
     "cache_write_input_tokens": 0,
-    "output_tokens": 4478,
-    "reasoning_output_tokens": 683,
-    "total_tokens": 428922
+    "output_tokens": 266916,
+    "reasoning_output_tokens": 78693,
+    "total_tokens": 64492421
   },
   "notes": [
     "Each cumulative counter contributes only its last minus start delta.",
