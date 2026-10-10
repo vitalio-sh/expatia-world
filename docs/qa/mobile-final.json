@@ -1,41 +1,125 @@
 {
-  "at": "2026-10-10T11:12:36.674Z",
+  "at": "2026-10-10T11:27:15.558Z",
   "url": "https://expatia.world/",
-  "siteVersion": 4,
-  "canvas": {
-    "height": 267.8359375,
-    "width": 267.8359375
-  },
-  "directions": [
+  "siteVersion": 5,
+  "sizes": [
     {
-      "height": 44,
-      "label": "Move up",
-      "width": 44
+      "canvas": {
+        "height": 240,
+        "width": 240
+      },
+      "inputFontSize": null,
+      "outcome": "Parcel received!",
+      "pageWidth": 360,
+      "timer": "Done",
+      "touchTargets": [
+        {
+          "height": 44,
+          "label": "Move up",
+          "width": 44
+        },
+        {
+          "height": 44,
+          "label": "Move left",
+          "width": 44
+        },
+        {
+          "height": 44,
+          "label": "Move down",
+          "width": 44
+        },
+        {
+          "height": 44,
+          "label": "Move right",
+          "width": 44
+        }
+      ],
+      "viewport": {
+        "height": 800,
+        "width": 360
+      }
     },
     {
-      "height": 44,
-      "label": "Move left",
-      "width": 44
-    },
-    {
-      "height": 44,
-      "label": "Move down",
-      "width": 44
-    },
-    {
-      "height": 44,
-      "label": "Move right",
-      "width": 44
+      "canvas": {
+        "height": 270.078125,
+        "width": 270.078125
+      },
+      "outcome": "Parcel received!",
+      "pageWidth": 390,
+      "timer": "Done",
+      "touchTargets": [
+        {
+          "height": 44,
+          "label": "Move up",
+          "width": 44
+        },
+        {
+          "height": 44,
+          "label": "Move left",
+          "width": 44
+        },
+        {
+          "height": 44,
+          "label": "Move down",
+          "width": 44
+        },
+        {
+          "height": 44,
+          "label": "Move right",
+          "width": 44
+        }
+      ],
+      "viewport": {
+        "height": 844,
+        "width": 390
+      }
     }
   ],
-  "outcome": "Parcel received!",
-  "pageWidth": 445,
-  "viewport": {
-    "height": 837,
-    "width": 460
+  "method": "Real browser UI: onboarding, scenario selection, six Move down taps before Answer, mic permission request immediately superseded by typed sign clarification, visible Bar Llevant reply, typed south entrance direction, live JEV route, enabled Receive parcel, clicked physical handoff and verified Parcel received.",
+  "snapshotBeforeHandoff": {
+    "resident": {
+      "x": 480,
+      "y": 636.2800000000007,
+      "direction": "south",
+      "moving": true
+    },
+    "courier": {
+      "x": 480,
+      "y": 645,
+      "direction": "east",
+      "moving": false
+    },
+    "parcel": "courier",
+    "canHandoff": true
   },
-  "method": "Real browser UI: onboarding, scenario selection, six Move down taps before Answer, typed south entrance direction, live JEV choice, visible courier arrival, enabled Receive parcel, clicked handoff and verified Parcel received.",
+  "sessionUsage": {
+    "calls": 15,
+    "liveCalls": 15,
+    "inputTokens": 15941,
+    "outputTokens": 379,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 16320,
+    "unreportedTokenCalls": 0,
+    "returnedCostUsd": 0.0023756999999999997,
+    "estimatedCostUsd": 0.010197923999999999,
+    "voiceCharacters": 246,
+    "audioSeconds": 14.479999999999999,
+    "providers": {
+      "jev": 3,
+      "openrouter": 4,
+      "browser": 4,
+      "elevenlabs": 4
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  },
   "limitations": [
-    "Viewport emulation, not a physical phone. No human microphone or hardware audibility result."
+    "Viewport emulation, not a physical phone.",
+    "Microphone permission request was pending in IAB; typed fallback worked. Real-device denial and human capture were unavailable.",
+    "Late success, late denial and STT cancellation are covered by focused fake-device regression tests.",
+    "No human microphone or hardware audibility claim."
   ]
 }

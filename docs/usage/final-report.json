@@ -1,0 +1,244 @@
+{
+  "measuredAt": "2026-10-10T11:28:00.129855+00:00",
+  "runtime": {
+    "scope": "Disjoint captured request cohorts only. These are lower bounds for available recorded usage, not all work or an invoice. Local per-probe files already included in the persisted local aggregate are not added again. Each Worker scenario final ledger is filtered by session ID. Browser playback events carry timing but no billed provider tokens.",
+    "cohorts": [
+      {
+        "name": "Persisted local Node/provider probes",
+        "file": "docs/usage/provider-local-aggregate.json",
+        "boundary": "2026-10-10T10:37:55.491Z",
+        "providers": {
+          "openrouter": {
+            "calls": 22,
+            "live": 22,
+            "cancelledOrUnavailable": 0,
+            "inputTokens": 24409,
+            "outputTokens": 581,
+            "reasoningTokensIncludedInOutput": 90,
+            "returnedCostUsd": 0.0079091,
+            "estimatedCostUsd": 0,
+            "characters": 0,
+            "audioSeconds": 0,
+            "unreturnedTokenCalls": 0
+          },
+          "elevenlabs": {
+            "calls": 12,
+            "live": 9,
+            "cancelledOrUnavailable": 3,
+            "inputTokens": 0,
+            "outputTokens": 0,
+            "reasoningTokensIncludedInOutput": 0,
+            "returnedCostUsd": 0,
+            "estimatedCostUsd": 0.029199500000000003,
+            "characters": 723,
+            "audioSeconds": 33.580875,
+            "unreturnedTokenCalls": 0
+          },
+          "jev": {
+            "calls": 15,
+            "live": 15,
+            "cancelledOrUnavailable": 0,
+            "inputTokens": 36572,
+            "outputTokens": 1251,
+            "reasoningTokensIncludedInOutput": 0,
+            "returnedCostUsd": 0,
+            "estimatedCostUsd": 0.0015360240000000004,
+            "characters": 0,
+            "audioSeconds": 0,
+            "unreturnedTokenCalls": 0
+          }
+        }
+      },
+      {
+        "name": "http://localhost:3318 outcome QA",
+        "file": "docs/qa/live-worker-local.json",
+        "boundary": "2026-10-10T10:39:06.816Z",
+        "sessionIds": [
+          "2d61270d-304d-41ad-8ceb-78414c5ca22f",
+          "33c1dc82-8a3a-45a5-8499-f83212a5a7d1"
+        ],
+        "totals": {
+          "calls": 18,
+          "inputTokens": 25136,
+          "outputTokens": 633,
+          "returnedCostUsd": 0.0032152,
+          "estimatedCostUsd": 0.012001634,
+          "voiceCharacters": 284
+        },
+        "unreportedTokenCalls": 0
+      },
+      {
+        "name": "https://expatia-world.iviviv.chatgpt.site outcome QA",
+        "file": "docs/qa/live-worker-published.json",
+        "boundary": "2026-10-10T10:48:09.272Z",
+        "sessionIds": [
+          "4d4c0011-06f4-4737-bc17-dd97883d2bf2",
+          "03f59c55-78c0-496c-b7c2-87fab0f7bc5f"
+        ],
+        "totals": {
+          "calls": 20,
+          "inputTokens": 27083,
+          "outputTokens": 651,
+          "returnedCostUsd": 0.00385,
+          "estimatedCostUsd": 0.020280835999999997,
+          "voiceCharacters": 491
+        },
+        "unreportedTokenCalls": 0
+      },
+      {
+        "name": "https://expatia.world outcome QA",
+        "file": "docs/qa/live-domain.json",
+        "boundary": "2026-10-10T10:53:59.376Z",
+        "sessionIds": [
+          "334104c5-3e1e-4286-b03f-2fda69ac6136",
+          "ebac3187-a0f6-44cf-8b39-86b6681a5049"
+        ],
+        "totals": {
+          "calls": 20,
+          "inputTokens": 25078,
+          "outputTokens": 651,
+          "returnedCostUsd": 0.0032515,
+          "estimatedCostUsd": 0.020480416,
+          "voiceCharacters": 496
+        },
+        "unreportedTokenCalls": 1
+      },
+      {
+        "name": "https://expatia-world.iviviv.chatgpt.site synthetic Scribe/TTD probe",
+        "file": "docs/usage/published-voice-probe.json",
+        "boundary": "2026-10-10T10:47:09.522Z",
+        "totals": {
+          "calls": 4,
+          "liveCalls": 4,
+          "inputTokens": 2200,
+          "outputTokens": 41,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 2241,
+          "unreportedTokenCalls": 0,
+          "returnedCostUsd": 0.0003332,
+          "estimatedCostUsd": 0.0029217853333333333,
+          "voiceCharacters": 61,
+          "audioSeconds": 7.890000000000001,
+          "providers": {
+            "jev": 1,
+            "openrouter": 1,
+            "elevenlabs": 2
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        }
+      },
+      {
+        "name": "https://expatia.world synthetic Scribe/TTD probe",
+        "file": "docs/usage/domain-voice-final.json",
+        "boundary": "2026-10-10T11:25:11.161Z",
+        "totals": {
+          "calls": 4,
+          "liveCalls": 4,
+          "inputTokens": 2611,
+          "outputTokens": 49,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 2660,
+          "unreportedTokenCalls": 0,
+          "returnedCostUsd": 0.0004042,
+          "estimatedCostUsd": 0.004301907333333333,
+          "voiceCharacters": 92,
+          "audioSeconds": 10.29,
+          "providers": {
+            "jev": 1,
+            "openrouter": 1,
+            "elevenlabs": 2
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        }
+      },
+      {
+        "name": "https://expatia.world/ browser round",
+        "file": "docs/usage/browser-session-v5.json",
+        "boundary": "2026-10-10T11:26:31.027Z",
+        "totals": {
+          "calls": 15,
+          "liveCalls": 15,
+          "inputTokens": 15941,
+          "outputTokens": 379,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 16320,
+          "unreportedTokenCalls": 0,
+          "returnedCostUsd": 0.0023756999999999997,
+          "estimatedCostUsd": 0.010197923999999999,
+          "voiceCharacters": 246,
+          "audioSeconds": 14.479999999999999,
+          "providers": {
+            "jev": 3,
+            "openrouter": 4,
+            "browser": 4,
+            "elevenlabs": 4
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        }
+      },
+      {
+        "name": "https://expatia.world version5 complete outcome QA",
+        "file": "docs/qa/live-domain-final.json",
+        "boundary": "2026-10-10T11:30:42.415Z",
+        "sessionIds": [
+          "8264beb2-59a4-441a-b450-04964492593a",
+          "1c68c021-508c-4614-94bd-55c69b0f348b"
+        ],
+        "totals": {
+          "calls": 19,
+          "inputTokens": 27506,
+          "outputTokens": 633,
+          "returnedCostUsd": 0.0035086000000000006,
+          "estimatedCostUsd": 0.012740098,
+          "voiceCharacters": 301
+        },
+        "unreportedTokenCalls": 1
+      }
+    ],
+    "capturedLowerBounds": {
+      "inputTokens": 159030,
+      "outputTokens": 4236,
+      "returnedOpenRouterCostUsd": 0.0213389,
+      "estimatedJevAndElevenUsd": 0.10092002666666665,
+      "voiceRequestedCharacters": 2393,
+      "unreturnedTokenCalls": 1,
+      "totalReturnedTokens": 163266
+    },
+    "unavailable": [
+      "Earlier failed Worker sessions before stable accounting and manual browser rounds closed without captured ledgers.",
+      "Tokens/billing for cancelled upstream calls before returned usage headers.",
+      "ElevenLabs invoice/billed credits: account key lacks user_read.",
+      "Full development billed dollar amount."
+    ],
+    "estimatedPricesNote": "JEV token and Eleven character/audio estimates are distinct from OpenRouter returned cost fields. Do not present the sum as billed charges."
+  },
+  "art": {
+    "builtinImagegenCalls": 6,
+    "builtinImagegenTokensAndCharges": "unavailable",
+    "gmiRequestIds": 7,
+    "successfulFourSecondAnimations": 5,
+    "immediateReferenceValidationFailures": 2,
+    "requestedSuccessfulSeconds": 20,
+    "catalogPriceUnitsPerSecond": 231000,
+    "estimatedCatalogPriceUnits": 4620000,
+    "currencyConversionAndBilledCharges": "unavailable",
+    "failedRequestBilling": "unavailable",
+    "provenance": "docs/ART_REVIEW.md"
+  },
+  "development": {
+    "report": "docs/usage/development-report.json",
+    "method": "Four explicitly registered logs; each latest cumulative counter minus pre-first-request baseline once. Cached input is a subset of input and reasoning is a subset of output. Final response after the checkpoint is excluded."
+  }
+}

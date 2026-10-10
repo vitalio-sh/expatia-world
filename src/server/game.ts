@@ -53,9 +53,10 @@ export function rememberObservations(game: Game, now = game.updatedAt) {
 }
 export function moveResident(game: Game, dx: number, dy: number, dt: number) {
   if (game.phase !== 'active' && game.phase !== 'incoming') { game.resident.moving = false; return false; }
-  if (![dx, dy, dt].every(Number.isFinite) || dt <= 0) return false;
+  if (![dx, dy, dt].every(Number.isFinite) || dt < 0) return false;
   const length = Math.hypot(dx, dy), scale = RESIDENT_SPEED * Math.min(0.25, dt) / Math.max(1, length);
   if (!length) { game.resident.moving = false; return false; }
+  if (dt === 0) return false;
   const x = dx * scale, y = dy * scale, start = { x: game.resident.x, y: game.resident.y };
   const steps = Math.max(1, Math.ceil(Math.hypot(x, y) / (ACTOR_RADIUS / 2)));
   for (let i = 0; i < steps; i++) {

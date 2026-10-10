@@ -1,7 +1,7 @@
 {
-  "at": "2026-10-10T11:11:17.908Z",
-  "siteVersion": 4,
-  "commitSha": "503ba1c093fc48624db17c5502bf43f1238d1b19",
+  "at": "2026-10-10T11:25:13.862Z",
+  "siteVersion": 5,
+  "commitSha": "56d357bf876984863fe7521390a5464dfbfa3af2",
   "health": [
     {
       "origin": "https://expatia.world",
@@ -29,13 +29,12 @@
     }
   ],
   "weather": {
-    "httpStatus": 200,
     "temperature": 20.7,
     "description": "Clear sky",
     "code": null,
     "isRain": false,
-    "retrievedAt": "2026-10-10T11:11:15.170Z",
-    "checkedAt": "2026-10-10T11:11:14.944Z",
+    "retrievedAt": "2026-10-10T11:25:13.531Z",
+    "checkedAt": "2026-10-10T11:25:12.022Z",
     "validAt": "2026-10-10T11:00:00Z",
     "modelUpdatedAt": "2026-10-10T09:17:19Z",
     "source": "MET Norway",
@@ -47,13 +46,13 @@
       {
         "source": "Open-Meteo",
         "outcome": "http_error",
-        "elapsedMs": 44,
+        "elapsedMs": 1159,
         "status": 429
       },
       {
         "source": "MET Norway",
         "outcome": "live",
-        "elapsedMs": 182,
+        "elapsedMs": 350,
         "status": 200
       }
     ]
@@ -232,5 +231,16 @@
     }
   ],
   "missingArtStatus": 404,
-  "passed": true
+  "passed": true,
+  "finalBundle": {
+    "path": "/assets/index-BHwNvTvU.js",
+    "containsFinalMicCopy": true,
+    "containsDone": true,
+    "containsSessionCounter": true
+  },
+  "finalAsset": {
+    "status": 200,
+    "type": "image/webp"
+  },
+  "assetEvidenceNote": "All 19 byte-identical generated asset responses were verified on version4; version5 changes only client mic lifecycle/UI and includes the same art assets. Main image MIME and final client bundle were rechecked on version5."
 }

@@ -115,3 +115,16 @@ test('cancellation during audio unlock never requests microphone and stale denia
     assert.equal(f.statuses.includes('microphone-denied'), false);
   } finally { f.cleanup(); }
 });
+
+
+test('server cancellation admits spontaneous arrival speech and rejects cancelled chunks', async () => {
+  const f = await fixture(async () => microphone().stream);
+  try {
+    f.voice.beginTurn('direction');
+    f.socket.emit({ type: 'npc.cancel', turnId: 'direction' });
+    f.socket.emit({ type: 'npc.audio_begin', turnId: 'arrival-1' });
+    f.socket.emit({ type: 'npc.caption', turnId: 'arrival-1', text: 'I have arrived at your entrance.' });
+    f.socket.emit({ type: 'npc.caption', turnId: 'direction', text: 'Stale directions.' });
+    assert.deepEqual(f.captions, ['I have arrived at your entrance.']);
+  } finally { f.cleanup(); }
+});

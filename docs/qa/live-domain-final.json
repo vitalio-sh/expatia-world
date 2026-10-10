@@ -1,0 +1,3844 @@
+{
+  "started": "2026-10-10T11:29:20.200Z",
+  "completed": "2026-10-10T11:30:42.415Z",
+  "url": "https://expatia.world",
+  "transport": "Connection-owned native Worker WebSocket RPC",
+  "scenarios": [
+    {
+      "name": "Clarification, wrong north entrance, correction, physical handoff",
+      "sessionId": "8264beb2-59a4-441a-b450-04964492593a",
+      "started": "2026-10-10T11:29:23.001Z",
+      "clockUntimed": true,
+      "deadlineExactly60000": true,
+      "opening": [
+        {
+          "role": "courier",
+          "text": "I have your parcel and I am near a bar.",
+          "at": 1791631765519,
+          "turnId": "opening"
+        }
+      ],
+      "clarification": {
+        "id": "6bf24082-1b13-479c-aafb-ba6d6b64a30a",
+        "sequence": 2,
+        "trigger": "directions",
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "reveal:bar-llevant",
+        "action": {
+          "id": "reveal:bar-llevant",
+          "type": "reveal",
+          "targetId": "bar-llevant",
+          "label": "Read the visible Bar Llevant sign",
+          "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+        },
+        "candidates": [
+          {
+            "id": "clarify",
+            "type": "clarify",
+            "label": "Ask for a clearer landmark or entrance side",
+            "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+          },
+          {
+            "id": "wait",
+            "type": "wait",
+            "label": "Stop and wait",
+            "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+          },
+          {
+            "id": "reveal:bar-llevant",
+            "type": "reveal",
+            "targetId": "bar-llevant",
+            "label": "Read the visible Bar Llevant sign",
+            "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+          },
+          {
+            "id": "reveal:bar-ponent",
+            "type": "reveal",
+            "targetId": "bar-ponent",
+            "label": "Read the visible Bar Ponent sign",
+            "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+          },
+          {
+            "id": "reveal:fruita",
+            "type": "reveal",
+            "targetId": "fruita",
+            "label": "Read the visible Fruita Fresca sign",
+            "reason": "Reveal the distinguishing sign of this currently visible fruit shop after a relevant clarification question; no movement."
+          },
+          {
+            "id": "go:bar-llevant",
+            "type": "move",
+            "targetId": "bar-llevant",
+            "target": {
+              "x": 150,
+              "y": 175
+            },
+            "label": "Walk to Bar Llevant",
+            "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:bar-ponent",
+            "type": "move",
+            "targetId": "bar-ponent",
+            "target": {
+              "x": 430,
+              "y": 175
+            },
+            "label": "Walk to Bar Ponent",
+            "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:fruita",
+            "type": "move",
+            "targetId": "fruita",
+            "target": {
+              "x": 195,
+              "y": 460
+            },
+            "label": "Walk to Fruita Fresca",
+            "reason": "Navigate to the fruit shop actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "walk:north",
+            "type": "move",
+            "target": {
+              "x": 210,
+              "y": 170
+            },
+            "label": "Walk north along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:south",
+            "type": "move",
+            "target": {
+              "x": 210,
+              "y": 470
+            },
+            "label": "Walk south along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:east",
+            "type": "move",
+            "target": {
+              "x": 310,
+              "y": 250
+            },
+            "label": "Walk east along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:west",
+            "type": "move",
+            "target": {
+              "x": 30,
+              "y": 250
+            },
+            "label": "Walk west along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          }
+        ],
+        "probabilities": {
+          "clarify": 0,
+          "wait": 0,
+          "reveal:bar-llevant": 0.99,
+          "reveal:bar-ponent": 0.01,
+          "reveal:fruita": 0,
+          "go:bar-llevant": 0,
+          "go:bar-ponent": 0,
+          "go:fruita": 0,
+          "walk:north": 0,
+          "walk:south": 0,
+          "walk:east": 0,
+          "walk:west": 0
+        },
+        "confidence": 0.99,
+        "evidence": [
+          "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+          "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+          "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+          "Barcelona Sat, 13:29; weather: Clear sky (live)."
+        ],
+        "reason": "live",
+        "elapsedMs": 215,
+        "discarded": false,
+        "usage": {
+          "inputTokens": 3380,
+          "outputTokens": 145,
+          "estimatedUsd": 0.00014196
+        },
+        "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+      },
+      "wrongDecision": {
+        "id": "ceadb5b2-63bc-48e1-b4c8-e5df84b2990a",
+        "sequence": 3,
+        "trigger": "directions",
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "home:north",
+        "action": {
+          "id": "home:north",
+          "type": "move",
+          "targetId": "home-north",
+          "target": {
+            "x": 480,
+            "y": 200
+          },
+          "label": "Go to the north side described by the resident",
+          "reason": "Resident said the entrance is on the north side. This is a conversational belief, not proof; verify on arrival."
+        },
+        "candidates": [
+          {
+            "id": "clarify",
+            "type": "clarify",
+            "label": "Ask for a clearer landmark or entrance side",
+            "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+          },
+          {
+            "id": "wait",
+            "type": "wait",
+            "label": "Stop and wait",
+            "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+          },
+          {
+            "id": "reveal:bar-llevant",
+            "type": "reveal",
+            "targetId": "bar-llevant",
+            "label": "Read the visible Bar Llevant sign",
+            "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+          },
+          {
+            "id": "reveal:bar-ponent",
+            "type": "reveal",
+            "targetId": "bar-ponent",
+            "label": "Read the visible Bar Ponent sign",
+            "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+          },
+          {
+            "id": "reveal:fruita",
+            "type": "reveal",
+            "targetId": "fruita",
+            "label": "Read the visible Fruita Fresca sign",
+            "reason": "Reveal the distinguishing sign of this currently visible fruit shop after a relevant clarification question; no movement."
+          },
+          {
+            "id": "go:bar-llevant",
+            "type": "move",
+            "targetId": "bar-llevant",
+            "target": {
+              "x": 150,
+              "y": 175
+            },
+            "label": "Walk to Bar Llevant",
+            "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:bar-ponent",
+            "type": "move",
+            "targetId": "bar-ponent",
+            "target": {
+              "x": 430,
+              "y": 175
+            },
+            "label": "Walk to Bar Ponent",
+            "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:fruita",
+            "type": "move",
+            "targetId": "fruita",
+            "target": {
+              "x": 195,
+              "y": 460
+            },
+            "label": "Walk to Fruita Fresca",
+            "reason": "Navigate to the fruit shop actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "home:north",
+            "type": "move",
+            "targetId": "home-north",
+            "target": {
+              "x": 480,
+              "y": 200
+            },
+            "label": "Go to the north side described by the resident",
+            "reason": "Resident said the entrance is on the north side. This is a conversational belief, not proof; verify on arrival."
+          },
+          {
+            "id": "walk:north",
+            "type": "move",
+            "target": {
+              "x": 210,
+              "y": 170
+            },
+            "label": "Walk north along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:south",
+            "type": "move",
+            "target": {
+              "x": 210,
+              "y": 470
+            },
+            "label": "Walk south along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:east",
+            "type": "move",
+            "target": {
+              "x": 310,
+              "y": 250
+            },
+            "label": "Walk east along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:west",
+            "type": "move",
+            "target": {
+              "x": 30,
+              "y": 250
+            },
+            "label": "Walk west along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          }
+        ],
+        "probabilities": {
+          "clarify": 0.02,
+          "wait": 0,
+          "reveal:bar-llevant": 0,
+          "reveal:bar-ponent": 0,
+          "reveal:fruita": 0,
+          "go:bar-llevant": 0.01,
+          "go:bar-ponent": 0,
+          "go:fruita": 0,
+          "home:north": 0.9,
+          "walk:north": 0.07,
+          "walk:south": 0,
+          "walk:east": 0,
+          "walk:west": 0
+        },
+        "confidence": 0.89,
+        "evidence": [
+          "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+          "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+          "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+          "Barcelona Sat, 13:29; weather: Clear sky (live).",
+          "Resident reported a north entrance; this remains a belief until observed."
+        ],
+        "reason": "live",
+        "elapsedMs": 221,
+        "discarded": false,
+        "usage": {
+          "inputTokens": 3658,
+          "outputTokens": 150,
+          "estimatedUsd": 0.000153636
+        },
+        "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+      },
+      "wrongArrival": {
+        "id": "8264beb2-59a4-441a-b450-04964492593a",
+        "phase": "active",
+        "startedAt": 1791631764448,
+        "deadline": 1791631824448,
+        "serverNow": 1791631769481,
+        "remainingMs": 54967,
+        "courier": {
+          "x": 480,
+          "y": 200,
+          "direction": "east",
+          "moving": false
+        },
+        "resident": {
+          "x": 480,
+          "y": 565,
+          "direction": "south",
+          "moving": false
+        },
+        "route": [],
+        "routeTargetId": "home-north",
+        "parcel": "courier",
+        "dropLocationId": null,
+        "outcome": null,
+        "history": [
+          {
+            "role": "event",
+            "text": "The resident answered the incoming delivery call. The 60-second delivery window began.",
+            "at": 1791631764448
+          },
+          {
+            "role": "courier",
+            "text": "I have your parcel and I am near a bar. Which way should I go?",
+            "at": 1791631765519,
+            "turnId": "opening"
+          },
+          {
+            "role": "player",
+            "text": "Which bar are you beside? Can you read its name?",
+            "at": 1791631765730
+          },
+          {
+            "role": "event",
+            "text": "The courier read the currently visible sign: Bar Llevant.",
+            "at": 1791631765945,
+            "turnId": "6bf24082-1b13-479c-aafb-ba6d6b64a30a"
+          },
+          {
+            "role": "courier",
+            "text": "I am standing right by Bar Llevant. Which way from here?",
+            "at": 1791631766529,
+            "turnId": "clarify"
+          },
+          {
+            "role": "player",
+            "text": "My entrance is on the north side. Please meet me there.",
+            "at": 1791631766743
+          },
+          {
+            "role": "event",
+            "text": "Courier started: Go to the north side described by the resident. Arrival and handoff have not yet happened.",
+            "at": 1791631766964,
+            "turnId": "ceadb5b2-63bc-48e1-b4c8-e5df84b2990a"
+          },
+          {
+            "role": "courier",
+            "text": "I am heading toward the north side now to find your entrance.",
+            "at": 1791631768053,
+            "turnId": "wrong"
+          },
+          {
+            "role": "event",
+            "text": "The courier arrived at the requested waypoint. The parcel remains with the courier until a physical handoff.",
+            "at": 1791631769377
+          }
+        ],
+        "weather": {
+          "temperature": 20.7,
+          "description": "Clear sky",
+          "code": null,
+          "isRain": false,
+          "retrievedAt": "2026-10-10T11:29:22.990Z",
+          "checkedAt": "2026-10-10T11:29:22.445Z",
+          "validAt": "2026-10-10T11:00:00Z",
+          "modelUpdatedAt": "2026-10-10T09:17:19Z",
+          "source": "MET Norway",
+          "dataKind": "current-forecast",
+          "cacheExpiresAt": "2026-10-10T11:32:02.000Z",
+          "status": "live",
+          "timeZone": "Europe/Madrid",
+          "diagnostics": [
+            {
+              "source": "Open-Meteo",
+              "outcome": "http_error",
+              "elapsedMs": 235,
+              "status": 429
+            },
+            {
+              "source": "MET Norway",
+              "outcome": "live",
+              "elapsedMs": 310,
+              "status": 200
+            }
+          ]
+        },
+        "time": {
+          "day": 6,
+          "minutes": 809,
+          "label": "Sat, 13:29",
+          "date": "2026-10-10",
+          "timeZone": "Europe/Madrid"
+        },
+        "map": {
+          "size": 960,
+          "home": {
+            "id": "home",
+            "name": "Your home",
+            "footprint": [
+              {
+                "x": 364,
+                "y": 220
+              },
+              {
+                "x": 594,
+                "y": 220
+              },
+              {
+                "x": 679,
+                "y": 304
+              },
+              {
+                "x": 679,
+                "y": 537
+              },
+              {
+                "x": 592,
+                "y": 629
+              },
+              {
+                "x": 364,
+                "y": 629
+              },
+              {
+                "x": 279,
+                "y": 543
+              },
+              {
+                "x": 279,
+                "y": 304
+              }
+            ],
+            "entrance": {
+              "x": 480,
+              "y": 645
+            }
+          },
+          "buildings": [
+            {
+              "id": "bar-llevant",
+              "name": "Bar Llevant",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 60,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 155
+                },
+                {
+                  "x": 60,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 150,
+                "y": 175
+              },
+              "sign": {
+                "x": 150,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "23:30"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#b66759"
+            },
+            {
+              "id": "bar-ponent",
+              "name": "Bar Ponent",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 155
+                },
+                {
+                  "x": 340,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 430,
+                "y": 175
+              },
+              "sign": {
+                "x": 430,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "10:00",
+                  "to": "22:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#59847e"
+            },
+            {
+              "id": "mercat",
+              "name": "Mercat del Barri",
+              "category": "supermarket",
+              "footprint": [
+                {
+                  "x": 660,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 155
+                },
+                {
+                  "x": 660,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 780,
+                "y": 175
+              },
+              "sign": {
+                "x": 780,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "21:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#84a167"
+            },
+            {
+              "id": "fruita",
+              "name": "Fruita Fresca",
+              "category": "fruit shop",
+              "footprint": [
+                {
+                  "x": 0,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 525
+                },
+                {
+                  "x": 0,
+                  "y": 525
+                }
+              ],
+              "entrance": {
+                "x": 195,
+                "y": 460
+              },
+              "sign": {
+                "x": 175,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "14:00"
+                },
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "from": "17:00",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": false,
+              "color": "#d8a759"
+            },
+            {
+              "id": "forn",
+              "name": "Forn de la Plaça",
+              "category": "bakery",
+              "footprint": [
+                {
+                  "x": 785,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 530
+                },
+                {
+                  "x": 785,
+                  "y": 530
+                }
+              ],
+              "entrance": {
+                "x": 765,
+                "y": 460
+              },
+              "sign": {
+                "x": 785,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "06:30",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#c88b64"
+            },
+            {
+              "id": "perruqueria",
+              "name": "Perruqueria Ona",
+              "category": "hairdresser",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 895
+                },
+                {
+                  "x": 340,
+                  "y": 895
+                }
+              ],
+              "entrance": {
+                "x": 480,
+                "y": 915
+              },
+              "sign": {
+                "x": 480,
+                "y": 895
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "09:00",
+                  "to": "19:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#9294ad"
+            }
+          ],
+          "sightRange": 310,
+          "sightDescription": "Four cardinal viewing sectors, 310 units, with solid-building occlusion."
+        },
+        "canHandoff": false,
+        "visibleBuildings": [
+          "bar-ponent",
+          "mercat"
+        ],
+        "arrivalSequence": 1,
+        "inspector": {
+          "id": "ceadb5b2-63bc-48e1-b4c8-e5df84b2990a",
+          "sequence": 3,
+          "trigger": "directions",
+          "source": "jev",
+          "model": "jev-1.13.0",
+          "selected": "home:north",
+          "action": {
+            "id": "home:north",
+            "type": "move",
+            "targetId": "home-north",
+            "target": {
+              "x": 480,
+              "y": 200
+            },
+            "label": "Go to the north side described by the resident",
+            "reason": "Resident said the entrance is on the north side. This is a conversational belief, not proof; verify on arrival."
+          },
+          "candidates": [
+            {
+              "id": "clarify",
+              "type": "clarify",
+              "label": "Ask for a clearer landmark or entrance side",
+              "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+            },
+            {
+              "id": "wait",
+              "type": "wait",
+              "label": "Stop and wait",
+              "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+            },
+            {
+              "id": "reveal:bar-llevant",
+              "type": "reveal",
+              "targetId": "bar-llevant",
+              "label": "Read the visible Bar Llevant sign",
+              "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+            },
+            {
+              "id": "reveal:bar-ponent",
+              "type": "reveal",
+              "targetId": "bar-ponent",
+              "label": "Read the visible Bar Ponent sign",
+              "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+            },
+            {
+              "id": "reveal:fruita",
+              "type": "reveal",
+              "targetId": "fruita",
+              "label": "Read the visible Fruita Fresca sign",
+              "reason": "Reveal the distinguishing sign of this currently visible fruit shop after a relevant clarification question; no movement."
+            },
+            {
+              "id": "go:bar-llevant",
+              "type": "move",
+              "targetId": "bar-llevant",
+              "target": {
+                "x": 150,
+                "y": 175
+              },
+              "label": "Walk to Bar Llevant",
+              "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:bar-ponent",
+              "type": "move",
+              "targetId": "bar-ponent",
+              "target": {
+                "x": 430,
+                "y": 175
+              },
+              "label": "Walk to Bar Ponent",
+              "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:fruita",
+              "type": "move",
+              "targetId": "fruita",
+              "target": {
+                "x": 195,
+                "y": 460
+              },
+              "label": "Walk to Fruita Fresca",
+              "reason": "Navigate to the fruit shop actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "home:north",
+              "type": "move",
+              "targetId": "home-north",
+              "target": {
+                "x": 480,
+                "y": 200
+              },
+              "label": "Go to the north side described by the resident",
+              "reason": "Resident said the entrance is on the north side. This is a conversational belief, not proof; verify on arrival."
+            },
+            {
+              "id": "walk:north",
+              "type": "move",
+              "target": {
+                "x": 210,
+                "y": 170
+              },
+              "label": "Walk north along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "walk:south",
+              "type": "move",
+              "target": {
+                "x": 210,
+                "y": 470
+              },
+              "label": "Walk south along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "walk:east",
+              "type": "move",
+              "target": {
+                "x": 310,
+                "y": 250
+              },
+              "label": "Walk east along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "walk:west",
+              "type": "move",
+              "target": {
+                "x": 30,
+                "y": 250
+              },
+              "label": "Walk west along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            }
+          ],
+          "probabilities": {
+            "clarify": 0.02,
+            "wait": 0,
+            "reveal:bar-llevant": 0,
+            "reveal:bar-ponent": 0,
+            "reveal:fruita": 0,
+            "go:bar-llevant": 0.01,
+            "go:bar-ponent": 0,
+            "go:fruita": 0,
+            "home:north": 0.9,
+            "walk:north": 0.07,
+            "walk:south": 0,
+            "walk:east": 0,
+            "walk:west": 0
+          },
+          "confidence": 0.89,
+          "evidence": [
+            "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+            "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+            "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+            "Barcelona Sat, 13:29; weather: Clear sky (live).",
+            "Resident reported a north entrance; this remains a belief until observed."
+          ],
+          "reason": "live",
+          "elapsedMs": 221,
+          "discarded": false,
+          "usage": {
+            "inputTokens": 3658,
+            "outputTokens": 150,
+            "estimatedUsd": 0.000153636
+          },
+          "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+        },
+        "dialogueLive": true,
+        "usage": {
+          "calls": 8,
+          "liveCalls": 6,
+          "inputTokens": 13799,
+          "outputTokens": 363,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 14162,
+          "unreportedTokenCalls": 0,
+          "returnedCostUsd": 0.0016967000000000002,
+          "estimatedCostUsd": 0.004997420000000001,
+          "voiceCharacters": 116,
+          "audioSeconds": 1.20175,
+          "providers": {
+            "jev": 3,
+            "openrouter": 3,
+            "elevenlabs": 2
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        },
+        "realtimeRpc": true,
+        "connectionOwned": true
+      },
+      "correction": {
+        "id": "64093c23-e94f-4315-ba17-ad4cefe515aa",
+        "sequence": 4,
+        "trigger": "directions",
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "home:south",
+        "action": {
+          "id": "home:south",
+          "type": "move",
+          "targetId": "home-south",
+          "target": {
+            "x": 480,
+            "y": 645
+          },
+          "label": "Go to the south side described by the resident",
+          "reason": "Resident said the entrance is on the south side. This is a conversational belief, not proof; verify on arrival."
+        },
+        "candidates": [
+          {
+            "id": "clarify",
+            "type": "clarify",
+            "label": "Ask for a clearer landmark or entrance side",
+            "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+          },
+          {
+            "id": "wait",
+            "type": "wait",
+            "label": "Stop and wait",
+            "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+          },
+          {
+            "id": "reveal:bar-ponent",
+            "type": "reveal",
+            "targetId": "bar-ponent",
+            "label": "Read the visible Bar Ponent sign",
+            "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+          },
+          {
+            "id": "reveal:mercat",
+            "type": "reveal",
+            "targetId": "mercat",
+            "label": "Read the visible Mercat del Barri sign",
+            "reason": "Reveal the distinguishing sign of this currently visible supermarket after a relevant clarification question; no movement."
+          },
+          {
+            "id": "go:bar-llevant",
+            "type": "move",
+            "targetId": "bar-llevant",
+            "target": {
+              "x": 150,
+              "y": 175
+            },
+            "label": "Walk to Bar Llevant",
+            "reason": "Navigate to the bar actually observed earlier. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:bar-ponent",
+            "type": "move",
+            "targetId": "bar-ponent",
+            "target": {
+              "x": 430,
+              "y": 175
+            },
+            "label": "Walk to Bar Ponent",
+            "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:fruita",
+            "type": "move",
+            "targetId": "fruita",
+            "target": {
+              "x": 195,
+              "y": 460
+            },
+            "label": "Walk to Fruita Fresca",
+            "reason": "Navigate to the fruit shop actually observed earlier. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:mercat",
+            "type": "move",
+            "targetId": "mercat",
+            "target": {
+              "x": 780,
+              "y": 175
+            },
+            "label": "Walk to Mercat del Barri",
+            "reason": "Navigate to the supermarket actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "home:south",
+            "type": "move",
+            "targetId": "home-south",
+            "target": {
+              "x": 480,
+              "y": 645
+            },
+            "label": "Go to the south side described by the resident",
+            "reason": "Resident said the entrance is on the south side. This is a conversational belief, not proof; verify on arrival."
+          },
+          {
+            "id": "walk:north",
+            "type": "move",
+            "target": {
+              "x": 480,
+              "y": 180
+            },
+            "label": "Walk north along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:east",
+            "type": "move",
+            "target": {
+              "x": 700,
+              "y": 200
+            },
+            "label": "Walk east along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:west",
+            "type": "move",
+            "target": {
+              "x": 260,
+              "y": 200
+            },
+            "label": "Walk west along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "go-back",
+            "type": "move",
+            "target": {
+              "x": 210,
+              "y": 250
+            },
+            "label": "Go back to the previous position",
+            "reason": "Recover from a wrong turn using remembered movement, rather than restarting."
+          }
+        ],
+        "probabilities": {
+          "clarify": 0.03,
+          "wait": 0,
+          "reveal:bar-ponent": 0,
+          "reveal:mercat": 0,
+          "go:bar-llevant": 0,
+          "go:bar-ponent": 0,
+          "go:fruita": 0,
+          "go:mercat": 0,
+          "home:south": 0.97,
+          "walk:north": 0,
+          "walk:east": 0,
+          "walk:west": 0,
+          "go-back": 0
+        },
+        "confidence": 0.97,
+        "evidence": [
+          "Currently visible: Bar Ponent (bar), west, 67 units; open.",
+          "Currently visible: Mercat del Barri (supermarket), east, 303 units; open.",
+          "Barcelona Sat, 13:29; weather: Clear sky (live).",
+          "Resident reported a south entrance; this remains a belief until observed."
+        ],
+        "reason": "live",
+        "elapsedMs": 210,
+        "discarded": false,
+        "usage": {
+          "inputTokens": 3881,
+          "outputTokens": 146,
+          "estimatedUsd": 0.000163002
+        },
+        "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+      },
+      "arrival": {
+        "id": "8264beb2-59a4-441a-b450-04964492593a",
+        "phase": "active",
+        "startedAt": 1791631764448,
+        "deadline": 1791631824448,
+        "serverNow": 1791631776005,
+        "remainingMs": 48443,
+        "courier": {
+          "x": 448.0323977881396,
+          "y": 646.4530728278116,
+          "direction": "east",
+          "moving": true
+        },
+        "resident": {
+          "x": 480,
+          "y": 657.3999999999995,
+          "direction": "south",
+          "moving": true
+        },
+        "route": [
+          {
+            "x": 480,
+            "y": 645
+          }
+        ],
+        "routeTargetId": "home-south",
+        "parcel": "courier",
+        "dropLocationId": null,
+        "outcome": null,
+        "history": [
+          {
+            "role": "event",
+            "text": "The resident answered the incoming delivery call. The 60-second delivery window began.",
+            "at": 1791631764448
+          },
+          {
+            "role": "courier",
+            "text": "I have your parcel and I am near a bar. Which way should I go?",
+            "at": 1791631765519,
+            "turnId": "opening"
+          },
+          {
+            "role": "player",
+            "text": "Which bar are you beside? Can you read its name?",
+            "at": 1791631765730
+          },
+          {
+            "role": "event",
+            "text": "The courier read the currently visible sign: Bar Llevant.",
+            "at": 1791631765945,
+            "turnId": "6bf24082-1b13-479c-aafb-ba6d6b64a30a"
+          },
+          {
+            "role": "courier",
+            "text": "I am standing right by Bar Llevant. Which way from here?",
+            "at": 1791631766529,
+            "turnId": "clarify"
+          },
+          {
+            "role": "player",
+            "text": "My entrance is on the north side. Please meet me there.",
+            "at": 1791631766743
+          },
+          {
+            "role": "event",
+            "text": "Courier started: Go to the north side described by the resident. Arrival and handoff have not yet happened.",
+            "at": 1791631766964,
+            "turnId": "ceadb5b2-63bc-48e1-b4c8-e5df84b2990a"
+          },
+          {
+            "role": "courier",
+            "text": "I am heading toward the north side now to find your entrance.",
+            "at": 1791631768053,
+            "turnId": "wrong"
+          },
+          {
+            "role": "event",
+            "text": "The courier arrived at the requested waypoint. The parcel remains with the courier until a physical handoff.",
+            "at": 1791631769377
+          },
+          {
+            "role": "player",
+            "text": "Sorry, I meant the south side of the central building. My entrance is at the bottom. Please meet me there.",
+            "at": 1791631769527
+          },
+          {
+            "role": "event",
+            "text": "Courier started: Go to the south side described by the resident. Arrival and handoff have not yet happened.",
+            "at": 1791631769737,
+            "turnId": "64093c23-e94f-4315-ba17-ad4cefe515aa"
+          },
+          {
+            "role": "courier",
+            "text": "I am heading over to the south side now to check that entrance.",
+            "at": 1791631770758,
+            "turnId": "correct"
+          }
+        ],
+        "weather": {
+          "temperature": 20.7,
+          "description": "Clear sky",
+          "code": null,
+          "isRain": false,
+          "retrievedAt": "2026-10-10T11:29:22.990Z",
+          "checkedAt": "2026-10-10T11:29:22.445Z",
+          "validAt": "2026-10-10T11:00:00Z",
+          "modelUpdatedAt": "2026-10-10T09:17:19Z",
+          "source": "MET Norway",
+          "dataKind": "current-forecast",
+          "cacheExpiresAt": "2026-10-10T11:32:02.000Z",
+          "status": "live",
+          "timeZone": "Europe/Madrid",
+          "diagnostics": [
+            {
+              "source": "Open-Meteo",
+              "outcome": "http_error",
+              "elapsedMs": 235,
+              "status": 429
+            },
+            {
+              "source": "MET Norway",
+              "outcome": "live",
+              "elapsedMs": 310,
+              "status": 200
+            }
+          ]
+        },
+        "time": {
+          "day": 6,
+          "minutes": 809,
+          "label": "Sat, 13:29",
+          "date": "2026-10-10",
+          "timeZone": "Europe/Madrid"
+        },
+        "map": {
+          "size": 960,
+          "home": {
+            "id": "home",
+            "name": "Your home",
+            "footprint": [
+              {
+                "x": 364,
+                "y": 220
+              },
+              {
+                "x": 594,
+                "y": 220
+              },
+              {
+                "x": 679,
+                "y": 304
+              },
+              {
+                "x": 679,
+                "y": 537
+              },
+              {
+                "x": 592,
+                "y": 629
+              },
+              {
+                "x": 364,
+                "y": 629
+              },
+              {
+                "x": 279,
+                "y": 543
+              },
+              {
+                "x": 279,
+                "y": 304
+              }
+            ],
+            "entrance": {
+              "x": 480,
+              "y": 645
+            }
+          },
+          "buildings": [
+            {
+              "id": "bar-llevant",
+              "name": "Bar Llevant",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 60,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 155
+                },
+                {
+                  "x": 60,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 150,
+                "y": 175
+              },
+              "sign": {
+                "x": 150,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "23:30"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#b66759"
+            },
+            {
+              "id": "bar-ponent",
+              "name": "Bar Ponent",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 155
+                },
+                {
+                  "x": 340,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 430,
+                "y": 175
+              },
+              "sign": {
+                "x": 430,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "10:00",
+                  "to": "22:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#59847e"
+            },
+            {
+              "id": "mercat",
+              "name": "Mercat del Barri",
+              "category": "supermarket",
+              "footprint": [
+                {
+                  "x": 660,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 155
+                },
+                {
+                  "x": 660,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 780,
+                "y": 175
+              },
+              "sign": {
+                "x": 780,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "21:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#84a167"
+            },
+            {
+              "id": "fruita",
+              "name": "Fruita Fresca",
+              "category": "fruit shop",
+              "footprint": [
+                {
+                  "x": 0,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 525
+                },
+                {
+                  "x": 0,
+                  "y": 525
+                }
+              ],
+              "entrance": {
+                "x": 195,
+                "y": 460
+              },
+              "sign": {
+                "x": 175,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "14:00"
+                },
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "from": "17:00",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": false,
+              "color": "#d8a759"
+            },
+            {
+              "id": "forn",
+              "name": "Forn de la Plaça",
+              "category": "bakery",
+              "footprint": [
+                {
+                  "x": 785,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 530
+                },
+                {
+                  "x": 785,
+                  "y": 530
+                }
+              ],
+              "entrance": {
+                "x": 765,
+                "y": 460
+              },
+              "sign": {
+                "x": 785,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "06:30",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#c88b64"
+            },
+            {
+              "id": "perruqueria",
+              "name": "Perruqueria Ona",
+              "category": "hairdresser",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 895
+                },
+                {
+                  "x": 340,
+                  "y": 895
+                }
+              ],
+              "entrance": {
+                "x": 480,
+                "y": 915
+              },
+              "sign": {
+                "x": 480,
+                "y": 895
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "09:00",
+                  "to": "19:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#9294ad"
+            }
+          ],
+          "sightRange": 310,
+          "sightDescription": "Four cardinal viewing sectors, 310 units, with solid-building occlusion."
+        },
+        "canHandoff": true,
+        "visibleBuildings": [
+          "perruqueria"
+        ],
+        "arrivalSequence": 1,
+        "inspector": {
+          "id": "64093c23-e94f-4315-ba17-ad4cefe515aa",
+          "sequence": 4,
+          "trigger": "directions",
+          "source": "jev",
+          "model": "jev-1.13.0",
+          "selected": "home:south",
+          "action": {
+            "id": "home:south",
+            "type": "move",
+            "targetId": "home-south",
+            "target": {
+              "x": 480,
+              "y": 645
+            },
+            "label": "Go to the south side described by the resident",
+            "reason": "Resident said the entrance is on the south side. This is a conversational belief, not proof; verify on arrival."
+          },
+          "candidates": [
+            {
+              "id": "clarify",
+              "type": "clarify",
+              "label": "Ask for a clearer landmark or entrance side",
+              "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+            },
+            {
+              "id": "wait",
+              "type": "wait",
+              "label": "Stop and wait",
+              "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+            },
+            {
+              "id": "reveal:bar-ponent",
+              "type": "reveal",
+              "targetId": "bar-ponent",
+              "label": "Read the visible Bar Ponent sign",
+              "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+            },
+            {
+              "id": "reveal:mercat",
+              "type": "reveal",
+              "targetId": "mercat",
+              "label": "Read the visible Mercat del Barri sign",
+              "reason": "Reveal the distinguishing sign of this currently visible supermarket after a relevant clarification question; no movement."
+            },
+            {
+              "id": "go:bar-llevant",
+              "type": "move",
+              "targetId": "bar-llevant",
+              "target": {
+                "x": 150,
+                "y": 175
+              },
+              "label": "Walk to Bar Llevant",
+              "reason": "Navigate to the bar actually observed earlier. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:bar-ponent",
+              "type": "move",
+              "targetId": "bar-ponent",
+              "target": {
+                "x": 430,
+                "y": 175
+              },
+              "label": "Walk to Bar Ponent",
+              "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:fruita",
+              "type": "move",
+              "targetId": "fruita",
+              "target": {
+                "x": 195,
+                "y": 460
+              },
+              "label": "Walk to Fruita Fresca",
+              "reason": "Navigate to the fruit shop actually observed earlier. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:mercat",
+              "type": "move",
+              "targetId": "mercat",
+              "target": {
+                "x": 780,
+                "y": 175
+              },
+              "label": "Walk to Mercat del Barri",
+              "reason": "Navigate to the supermarket actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "home:south",
+              "type": "move",
+              "targetId": "home-south",
+              "target": {
+                "x": 480,
+                "y": 645
+              },
+              "label": "Go to the south side described by the resident",
+              "reason": "Resident said the entrance is on the south side. This is a conversational belief, not proof; verify on arrival."
+            },
+            {
+              "id": "walk:north",
+              "type": "move",
+              "target": {
+                "x": 480,
+                "y": 180
+              },
+              "label": "Walk north along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "walk:east",
+              "type": "move",
+              "target": {
+                "x": 700,
+                "y": 200
+              },
+              "label": "Walk east along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "walk:west",
+              "type": "move",
+              "target": {
+                "x": 260,
+                "y": 200
+              },
+              "label": "Walk west along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "go-back",
+              "type": "move",
+              "target": {
+                "x": 210,
+                "y": 250
+              },
+              "label": "Go back to the previous position",
+              "reason": "Recover from a wrong turn using remembered movement, rather than restarting."
+            }
+          ],
+          "probabilities": {
+            "clarify": 0.03,
+            "wait": 0,
+            "reveal:bar-ponent": 0,
+            "reveal:mercat": 0,
+            "go:bar-llevant": 0,
+            "go:bar-ponent": 0,
+            "go:fruita": 0,
+            "go:mercat": 0,
+            "home:south": 0.97,
+            "walk:north": 0,
+            "walk:east": 0,
+            "walk:west": 0,
+            "go-back": 0
+          },
+          "confidence": 0.97,
+          "evidence": [
+            "Currently visible: Bar Ponent (bar), west, 67 units; open.",
+            "Currently visible: Mercat del Barri (supermarket), east, 303 units; open.",
+            "Barcelona Sat, 13:29; weather: Clear sky (live).",
+            "Resident reported a south entrance; this remains a belief until observed."
+          ],
+          "reason": "live",
+          "elapsedMs": 210,
+          "discarded": false,
+          "usage": {
+            "inputTokens": 3881,
+            "outputTokens": 146,
+            "estimatedUsd": 0.000163002
+          },
+          "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+        },
+        "dialogueLive": true,
+        "usage": {
+          "calls": 12,
+          "liveCalls": 9,
+          "inputTokens": 20021,
+          "outputTokens": 523,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 20544,
+          "unreportedTokenCalls": 0,
+          "returnedCostUsd": 0.0024340000000000004,
+          "estimatedCostUsd": 0.010120422,
+          "voiceCharacters": 240,
+          "audioSeconds": 6.377375000000001,
+          "providers": {
+            "jev": 4,
+            "openrouter": 4,
+            "elevenlabs": 4
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        },
+        "realtimeRpc": true,
+        "connectionOwned": true
+      },
+      "final": {
+        "id": "8264beb2-59a4-441a-b450-04964492593a",
+        "phase": "resolved",
+        "startedAt": 1791631764448,
+        "deadline": 1791631824448,
+        "serverNow": 1791631776069,
+        "remainingMs": 48379,
+        "courier": {
+          "x": 455.5766082038078,
+          "y": 646.1101541725541,
+          "direction": "east",
+          "moving": false
+        },
+        "resident": {
+          "x": 480,
+          "y": 657.3999999999995,
+          "direction": "south",
+          "moving": false
+        },
+        "route": [],
+        "routeTargetId": "home-south",
+        "parcel": "resident",
+        "dropLocationId": null,
+        "outcome": {
+          "kind": "received",
+          "title": "Parcel received!",
+          "detail": "You met the courier at your home entrance and accepted the parcel.",
+          "feedback": "Asking for the sign removed the ambiguity. Clear directions and meeting at the entrance completed the delivery."
+        },
+        "history": [
+          {
+            "role": "event",
+            "text": "The resident answered the incoming delivery call. The 60-second delivery window began.",
+            "at": 1791631764448
+          },
+          {
+            "role": "courier",
+            "text": "I have your parcel and I am near a bar. Which way should I go?",
+            "at": 1791631765519,
+            "turnId": "opening"
+          },
+          {
+            "role": "player",
+            "text": "Which bar are you beside? Can you read its name?",
+            "at": 1791631765730
+          },
+          {
+            "role": "event",
+            "text": "The courier read the currently visible sign: Bar Llevant.",
+            "at": 1791631765945,
+            "turnId": "6bf24082-1b13-479c-aafb-ba6d6b64a30a"
+          },
+          {
+            "role": "courier",
+            "text": "I am standing right by Bar Llevant. Which way from here?",
+            "at": 1791631766529,
+            "turnId": "clarify"
+          },
+          {
+            "role": "player",
+            "text": "My entrance is on the north side. Please meet me there.",
+            "at": 1791631766743
+          },
+          {
+            "role": "event",
+            "text": "Courier started: Go to the north side described by the resident. Arrival and handoff have not yet happened.",
+            "at": 1791631766964,
+            "turnId": "ceadb5b2-63bc-48e1-b4c8-e5df84b2990a"
+          },
+          {
+            "role": "courier",
+            "text": "I am heading toward the north side now to find your entrance.",
+            "at": 1791631768053,
+            "turnId": "wrong"
+          },
+          {
+            "role": "event",
+            "text": "The courier arrived at the requested waypoint. The parcel remains with the courier until a physical handoff.",
+            "at": 1791631769377
+          },
+          {
+            "role": "player",
+            "text": "Sorry, I meant the south side of the central building. My entrance is at the bottom. Please meet me there.",
+            "at": 1791631769527
+          },
+          {
+            "role": "event",
+            "text": "Courier started: Go to the south side described by the resident. Arrival and handoff have not yet happened.",
+            "at": 1791631769737,
+            "turnId": "64093c23-e94f-4315-ba17-ad4cefe515aa"
+          },
+          {
+            "role": "courier",
+            "text": "I am heading over to the south side now to check that entrance.",
+            "at": 1791631770758,
+            "turnId": "correct"
+          },
+          {
+            "role": "event",
+            "text": "The resident physically accepted the parcel from the courier at the home entrance.",
+            "at": 1791631776069
+          }
+        ],
+        "weather": {
+          "temperature": 20.7,
+          "description": "Clear sky",
+          "code": null,
+          "isRain": false,
+          "retrievedAt": "2026-10-10T11:29:22.990Z",
+          "checkedAt": "2026-10-10T11:29:22.445Z",
+          "validAt": "2026-10-10T11:00:00Z",
+          "modelUpdatedAt": "2026-10-10T09:17:19Z",
+          "source": "MET Norway",
+          "dataKind": "current-forecast",
+          "cacheExpiresAt": "2026-10-10T11:32:02.000Z",
+          "status": "live",
+          "timeZone": "Europe/Madrid",
+          "diagnostics": [
+            {
+              "source": "Open-Meteo",
+              "outcome": "http_error",
+              "elapsedMs": 235,
+              "status": 429
+            },
+            {
+              "source": "MET Norway",
+              "outcome": "live",
+              "elapsedMs": 310,
+              "status": 200
+            }
+          ]
+        },
+        "time": {
+          "day": 6,
+          "minutes": 809,
+          "label": "Sat, 13:29",
+          "date": "2026-10-10",
+          "timeZone": "Europe/Madrid"
+        },
+        "map": {
+          "size": 960,
+          "home": {
+            "id": "home",
+            "name": "Your home",
+            "footprint": [
+              {
+                "x": 364,
+                "y": 220
+              },
+              {
+                "x": 594,
+                "y": 220
+              },
+              {
+                "x": 679,
+                "y": 304
+              },
+              {
+                "x": 679,
+                "y": 537
+              },
+              {
+                "x": 592,
+                "y": 629
+              },
+              {
+                "x": 364,
+                "y": 629
+              },
+              {
+                "x": 279,
+                "y": 543
+              },
+              {
+                "x": 279,
+                "y": 304
+              }
+            ],
+            "entrance": {
+              "x": 480,
+              "y": 645
+            }
+          },
+          "buildings": [
+            {
+              "id": "bar-llevant",
+              "name": "Bar Llevant",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 60,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 155
+                },
+                {
+                  "x": 60,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 150,
+                "y": 175
+              },
+              "sign": {
+                "x": 150,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "23:30"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#b66759"
+            },
+            {
+              "id": "bar-ponent",
+              "name": "Bar Ponent",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 155
+                },
+                {
+                  "x": 340,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 430,
+                "y": 175
+              },
+              "sign": {
+                "x": 430,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "10:00",
+                  "to": "22:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#59847e"
+            },
+            {
+              "id": "mercat",
+              "name": "Mercat del Barri",
+              "category": "supermarket",
+              "footprint": [
+                {
+                  "x": 660,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 155
+                },
+                {
+                  "x": 660,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 780,
+                "y": 175
+              },
+              "sign": {
+                "x": 780,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "21:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#84a167"
+            },
+            {
+              "id": "fruita",
+              "name": "Fruita Fresca",
+              "category": "fruit shop",
+              "footprint": [
+                {
+                  "x": 0,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 525
+                },
+                {
+                  "x": 0,
+                  "y": 525
+                }
+              ],
+              "entrance": {
+                "x": 195,
+                "y": 460
+              },
+              "sign": {
+                "x": 175,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "14:00"
+                },
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "from": "17:00",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": false,
+              "color": "#d8a759"
+            },
+            {
+              "id": "forn",
+              "name": "Forn de la Plaça",
+              "category": "bakery",
+              "footprint": [
+                {
+                  "x": 785,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 530
+                },
+                {
+                  "x": 785,
+                  "y": 530
+                }
+              ],
+              "entrance": {
+                "x": 765,
+                "y": 460
+              },
+              "sign": {
+                "x": 785,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "06:30",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#c88b64"
+            },
+            {
+              "id": "perruqueria",
+              "name": "Perruqueria Ona",
+              "category": "hairdresser",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 895
+                },
+                {
+                  "x": 340,
+                  "y": 895
+                }
+              ],
+              "entrance": {
+                "x": 480,
+                "y": 915
+              },
+              "sign": {
+                "x": 480,
+                "y": 895
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "09:00",
+                  "to": "19:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#9294ad"
+            }
+          ],
+          "sightRange": 310,
+          "sightDescription": "Four cardinal viewing sectors, 310 units, with solid-building occlusion."
+        },
+        "canHandoff": false,
+        "visibleBuildings": [
+          "perruqueria"
+        ],
+        "arrivalSequence": 1,
+        "inspector": {
+          "id": "64093c23-e94f-4315-ba17-ad4cefe515aa",
+          "sequence": 4,
+          "trigger": "directions",
+          "source": "jev",
+          "model": "jev-1.13.0",
+          "selected": "home:south",
+          "action": {
+            "id": "home:south",
+            "type": "move",
+            "targetId": "home-south",
+            "target": {
+              "x": 480,
+              "y": 645
+            },
+            "label": "Go to the south side described by the resident",
+            "reason": "Resident said the entrance is on the south side. This is a conversational belief, not proof; verify on arrival."
+          },
+          "candidates": [
+            {
+              "id": "clarify",
+              "type": "clarify",
+              "label": "Ask for a clearer landmark or entrance side",
+              "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+            },
+            {
+              "id": "wait",
+              "type": "wait",
+              "label": "Stop and wait",
+              "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+            },
+            {
+              "id": "reveal:bar-ponent",
+              "type": "reveal",
+              "targetId": "bar-ponent",
+              "label": "Read the visible Bar Ponent sign",
+              "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+            },
+            {
+              "id": "reveal:mercat",
+              "type": "reveal",
+              "targetId": "mercat",
+              "label": "Read the visible Mercat del Barri sign",
+              "reason": "Reveal the distinguishing sign of this currently visible supermarket after a relevant clarification question; no movement."
+            },
+            {
+              "id": "go:bar-llevant",
+              "type": "move",
+              "targetId": "bar-llevant",
+              "target": {
+                "x": 150,
+                "y": 175
+              },
+              "label": "Walk to Bar Llevant",
+              "reason": "Navigate to the bar actually observed earlier. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:bar-ponent",
+              "type": "move",
+              "targetId": "bar-ponent",
+              "target": {
+                "x": 430,
+                "y": 175
+              },
+              "label": "Walk to Bar Ponent",
+              "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:fruita",
+              "type": "move",
+              "targetId": "fruita",
+              "target": {
+                "x": 195,
+                "y": 460
+              },
+              "label": "Walk to Fruita Fresca",
+              "reason": "Navigate to the fruit shop actually observed earlier. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "go:mercat",
+              "type": "move",
+              "targetId": "mercat",
+              "target": {
+                "x": 780,
+                "y": 175
+              },
+              "label": "Walk to Mercat del Barri",
+              "reason": "Navigate to the supermarket actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+            },
+            {
+              "id": "home:south",
+              "type": "move",
+              "targetId": "home-south",
+              "target": {
+                "x": 480,
+                "y": 645
+              },
+              "label": "Go to the south side described by the resident",
+              "reason": "Resident said the entrance is on the south side. This is a conversational belief, not proof; verify on arrival."
+            },
+            {
+              "id": "walk:north",
+              "type": "move",
+              "target": {
+                "x": 480,
+                "y": 180
+              },
+              "label": "Walk north along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "walk:east",
+              "type": "move",
+              "target": {
+                "x": 700,
+                "y": 200
+              },
+              "label": "Walk east along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "walk:west",
+              "type": "move",
+              "target": {
+                "x": 260,
+                "y": 200
+              },
+              "label": "Walk west along the clear street",
+              "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+            },
+            {
+              "id": "go-back",
+              "type": "move",
+              "target": {
+                "x": 210,
+                "y": 250
+              },
+              "label": "Go back to the previous position",
+              "reason": "Recover from a wrong turn using remembered movement, rather than restarting."
+            }
+          ],
+          "probabilities": {
+            "clarify": 0.03,
+            "wait": 0,
+            "reveal:bar-ponent": 0,
+            "reveal:mercat": 0,
+            "go:bar-llevant": 0,
+            "go:bar-ponent": 0,
+            "go:fruita": 0,
+            "go:mercat": 0,
+            "home:south": 0.97,
+            "walk:north": 0,
+            "walk:east": 0,
+            "walk:west": 0,
+            "go-back": 0
+          },
+          "confidence": 0.97,
+          "evidence": [
+            "Currently visible: Bar Ponent (bar), west, 67 units; open.",
+            "Currently visible: Mercat del Barri (supermarket), east, 303 units; open.",
+            "Barcelona Sat, 13:29; weather: Clear sky (live).",
+            "Resident reported a south entrance; this remains a belief until observed."
+          ],
+          "reason": "live",
+          "elapsedMs": 210,
+          "discarded": false,
+          "usage": {
+            "inputTokens": 3881,
+            "outputTokens": 146,
+            "estimatedUsd": 0.000163002
+          },
+          "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+        },
+        "dialogueLive": true,
+        "usage": {
+          "calls": 12,
+          "liveCalls": 9,
+          "inputTokens": 20021,
+          "outputTokens": 523,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 20544,
+          "unreportedTokenCalls": 0,
+          "returnedCostUsd": 0.0024340000000000004,
+          "estimatedCostUsd": 0.010120422,
+          "voiceCharacters": 240,
+          "audioSeconds": 6.377375000000001,
+          "providers": {
+            "jev": 4,
+            "openrouter": 4,
+            "elevenlabs": 4
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        },
+        "realtimeRpc": true,
+        "connectionOwned": true
+      },
+      "events": [
+        {
+          "atMs": 801,
+          "type": "ready"
+        },
+        {
+          "atMs": 898,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 898,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 2414,
+          "type": "npc.audio_begin",
+          "turnId": "opening",
+          "model": "eleven_v4_turbo"
+        },
+        {
+          "atMs": 3291,
+          "type": "npc.caption",
+          "turnId": "opening",
+          "text": "I have your parcel and I am near a bar."
+        },
+        {
+          "atMs": 3381,
+          "type": "npc.caption",
+          "turnId": "opening",
+          "text": "Which way should I go?"
+        },
+        {
+          "atMs": 3381,
+          "type": "dialogue.status",
+          "turnId": "opening",
+          "live": true,
+          "model": "google/gemini-3.5-flash-lite"
+        },
+        {
+          "atMs": 3505,
+          "type": "npc.cancel",
+          "turnId": "opening",
+          "live": false,
+          "error": "cancelled",
+          "timings": {
+            "connectMs": 0,
+            "firstAudioMs": 95,
+            "elapsedMs": 1081
+          }
+        },
+        {
+          "atMs": 3511,
+          "type": "npc.cancel",
+          "turnId": "opening"
+        },
+        {
+          "atMs": 3598,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 3727,
+          "type": "npc.audio_begin",
+          "turnId": "clarify",
+          "model": "eleven_v4_turbo"
+        },
+        {
+          "atMs": 4306,
+          "type": "npc.caption",
+          "turnId": "clarify",
+          "text": "I am standing right by Bar Llevant."
+        },
+        {
+          "atMs": 4479,
+          "type": "npc.caption",
+          "turnId": "clarify",
+          "text": "Which way from here?"
+        },
+        {
+          "atMs": 4479,
+          "type": "dialogue.status",
+          "turnId": "clarify",
+          "live": true,
+          "model": "google/gemini-3.5-flash-lite"
+        },
+        {
+          "atMs": 4519,
+          "type": "npc.cancel",
+          "turnId": "clarify",
+          "live": false,
+          "error": "cancelled",
+          "timings": {
+            "connectMs": 0,
+            "firstAudioMs": 100,
+            "elapsedMs": 798
+          }
+        },
+        {
+          "atMs": 4531,
+          "type": "npc.cancel",
+          "turnId": "clarify"
+        },
+        {
+          "atMs": 4613,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 4754,
+          "type": "npc.audio_begin",
+          "turnId": "wrong",
+          "model": "eleven_v4_turbo"
+        },
+        {
+          "atMs": 5829,
+          "type": "npc.caption",
+          "turnId": "wrong",
+          "text": "I am heading toward the north side now to find your entrance."
+        },
+        {
+          "atMs": 5971,
+          "type": "dialogue.status",
+          "turnId": "wrong",
+          "live": true,
+          "model": "google/gemini-3.5-flash-lite"
+        },
+        {
+          "atMs": 7306,
+          "type": "npc.cancel",
+          "turnId": "wrong",
+          "live": false,
+          "error": "cancelled",
+          "timings": {
+            "connectMs": 0,
+            "firstAudioMs": 93,
+            "elapsedMs": 2563
+          }
+        },
+        {
+          "atMs": 7324,
+          "type": "npc.cancel",
+          "turnId": "wrong"
+        },
+        {
+          "atMs": 7410,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 7549,
+          "type": "npc.audio_begin",
+          "turnId": "correct",
+          "model": "eleven_v4_turbo"
+        },
+        {
+          "atMs": 8534,
+          "type": "npc.caption",
+          "turnId": "correct",
+          "text": "I am heading over to the south side now to check that entrance."
+        },
+        {
+          "atMs": 8622,
+          "type": "dialogue.status",
+          "turnId": "correct",
+          "live": true,
+          "model": "google/gemini-3.5-flash-lite"
+        },
+        {
+          "atMs": 10081,
+          "type": "npc.audio_end",
+          "turnId": "correct",
+          "live": true,
+          "timings": {
+            "connectMs": 0,
+            "firstAudioMs": 92,
+            "elapsedMs": 2555
+          }
+        },
+        {
+          "atMs": 10154,
+          "type": "voice.prepared",
+          "live": true
+        }
+      ],
+      "audio": {
+        "opening": {
+          "frames": 5,
+          "bytes": 28842
+        },
+        "clarify": {
+          "frames": 5,
+          "bytes": 28842
+        },
+        "wrong": {
+          "frames": 7,
+          "bytes": 98670
+        },
+        "correct": {
+          "frames": 11,
+          "bytes": 149760
+        }
+      },
+      "turnTimings": {
+        "opening": {
+          "firstReceivedCaptionMs": 1133.2202500000003,
+          "firstReceivedPcmMs": 1232.3282500000005
+        },
+        "clarify": {
+          "firstReceivedCaptionMs": 873.2536249999994,
+          "firstReceivedPcmMs": 974.5896249999996
+        },
+        "wrong": {
+          "firstReceivedCaptionMs": 1349.6225000000004,
+          "firstReceivedPcmMs": 1438.3049580000006
+        },
+        "correct": {
+          "firstReceivedCaptionMs": 1279.2919999999995,
+          "firstReceivedPcmMs": 1376.963416999999
+        }
+      },
+      "completed": "2026-10-10T11:29:36.048Z",
+      "pass": true
+    },
+    {
+      "name": "Actual 60-second timeout and physical collection drop",
+      "sessionId": "1c68c021-508c-4614-94bd-55c69b0f348b",
+      "started": "2026-10-10T11:29:36.614Z",
+      "checkpoints": [
+        {
+          "observedAt": "2026-10-10T11:29:38.164Z",
+          "serverNow": 1791631778149,
+          "phase": "active",
+          "parcel": "courier",
+          "remainingMs": 59919,
+          "courier": {
+            "x": 210,
+            "y": 250,
+            "direction": "south",
+            "moving": false
+          },
+          "route": [],
+          "inspector": null
+        },
+        {
+          "observedAt": "2026-10-10T11:29:38.609Z",
+          "serverNow": 1791631778590,
+          "phase": "active",
+          "parcel": "courier",
+          "remainingMs": 59478,
+          "courier": {
+            "x": 210,
+            "y": 250,
+            "direction": "south",
+            "moving": false
+          },
+          "route": [],
+          "inspector": {
+            "id": "07e29b97-51b5-4429-969f-07c6dc40c7e2",
+            "sequence": 1,
+            "trigger": "opening",
+            "source": "jev",
+            "model": "jev-1.13.0",
+            "selected": "describe",
+            "action": {
+              "id": "describe",
+              "type": "describe",
+              "label": "Describe being near a bar",
+              "reason": "First clue gives the landmark category and deliberately withholds the visible sign."
+            },
+            "candidates": [
+              {
+                "id": "describe",
+                "type": "describe",
+                "label": "Describe being near a bar",
+                "reason": "First clue gives the landmark category and deliberately withholds the visible sign."
+              }
+            ],
+            "probabilities": {
+              "describe": 1
+            },
+            "confidence": 1,
+            "evidence": [
+              "Near an observed bar; distinguishing sign deliberately omitted."
+            ],
+            "reason": "live",
+            "elapsedMs": 224,
+            "discarded": false,
+            "usage": {
+              "inputTokens": 1470,
+              "outputTokens": 24,
+              "estimatedUsd": 0.00006174
+            },
+            "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+          }
+        },
+        {
+          "observedAt": "2026-10-10T11:30:38.093Z",
+          "serverNow": 1791631838165,
+          "phase": "timeout",
+          "parcel": "courier",
+          "remainingMs": 0,
+          "courier": {
+            "x": 210,
+            "y": 250,
+            "direction": "south",
+            "moving": false
+          },
+          "route": [],
+          "inspector": {
+            "id": "07e29b97-51b5-4429-969f-07c6dc40c7e2",
+            "sequence": 1,
+            "trigger": "opening",
+            "source": "jev",
+            "model": "jev-1.13.0",
+            "selected": "describe",
+            "action": {
+              "id": "describe",
+              "type": "describe",
+              "label": "Describe being near a bar",
+              "reason": "First clue gives the landmark category and deliberately withholds the visible sign."
+            },
+            "candidates": [
+              {
+                "id": "describe",
+                "type": "describe",
+                "label": "Describe being near a bar",
+                "reason": "First clue gives the landmark category and deliberately withholds the visible sign."
+              }
+            ],
+            "probabilities": {
+              "describe": 1
+            },
+            "confidence": 1,
+            "evidence": [
+              "Near an observed bar; distinguishing sign deliberately omitted."
+            ],
+            "reason": "live",
+            "elapsedMs": 224,
+            "discarded": false,
+            "usage": {
+              "inputTokens": 1470,
+              "outputTokens": 24,
+              "estimatedUsd": 0.00006174
+            },
+            "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+          }
+        },
+        {
+          "observedAt": "2026-10-10T11:30:38.491Z",
+          "serverNow": 1791631838556,
+          "phase": "timeout",
+          "parcel": "courier",
+          "remainingMs": 0,
+          "courier": {
+            "x": 191.05549798786456,
+            "y": 226.3193724848307,
+            "direction": "north",
+            "moving": true
+          },
+          "route": [
+            {
+              "x": 150,
+              "y": 175
+            }
+          ],
+          "inspector": {
+            "id": "f7d1d46e-1b97-43fd-93a9-5ba0218fd309",
+            "sequence": 3,
+            "trigger": "timeout",
+            "source": "jev",
+            "model": "jev-1.13.0",
+            "selected": "drop:bar-llevant",
+            "action": {
+              "id": "drop:bar-llevant",
+              "type": "drop",
+              "targetId": "bar-llevant",
+              "target": {
+                "x": 150,
+                "y": 175
+              },
+              "label": "Leave for collection at Bar Llevant",
+              "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+            },
+            "candidates": [
+              {
+                "id": "drop:bar-llevant",
+                "type": "drop",
+                "targetId": "bar-llevant",
+                "target": {
+                  "x": 150,
+                  "y": 175
+                },
+                "label": "Leave for collection at Bar Llevant",
+                "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+              },
+              {
+                "id": "return",
+                "type": "return",
+                "label": "Keep parcel for return to depot",
+                "reason": "Use if no observed open accessible parcel-accepting place is appropriate; never invent an unseen collection location."
+              }
+            ],
+            "probabilities": {
+              "drop:bar-llevant": 0.99,
+              "return": 0.01
+            },
+            "confidence": 0.98,
+            "evidence": [
+              "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+              "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+              "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+              "Barcelona Sat, 13:30; weather: Clear sky (live)."
+            ],
+            "reason": "live",
+            "elapsedMs": 207,
+            "discarded": false,
+            "usage": {
+              "inputTokens": 2808,
+              "outputTokens": 41,
+              "estimatedUsd": 0.000117936
+            },
+            "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+          }
+        },
+        {
+          "observedAt": "2026-10-10T11:30:39.318Z",
+          "serverNow": 1791631839385,
+          "phase": "resolved",
+          "parcel": "drop",
+          "remainingMs": 0,
+          "courier": {
+            "x": 150,
+            "y": 175,
+            "direction": "north",
+            "moving": false
+          },
+          "route": [],
+          "inspector": {
+            "id": "f7d1d46e-1b97-43fd-93a9-5ba0218fd309",
+            "sequence": 3,
+            "trigger": "timeout",
+            "source": "jev",
+            "model": "jev-1.13.0",
+            "selected": "drop:bar-llevant",
+            "action": {
+              "id": "drop:bar-llevant",
+              "type": "drop",
+              "targetId": "bar-llevant",
+              "target": {
+                "x": 150,
+                "y": 175
+              },
+              "label": "Leave for collection at Bar Llevant",
+              "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+            },
+            "candidates": [
+              {
+                "id": "drop:bar-llevant",
+                "type": "drop",
+                "targetId": "bar-llevant",
+                "target": {
+                  "x": 150,
+                  "y": 175
+                },
+                "label": "Leave for collection at Bar Llevant",
+                "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+              },
+              {
+                "id": "return",
+                "type": "return",
+                "label": "Keep parcel for return to depot",
+                "reason": "Use if no observed open accessible parcel-accepting place is appropriate; never invent an unseen collection location."
+              }
+            ],
+            "probabilities": {
+              "drop:bar-llevant": 0.99,
+              "return": 0.01
+            },
+            "confidence": 0.98,
+            "evidence": [
+              "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+              "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+              "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+              "Barcelona Sat, 13:30; weather: Clear sky (live)."
+            ],
+            "reason": "live",
+            "elapsedMs": 207,
+            "discarded": false,
+            "usage": {
+              "inputTokens": 2808,
+              "outputTokens": 41,
+              "estimatedUsd": 0.000117936
+            },
+            "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+          }
+        }
+      ],
+      "clockUntimed": true,
+      "deadlineExactly60000": true,
+      "timeoutObservedAfterMs": 60097,
+      "elapsedWallMs": 61304.011583,
+      "timeoutDecision": {
+        "id": "f7d1d46e-1b97-43fd-93a9-5ba0218fd309",
+        "sequence": 3,
+        "trigger": "timeout",
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "drop:bar-llevant",
+        "action": {
+          "id": "drop:bar-llevant",
+          "type": "drop",
+          "targetId": "bar-llevant",
+          "target": {
+            "x": 150,
+            "y": 175
+          },
+          "label": "Leave for collection at Bar Llevant",
+          "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+        },
+        "candidates": [
+          {
+            "id": "drop:bar-llevant",
+            "type": "drop",
+            "targetId": "bar-llevant",
+            "target": {
+              "x": 150,
+              "y": 175
+            },
+            "label": "Leave for collection at Bar Llevant",
+            "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+          },
+          {
+            "id": "return",
+            "type": "return",
+            "label": "Keep parcel for return to depot",
+            "reason": "Use if no observed open accessible parcel-accepting place is appropriate; never invent an unseen collection location."
+          }
+        ],
+        "probabilities": {
+          "drop:bar-llevant": 0.99,
+          "return": 0.01
+        },
+        "confidence": 0.98,
+        "evidence": [
+          "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+          "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+          "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+          "Barcelona Sat, 13:30; weather: Clear sky (live)."
+        ],
+        "reason": "live",
+        "elapsedMs": 207,
+        "discarded": false,
+        "usage": {
+          "inputTokens": 2808,
+          "outputTokens": 41,
+          "estimatedUsd": 0.000117936
+        },
+        "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+      },
+      "final": {
+        "id": "1c68c021-508c-4614-94bd-55c69b0f348b",
+        "phase": "resolved",
+        "startedAt": 1791631778068,
+        "deadline": 1791631838068,
+        "serverNow": 1791631842444,
+        "remainingMs": 0,
+        "courier": {
+          "x": 150,
+          "y": 175,
+          "direction": "north",
+          "moving": false
+        },
+        "resident": {
+          "x": 480,
+          "y": 565,
+          "direction": "south",
+          "moving": false
+        },
+        "route": [],
+        "routeTargetId": "bar-llevant",
+        "parcel": "drop",
+        "dropLocationId": "bar-llevant",
+        "outcome": {
+          "kind": "collection",
+          "title": "Parcel waiting for collection",
+          "detail": "The courier reached Bar Llevant and left your parcel there. You still need to collect it from the shop.",
+          "feedback": "The alternative kept the parcel accessible. Next time, confirm the bar name and say which side has your entrance."
+        },
+        "history": [
+          {
+            "role": "event",
+            "text": "The resident answered the incoming delivery call. The 60-second delivery window began.",
+            "at": 1791631778068
+          },
+          {
+            "role": "courier",
+            "text": "I have your parcel and I am near a bar. Which way should I go?",
+            "at": 1791631779041,
+            "turnId": "timeout-opening"
+          },
+          {
+            "role": "event",
+            "text": "The 60-second window ended without a handoff. The parcel is still with the courier while an observed collection alternative is evaluated.",
+            "at": 1791631838068
+          },
+          {
+            "role": "event",
+            "text": "Courier started: Leave for collection at Bar Llevant. The parcel remains with the courier until arrival.",
+            "at": 1791631838299,
+            "turnId": "f7d1d46e-1b97-43fd-93a9-5ba0218fd309"
+          },
+          {
+            "role": "event",
+            "text": "The courier physically reached the open Bar Llevant entrance and left the parcel for collection. The resident has not received it.",
+            "at": 1791631839142
+          },
+          {
+            "role": "courier",
+            "text": "I have left your parcel for collection at Bar Llevant since you were out. You will need to drop by and pick it up there.",
+            "at": 1791631839921,
+            "turnId": "arrival-1"
+          }
+        ],
+        "weather": {
+          "temperature": 20.7,
+          "description": "Clear sky",
+          "code": null,
+          "isRain": false,
+          "retrievedAt": "2026-10-10T11:29:36.596Z",
+          "checkedAt": "2026-10-10T11:29:36.490Z",
+          "validAt": "2026-10-10T11:00:00Z",
+          "modelUpdatedAt": "2026-10-10T09:17:19Z",
+          "source": "MET Norway",
+          "dataKind": "current-forecast",
+          "cacheExpiresAt": "2026-10-10T11:32:02.000Z",
+          "status": "live",
+          "timeZone": "Europe/Madrid",
+          "diagnostics": [
+            {
+              "source": "Open-Meteo",
+              "outcome": "http_error",
+              "elapsedMs": 44,
+              "status": 429
+            },
+            {
+              "source": "MET Norway",
+              "outcome": "live",
+              "elapsedMs": 62,
+              "status": 200
+            }
+          ]
+        },
+        "time": {
+          "day": 6,
+          "minutes": 810,
+          "label": "Sat, 13:30",
+          "date": "2026-10-10",
+          "timeZone": "Europe/Madrid"
+        },
+        "map": {
+          "size": 960,
+          "home": {
+            "id": "home",
+            "name": "Your home",
+            "footprint": [
+              {
+                "x": 364,
+                "y": 220
+              },
+              {
+                "x": 594,
+                "y": 220
+              },
+              {
+                "x": 679,
+                "y": 304
+              },
+              {
+                "x": 679,
+                "y": 537
+              },
+              {
+                "x": 592,
+                "y": 629
+              },
+              {
+                "x": 364,
+                "y": 629
+              },
+              {
+                "x": 279,
+                "y": 543
+              },
+              {
+                "x": 279,
+                "y": 304
+              }
+            ],
+            "entrance": {
+              "x": 480,
+              "y": 645
+            }
+          },
+          "buildings": [
+            {
+              "id": "bar-llevant",
+              "name": "Bar Llevant",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 60,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 0
+                },
+                {
+                  "x": 280,
+                  "y": 155
+                },
+                {
+                  "x": 60,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 150,
+                "y": 175
+              },
+              "sign": {
+                "x": 150,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "23:30"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#b66759"
+            },
+            {
+              "id": "bar-ponent",
+              "name": "Bar Ponent",
+              "category": "bar",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 0
+                },
+                {
+                  "x": 560,
+                  "y": 155
+                },
+                {
+                  "x": 340,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 430,
+                "y": 175
+              },
+              "sign": {
+                "x": 430,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "10:00",
+                  "to": "22:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#59847e"
+            },
+            {
+              "id": "mercat",
+              "name": "Mercat del Barri",
+              "category": "supermarket",
+              "footprint": [
+                {
+                  "x": 660,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 0
+                },
+                {
+                  "x": 900,
+                  "y": 155
+                },
+                {
+                  "x": 660,
+                  "y": 155
+                }
+              ],
+              "entrance": {
+                "x": 780,
+                "y": 175
+              },
+              "sign": {
+                "x": 780,
+                "y": 155
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "21:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#84a167"
+            },
+            {
+              "id": "fruita",
+              "name": "Fruita Fresca",
+              "category": "fruit shop",
+              "footprint": [
+                {
+                  "x": 0,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 295
+                },
+                {
+                  "x": 175,
+                  "y": 525
+                },
+                {
+                  "x": 0,
+                  "y": 525
+                }
+              ],
+              "entrance": {
+                "x": 195,
+                "y": 460
+              },
+              "sign": {
+                "x": 175,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "08:00",
+                  "to": "14:00"
+                },
+                {
+                  "days": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ],
+                  "from": "17:00",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": false,
+              "color": "#d8a759"
+            },
+            {
+              "id": "forn",
+              "name": "Forn de la Plaça",
+              "category": "bakery",
+              "footprint": [
+                {
+                  "x": 785,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 295
+                },
+                {
+                  "x": 960,
+                  "y": 530
+                },
+                {
+                  "x": 785,
+                  "y": 530
+                }
+              ],
+              "entrance": {
+                "x": 765,
+                "y": 460
+              },
+              "sign": {
+                "x": 785,
+                "y": 460
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "06:30",
+                  "to": "20:00"
+                }
+              ],
+              "acceptsParcels": true,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#c88b64"
+            },
+            {
+              "id": "perruqueria",
+              "name": "Perruqueria Ona",
+              "category": "hairdresser",
+              "footprint": [
+                {
+                  "x": 340,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 710
+                },
+                {
+                  "x": 620,
+                  "y": 895
+                },
+                {
+                  "x": 340,
+                  "y": 895
+                }
+              ],
+              "entrance": {
+                "x": 480,
+                "y": 915
+              },
+              "sign": {
+                "x": 480,
+                "y": 895
+              },
+              "openingHours": [
+                {
+                  "days": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "from": "09:00",
+                  "to": "19:00"
+                }
+              ],
+              "acceptsParcels": false,
+              "accessible": true,
+              "sheltered": true,
+              "color": "#9294ad"
+            }
+          ],
+          "sightRange": 310,
+          "sightDescription": "Four cardinal viewing sectors, 310 units, with solid-building occlusion."
+        },
+        "canHandoff": false,
+        "visibleBuildings": [
+          "bar-llevant",
+          "bar-ponent",
+          "fruita"
+        ],
+        "arrivalSequence": 1,
+        "inspector": {
+          "id": "f7d1d46e-1b97-43fd-93a9-5ba0218fd309",
+          "sequence": 3,
+          "trigger": "timeout",
+          "source": "jev",
+          "model": "jev-1.13.0",
+          "selected": "drop:bar-llevant",
+          "action": {
+            "id": "drop:bar-llevant",
+            "type": "drop",
+            "targetId": "bar-llevant",
+            "target": {
+              "x": 150,
+              "y": 175
+            },
+            "label": "Leave for collection at Bar Llevant",
+            "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+          },
+          "candidates": [
+            {
+              "id": "drop:bar-llevant",
+              "type": "drop",
+              "targetId": "bar-llevant",
+              "target": {
+                "x": 150,
+                "y": 175
+              },
+              "label": "Leave for collection at Bar Llevant",
+              "reason": "Previously observed bar; open now, accepts parcels, accessible, sheltered, route 96 units. The resident must collect it."
+            },
+            {
+              "id": "return",
+              "type": "return",
+              "label": "Keep parcel for return to depot",
+              "reason": "Use if no observed open accessible parcel-accepting place is appropriate; never invent an unseen collection location."
+            }
+          ],
+          "probabilities": {
+            "drop:bar-llevant": 0.99,
+            "return": 0.01
+          },
+          "confidence": 0.98,
+          "evidence": [
+            "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+            "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+            "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+            "Barcelona Sat, 13:30; weather: Clear sky (live)."
+          ],
+          "reason": "live",
+          "elapsedMs": 207,
+          "discarded": false,
+          "usage": {
+            "inputTokens": 2808,
+            "outputTokens": 41,
+            "estimatedUsd": 0.000117936
+          },
+          "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+        },
+        "dialogueLive": true,
+        "usage": {
+          "calls": 7,
+          "liveCalls": 5,
+          "inputTokens": 7485,
+          "outputTokens": 110,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 7595,
+          "unreportedTokenCalls": 1,
+          "returnedCostUsd": 0.0010746,
+          "estimatedCostUsd": 0.0026196759999999996,
+          "voiceCharacters": 61,
+          "audioSeconds": 4.16,
+          "providers": {
+            "jev": 2,
+            "openrouter": 3,
+            "elevenlabs": 2
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        },
+        "realtimeRpc": true,
+        "connectionOwned": true
+      },
+      "events": [
+        {
+          "atMs": 357,
+          "type": "ready"
+        },
+        {
+          "atMs": 469,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 469,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 2057,
+          "type": "npc.audio_begin",
+          "turnId": "timeout-opening",
+          "model": "eleven_v4_turbo"
+        },
+        {
+          "atMs": 2756,
+          "type": "npc.caption",
+          "turnId": "timeout-opening",
+          "text": "I have your parcel and I am near a bar."
+        },
+        {
+          "atMs": 2816,
+          "type": "npc.caption",
+          "turnId": "timeout-opening",
+          "text": "Which way should I go?"
+        },
+        {
+          "atMs": 2816,
+          "type": "dialogue.status",
+          "turnId": "timeout-opening",
+          "live": true,
+          "model": "google/gemini-3.5-flash-lite"
+        },
+        {
+          "atMs": 4548,
+          "type": "npc.audio_end",
+          "turnId": "timeout-opening",
+          "live": true,
+          "timings": {
+            "connectMs": 0,
+            "firstAudioMs": 97,
+            "elapsedMs": 2532
+          }
+        },
+        {
+          "atMs": 4623,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 61796,
+          "type": "npc.cancel",
+          "turnId": "timeout-opening"
+        },
+        {
+          "atMs": 62017,
+          "type": "npc.audio_begin",
+          "turnId": "timeout-219ed8b3-7204-4b6b-974f-6a14f488b823",
+          "model": "eleven_v4_turbo"
+        },
+        {
+          "atMs": 62858,
+          "type": "npc.cancel",
+          "turnId": "timeout-219ed8b3-7204-4b6b-974f-6a14f488b823",
+          "live": false,
+          "error": "cancelled",
+          "timings": {
+            "connectMs": 0,
+            "elapsedMs": 843
+          }
+        },
+        {
+          "atMs": 62858,
+          "type": "npc.cancel",
+          "turnId": "timeout-219ed8b3-7204-4b6b-974f-6a14f488b823"
+        },
+        {
+          "atMs": 62970,
+          "type": "voice.prepared",
+          "live": true
+        },
+        {
+          "atMs": 62970,
+          "type": "npc.audio_begin",
+          "turnId": "arrival-1",
+          "model": "eleven_v4_turbo"
+        },
+        {
+          "atMs": 63625,
+          "type": "npc.caption",
+          "turnId": "arrival-1",
+          "text": "I have left your parcel for collection at Bar Llevant since you were out."
+        },
+        {
+          "atMs": 63653,
+          "type": "npc.caption",
+          "turnId": "arrival-1",
+          "text": "You will need to drop by and pick it up there."
+        },
+        {
+          "atMs": 63736,
+          "type": "dialogue.status",
+          "turnId": "arrival-1",
+          "live": true,
+          "model": "google/gemini-3.5-flash-lite"
+        },
+        {
+          "atMs": 66194,
+          "type": "npc.cancel",
+          "turnId": "arrival-1",
+          "live": false,
+          "error": "cancelled",
+          "timings": {
+            "connectMs": 117,
+            "firstAudioMs": 101,
+            "elapsedMs": 3355
+          }
+        }
+      ],
+      "audio": {
+        "timeout-opening": {
+          "frames": 19,
+          "bytes": 199680
+        },
+        "arrival-1": {
+          "frames": 17,
+          "bytes": 247362
+        }
+      },
+      "turnTimings": {
+        "timeout-opening": {
+          "firstReceivedCaptionMs": 1035.3815830000021,
+          "firstReceivedPcmMs": 1128.856708000003
+        }
+      },
+      "completed": "2026-10-10T11:30:42.358Z",
+      "pass": true
+    }
+  ],
+  "measurementBoundary": "Actual provider-backed typed input and returned PCM transport. This script does not play audio or use a physical microphone; first audible and human STT latency are unavailable.",
+  "pass": true,
+  "totals": {
+    "calls": 19,
+    "inputTokens": 27506,
+    "outputTokens": 633,
+    "returnedCostUsd": 0.0035086000000000006,
+    "estimatedCostUsd": 0.012740098,
+    "voiceCharacters": 301
+  }
+}

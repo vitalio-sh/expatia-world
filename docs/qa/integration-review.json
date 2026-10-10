@@ -1,0 +1,24 @@
+{
+  "scope": "Independent read-only client integration review by world/JEV lane; provider-free reproduction. All findings fixed before version6 packaging.",
+  "findings": [
+    {
+      "issue": "Server npc.cancel retained old turn and dropped later spontaneous arrival/timeout speech.",
+      "fix": "Mark canceled turn and release ownership, with regression."
+    },
+    {
+      "issue": "Outer App audio unlock allowed a stale mic request after typed input.",
+      "fix": "Only startRecording owns unlock under epoch guard."
+    },
+    {
+      "issue": "Replay lost mute while UI retained setting.",
+      "fix": "Apply current mute ref to new voice instance; reset transient replay state."
+    },
+    {
+      "issue": "Resident kept walking in place after movement control release.",
+      "fix": "Send one zero-vector stop on release/keyup/blur; accept finite dt0 stop without displacement, with regression."
+    }
+  ],
+  "additionalMaterialFindings": [],
+  "tests": 49,
+  "sourceChangedAfterReview": "Only the documented fixes and evidence; production build passed."
+}

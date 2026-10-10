@@ -236,7 +236,7 @@ export class RealtimeVoice {
     else if (message.type === 'npc.caption') this.callbacks.onCaption?.(message.text, message.turnId);
     else if (message.type === 'npc.audio') { this.firstAudioReceived ||= performance.now(); this.player.enqueueBase64(message.audio, message.turnId); }
     else if (message.type === 'npc.audio_end') { this.currentTurn = null; this.prepare(); this.callbacks.onStatus?.('audio-complete'); }
-    else if (message.type === 'npc.cancel') { this.player.stop(); this.callbacks.onStatus?.('ready'); }
+    else if (message.type === 'npc.cancel') { this.cancelledTurns.add(message.turnId); this.player.stop(); this.currentTurn = null; this.callbacks.onStatus?.('ready'); }
     else if (message.type === 'npc.audio_error') { this.player.stop(); this.callbacks.onStatus?.('voice-unavailable', 'Speech unavailable. Read the courier transcript.'); }
     else if (message.type === 'stt.partial') this.callbacks.onTranscript?.(message.text, false, message.turnId);
     else if (message.type === 'stt.final') {

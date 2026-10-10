@@ -188,3 +188,16 @@ test('fallback/outage never invents probabilities and stalled timeout returns wi
   tickGame(game, SATURDAY_NOON + 60_000, 0); const position = { x: game.courier.x, y: game.courier.y };
   tickGame(game, SATURDAY_NOON + 81_000, 0); assert.equal(game.parcel, 'returned'); assert.equal(game.phase, 'resolved'); assert.equal(distance(game.courier, position), 0);
 });
+
+
+test('zero-vector release stops resident walking without consuming movement time or distance', () => {
+  const game = active();
+  assert.equal(moveResident(game, 0, 1, .1), true);
+  const before = { x: game.resident.x, y: game.resident.y };
+  moveResident(game, 0, 0, 0);
+  assert.equal(game.resident.moving, false);
+  assert.deepEqual({ x: game.resident.x, y: game.resident.y }, before);
+  moveResident(game, 0, 1, 0);
+  assert.deepEqual({ x: game.resident.x, y: game.resident.y }, before);
+  assert.equal(game.resident.moving, false);
+});
