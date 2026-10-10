@@ -1,0 +1,351 @@
+{
+  "at": "2026-10-10T13:02:40.945Z",
+  "url": "https://expatia.world",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-command-context"
+  },
+  "scope": "Actual production/local signed Worker RPC sequence with real JEV and generated courier speech. Opening interrupted before its first caption. Speech events/history recorded; no human microphone claim or token data.",
+  "openingCaptionsAtInterrupt": 0,
+  "cases": [
+    {
+      "text": "Mira hacia el sur y dime qué ves",
+      "turnId": "probe-command-0",
+      "selected": "look:south",
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "south",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "facts": {
+        "homeSide": null,
+        "signDisclosed": false,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "spokenHistory": [
+        {
+          "text": "Veo Fruita Fresca más adelante, con su toldo y unas cajas de fruta fuera. También tengo la esquina noreste de la tienda cerca y la pared del edificio al oeste.",
+          "turnId": "probe-command-0"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Ve hacia el sur",
+      "turnId": "probe-command-1",
+      "selected": "walk:south",
+      "position": {
+        "x": 210,
+        "y": 349.59199999999964,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "walk:south",
+      "route": [
+        {
+          "x": 210,
+          "y": 470
+        }
+      ],
+      "facts": {
+        "homeSide": null,
+        "signDisclosed": false,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "spokenHistory": [
+        {
+          "text": "Veo Fruita Fresca más adelante, con su toldo y unas cajas de fruta fuera. También tengo la esquina noreste de la tienda cerca y la pared del edificio al oeste.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Voy hacia el sur por la calle, acercándome a Fruita Fresca.",
+          "turnId": "probe-command-1"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Mi portal está en el lado sur. Ven a la entrada",
+      "turnId": "probe-command-2",
+      "selected": "home:south",
+      "position": {
+        "x": 240.43591519685492,
+        "y": 471.60195991902003,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        },
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "facts": {
+        "homeSide": "south",
+        "signDisclosed": false,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "spokenHistory": [
+        {
+          "text": "Veo Fruita Fresca más adelante, con su toldo y unas cajas de fruta fuera. También tengo la esquina noreste de la tienda cerca y la pared del edificio al oeste.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Voy hacia el sur por la calle, acercándome a Fruita Fresca.",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Voy hacia la entrada sur, bordeando la pared del edificio.",
+          "turnId": "probe-command-2"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur",
+        "Mi portal está en el lado sur. Ven a la entrada"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Sí, sigue.",
+      "turnId": "probe-command-3",
+      "selected": "continue",
+      "position": {
+        "x": 300.70034359393543,
+        "y": 580.7003435939358,
+        "direction": "east",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "facts": {
+        "homeSide": "south",
+        "signDisclosed": false,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "spokenHistory": [
+        {
+          "text": "Veo Fruita Fresca más adelante, con su toldo y unas cajas de fruta fuera. También tengo la esquina noreste de la tienda cerca y la pared del edificio al oeste.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Voy hacia el sur por la calle, acercándome a Fruita Fresca.",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Voy hacia la entrada sur, bordeando la pared del edificio.",
+          "turnId": "probe-command-2"
+        },
+        {
+          "text": "Sigo avanzando hacia la entrada sur por la calle.",
+          "turnId": "probe-command-3"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur",
+        "Mi portal está en el lado sur. Ven a la entrada",
+        "Sí, sigue."
+      ],
+      "phase": "active"
+    }
+  ],
+  "finalHistory": [
+    {
+      "role": "player",
+      "text": "Mira hacia el sur y dime qué ves"
+    },
+    {
+      "role": "courier",
+      "text": "Veo Fruita Fresca más adelante, con su toldo y unas cajas de fruta fuera. También tengo la esquina noreste de la tienda cerca y la pared del edificio al oeste.",
+      "turnId": "probe-command-0"
+    },
+    {
+      "role": "player",
+      "text": "Ve hacia el sur"
+    },
+    {
+      "role": "courier",
+      "text": "Voy hacia el sur por la calle, acercándome a Fruita Fresca.",
+      "turnId": "probe-command-1"
+    },
+    {
+      "role": "player",
+      "text": "Mi portal está en el lado sur. Ven a la entrada"
+    },
+    {
+      "role": "courier",
+      "text": "Voy hacia la entrada sur, bordeando la pared del edificio.",
+      "turnId": "probe-command-2"
+    },
+    {
+      "role": "player",
+      "text": "Sí, sigue."
+    },
+    {
+      "role": "courier",
+      "text": "Sigo avanzando hacia la entrada sur por la calle.",
+      "turnId": "probe-command-3"
+    }
+  ],
+  "events": [
+    {
+      "type": "npc.cancel",
+      "turnId": "opening-immediately-interrupted",
+      "atMs": 4031
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-0",
+      "atMs": 4292
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-0",
+      "text": "Veo Fruita Fresca más adelante, con su toldo y unas cajas de fruta fuera.",
+      "atMs": 5134
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-0",
+      "text": "También tengo la esquina noreste de la tienda cerca y la pared del edificio al oeste.",
+      "atMs": 5134
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 5353
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 5354
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-1",
+      "atMs": 5530
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-1",
+      "text": "Voy hacia el sur por la calle, acercándome a Fruita Fresca.",
+      "atMs": 6161
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 6409
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 6447
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-2",
+      "atMs": 6753
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-2",
+      "text": "Voy hacia la entrada sur, bordeando la pared del edificio.",
+      "atMs": 7361
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 7534
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 7538
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-3",
+      "atMs": 7788
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-3",
+      "text": "Sigo avanzando hacia la entrada sur por la calle.",
+      "atMs": 8398
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-3",
+      "atMs": 8617
+    }
+  ],
+  "totalMs": 8624,
+  "validation": {
+    "buildMatches": true,
+    "openingInterruptedBeforeCaption": true,
+    "actionsMatch": true,
+    "commandsPreserved": true,
+    "movementPositions": [
+      {
+        "x": 210,
+        "y": 250,
+        "moving": false
+      },
+      {
+        "x": 210,
+        "y": 349.59199999999964,
+        "moving": true
+      },
+      {
+        "x": 240.43591519685492,
+        "y": 471.60195991902003,
+        "moving": true
+      },
+      {
+        "x": 300.70034359393543,
+        "y": 580.7003435939358,
+        "moving": true
+      }
+    ],
+    "actualPositionChangedAfterWalking": true,
+    "knownEntranceRouteRetained": true,
+    "noRepeatedEntranceQuestion": true
+  },
+  "passed": true
+}
