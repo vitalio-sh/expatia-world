@@ -4,3 +4,5 @@
 @media(max-width:640px){.dpad{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,44px);gap:2px}.meet-control{max-width:178px}.world{max-height:32dvh}.type-form input{font-size:16px;padding:8px}.type-form button{width:40px;height:40px}.mic-button{min-height:44px}.icon-button{width:44px;height:44px}.game-shell .transcript{max-height:17dvh}.judge>button{min-height:44px}.error .text-button{display:block;padding:10px 0;color:#68452e}}
 @media(max-width:380px){.meet-control{max-width:158px}.handoff{padding:8px;font-size:9px}.game-shell{padding-inline:12px}.world{max-height:30dvh}}
 @media(max-height:740px) and (max-width:640px){.world{max-height:26dvh}.conversation{min-height:230px}.game-shell .transcript{max-height:13dvh}}
+
+@media(max-width:640px){.game-shell .world{width:100%}}

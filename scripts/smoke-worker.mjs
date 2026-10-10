@@ -116,7 +116,14 @@ async function handoffRound() {
     scenario.final = outcome; scenario.events = connection.events; scenario.audio = connection.audio;
     scenario.turnTimings = Object.fromEntries(Object.entries(connection.timings).map(([id, value]) => [id, { ...value, sentAt: undefined }]));
     scenario.completed = new Date().toISOString(); scenario.pass = true;
-  } finally { await connection.close(); persist(); }
+  } finally {
+    // Even a failed acceptance check keeps the available usage/history boundary.
+    // Closing the only state-owning connection before reading this loses it.
+    if (!scenario.pass) { try { scenario.lastState = await connection.state(); } catch { scenario.lastStateUnavailable = true; } }
+    scenario.events = connection.events; scenario.audio = connection.audio;
+    scenario.turnTimings = Object.fromEntries(Object.entries(connection.timings).map(([id, value]) => [id, { ...value, sentAt: undefined }]));
+    await connection.close(); persist();
+  }
 }
 
 async function timeoutRound() {
@@ -158,7 +165,12 @@ async function timeoutRound() {
     scenario.final = await connection.state(); scenario.events = connection.events; scenario.audio = connection.audio;
     scenario.turnTimings = Object.fromEntries(Object.entries(connection.timings).map(([id, value]) => [id, { ...value, sentAt: undefined }]));
     scenario.completed = new Date().toISOString(); scenario.pass = true;
-  } finally { await connection.close(); persist(); }
+  } finally {
+    if (!scenario.pass) { try { scenario.lastState = await connection.state(); } catch { scenario.lastStateUnavailable = true; } }
+    scenario.events = connection.events; scenario.audio = connection.audio;
+    scenario.turnTimings = Object.fromEntries(Object.entries(connection.timings).map(([id, value]) => [id, { ...value, sentAt: undefined }]));
+    await connection.close(); persist();
+  }
 }
 
 try {

@@ -52,15 +52,16 @@ export async function providerRequest(url: string, body: unknown, headers: Recor
 export async function openRouterStream(messages: { role: string; content: string }[], onText: (text: string) => void, signal?: AbortSignal, metadata: { sessionId?: string; turnId?: string | number; operation?: string } = {}) {
   const started = performance.now();
   if (!providerKey('OPENROUTER_API_KEY')) throw new Error('openrouter_not_configured');
-  const response = await providerRequest('https://openrouter.ai/api/v1/chat/completions', {
-    model: DIALOGUE_MODEL, messages, stream: true, max_tokens: 110, temperature: 0.5,
-  }, { Authorization: `Bearer ${providerKey('OPENROUTER_API_KEY')}`, 'HTTP-Referer': 'https://expatia.world', 'X-Title': 'Expatia World' }, signal);
-  if (!response.ok) throw new Error(`openrouter_http_${response.status}`);
-  if (!response.body) throw new Error('openrouter_empty_stream');
-  const reader = response.body.getReader();
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
   const decoder = new TextDecoder();
   let pending = '', text = '', usage: ModelUsage | undefined, firstTextMs: number | undefined, requestId: string | undefined;
   try {
+    const response = await providerRequest('https://openrouter.ai/api/v1/chat/completions', {
+      model: DIALOGUE_MODEL, messages, stream: true, max_tokens: 110, temperature: 0.5,
+    }, { Authorization: `Bearer ${providerKey('OPENROUTER_API_KEY')}`, 'HTTP-Referer': 'https://expatia.world', 'X-Title': 'Expatia World' }, signal);
+    if (!response.ok) throw new Error(`openrouter_http_${response.status}`);
+    if (!response.body) throw new Error('openrouter_empty_stream');
+    reader = response.body.getReader();
     while (true) {
       signal?.throwIfAborted();
       const { value, done } = await reader.read();
@@ -84,5 +85,5 @@ export async function openRouterStream(messages: { role: string; content: string
   } catch (error) {
     recordUsage({ provider: 'openrouter', operation: metadata.operation || 'dialogue', model: DIALOGUE_MODEL, ...metadata, ...accountModelUsage(usage), requestId, elapsedMs: performance.now() - started, firstTextMs, live: false, outcome: signal?.aborted ? 'cancelled' : 'error', error: error instanceof Error ? error.name : 'error' });
     throw error;
-  } finally { reader.releaseLock(); }
+  } finally { reader?.releaseLock(); }
 }

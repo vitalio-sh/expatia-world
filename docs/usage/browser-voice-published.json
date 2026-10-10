@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-10T10:47:00Z",
+  "url": "https://expatia-world.iviviv.chatgpt.site",
+  "scope": "Two actual browser interactions on the published native Worker, with real AudioContext PCM scheduling. Independent background in-app browser tab. The shared viewport was left unchanged; screenshot showed desktop layout.",
+  "samples": [
+    {
+      "trigger": "answer",
+      "firstScheduledMs": 923.8,
+      "playbackDelayMs": 25.3,
+      "queuedSecondsAtFirstChunk": 0.056625,
+      "underrunsAtFirstChunk": 0,
+      "jev": { "live": true, "model": "jev-1.13.0", "elapsedMs": 203, "selected": "describe", "probability": 1 },
+      "speechPolicyVerified": "Opening identified parcel and bar category without revealing distinguishing sign or hidden entrance."
+    },
+    {
+      "trigger": "typed sign clarification",
+      "firstScheduledMs": 1280.9,
+      "playbackDelayMs": 25.1,
+      "queuedSecondsAtFirstChunk": 0.056625,
+      "underrunsAtFirstChunk": 0,
+      "jev": { "live": true, "model": "jev-1.13.0", "elapsedMs": 202, "selected": "reveal:bar-llevant", "probability": 1 },
+      "speechPolicyVerified": "Generated English clarification named the selected observed Bar Llevant sign."
+    }
+  ],
+  "limitations": [
+    "Two samples are not a latency distribution or SLA.",
+    "First scheduling timing includes player gesture or typed submission through JEV, dialogue, speech transport and browser PCM scheduling.",
+    "Underrun counter shown in the inspector was sampled at first chunk, not across complete playback.",
+    "No claim of speaker audibility, human microphone capture, permission denial behavior on hardware, or mobile hardware timing.",
+    "Synthetic Scribe relay was independently measured in published-voice-probe.json.",
+    "One earlier timeout request canceled before OpenRouter headers had unavailable token units; final accounting guard now records such attempts."
+  ]
+}

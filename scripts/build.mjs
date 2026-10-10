@@ -1,5 +1,6 @@
 import {spawnSync} from 'node:child_process';
-import {cpSync,mkdirSync,existsSync} from 'node:fs';
+import {cpSync,mkdirSync,existsSync,rmSync} from 'node:fs';
+rmSync('dist',{recursive:true,force:true});
 for(const args of [['tsc','--noEmit'],['vite','build','--config','vite.hosting.config.ts']]){
  const r=spawnSync('npx',args,{stdio:'inherit'});if(r.status!==0)process.exit(r.status??1);
 }

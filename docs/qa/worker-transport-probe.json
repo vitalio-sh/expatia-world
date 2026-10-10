@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-10T10:37:00Z",
+  "checkedAt": "2026-10-10T10:39:49.342Z",
   "environment": "Actual local Workerd through installed Miniflare, compatibility_date 2026-10-10, nodejs_compat",
   "credentialUsage": "No credentials used. Failure occurs before any request is issued.",
   "abortSignalAny": "supported",
