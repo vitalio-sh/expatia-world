@@ -1,0 +1,130 @@
+{
+  "threads": [
+    {
+      "threadId": "01a12542-03e6-7601-b008-109416d4e0a3",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 40143039,
+        "cached_input_tokens": 39514880,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 118552,
+        "reasoning_output_tokens": 48575,
+        "total_tokens": 40261591
+      },
+      "delta": {
+        "input_tokens": 40143039,
+        "cached_input_tokens": 39514880,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 118552,
+        "reasoning_output_tokens": 48575,
+        "total_tokens": 40261591
+      },
+      "measuredThrough": "2026-10-10T11:48:57.283Z"
+    },
+    {
+      "threadId": "01a12543-908a-7910-b9a6-c7231806eff9",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 14281541,
+        "cached_input_tokens": 13889664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 93709,
+        "reasoning_output_tokens": 29763,
+        "total_tokens": 14375250
+      },
+      "delta": {
+        "input_tokens": 14281541,
+        "cached_input_tokens": 13889664,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 93709,
+        "reasoning_output_tokens": 29763,
+        "total_tokens": 14375250
+      },
+      "measuredThrough": "2026-10-10T11:34:10.514Z"
+    },
+    {
+      "threadId": "01a12543-b845-7e63-b24d-94c7c3e68fe0",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 16258515,
+        "cached_input_tokens": 15994112,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 67472,
+        "reasoning_output_tokens": 17118,
+        "total_tokens": 16325987
+      },
+      "delta": {
+        "input_tokens": 16258515,
+        "cached_input_tokens": 15994112,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 67472,
+        "reasoning_output_tokens": 17118,
+        "total_tokens": 16325987
+      },
+      "measuredThrough": "2026-10-10T11:19:59.158Z"
+    },
+    {
+      "threadId": "01a12543-e1d9-7c70-a19f-15b9b82dc507",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 4622827,
+        "cached_input_tokens": 4513280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34068,
+        "reasoning_output_tokens": 10781,
+        "total_tokens": 4656895
+      },
+      "delta": {
+        "input_tokens": 4622827,
+        "cached_input_tokens": 4513280,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34068,
+        "reasoning_output_tokens": 10781,
+        "total_tokens": 4656895
+      },
+      "measuredThrough": "2026-10-10T10:23:38.619Z"
+    }
+  ],
+  "sumDeltas": {
+    "input_tokens": 75305922,
+    "cached_input_tokens": 73911936,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 313801,
+    "reasoning_output_tokens": 106237,
+    "total_tokens": 75619723
+  },
+  "notes": [
+    "Each cumulative counter contributes only its last minus start delta.",
+    "Cached input is included in input; reasoning is included in output.",
+    "Excludes unexposed provider/tool internal tokens and final response after checkpoint.",
+    "Actual development billed costs unavailable; provider ledgers separate."
+  ]
+}

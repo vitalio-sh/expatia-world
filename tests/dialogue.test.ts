@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { actionCandidates, answerCall, createGame, npcContext, recordSpeech } from '../src/server/game';
-import { dialogueMessages, speechIsGrounded } from '../src/server/dialogue';
+import { courierGrounding, dialogueMessages, fallbackLine, speechIsGrounded } from '../src/server/dialogue';
+import { deliveryCoachFlavor, deliveryOutcomeFlavor, deliveryPhrasebook } from '../src/shared/phrasebook';
 
 test('opening speech guard withholds sign, invented visual details and the hidden entrance', () => {
   const game = createGame(); answerCall(game);
@@ -44,4 +45,91 @@ test('dialogue receives the selected action projection without route candidates 
   assert.equal(projection.candidates, undefined);
   assert.equal(projection.probabilities, undefined);
   assert.equal(dialogueMessages({}, { type: 'wait', label: 'Wait for handoff', reason: 'Arrived' })[1].content.includes('Wait for handoff'), true);
+});
+
+const richerContext = {
+  phase: 'active', parcel: 'courier', remainingMs: 40_000, factsLearned: { firstClueSpoken: true },
+  observations: [{ id: 'fruit', name: 'Fruita Fresca', category: 'fruit shop', distance: 213, direction: 'south', visible: true }],
+  rememberedPlaces: [
+    { id: 'fruit', name: 'Fruita Fresca', category: 'fruit shop', observedAt: 10 },
+    { id: 'other-bar', name: 'Bar Ponent', category: 'bar', distance: 99, direction: 'east', observedAt: 5, visible: false },
+  ],
+  visibleLandmarks: [
+    { id: 'corner', type: 'corner', label: 'West building corner', description: 'The apartment wall turns at this building corner', distance: 85, direction: 'west' },
+    { id: 'junction', type: 'intersection', label: 'East street junction', description: 'Two streets meet here', distance: 180, direction: 'east' },
+    { id: 'crossing', type: 'crossing', label: 'North crossing', description: 'A zebra crossing across the road', distance: 290, direction: 'north' },
+  ],
+  rememberedLandmarks: [{ id: 'old-tree', type: 'tree', label: 'South tree', observedAt: 4, distance: 20, direction: 'south' }],
+  surroundings: { currentRoad: { id: 'road', label: 'the north street', type: 'road' } },
+  history: [{ role: 'player', text: 'Can you see the produce shop?' }],
+};
+const describe = { type: 'describe', label: 'Describe currently visible surroundings', reason: 'Answer the player’s view question without moving' };
+
+test('fruit, corners and crossings use visible semantic facts instead of denying known objects', () => {
+  assert.equal(speechIsGrounded('I cannot see any fruit shop.', richerContext, describe), false);
+  assert.equal(speechIsGrounded("I don't know any greengrocer here.", richerContext, describe), false);
+  assert.equal(speechIsGrounded('There are no corners nearby.', richerContext, describe), false);
+  assert.equal(speechIsGrounded("I can't see a crosswalk.", richerContext, describe), false);
+  assert.equal(speechIsGrounded('I can see Fruita Fresca to the south.', richerContext, describe), true);
+  assert.match(fallbackLine(richerContext, describe), /Fruita Fresca to the south/);
+  assert.match(fallbackLine({ ...richerContext, history: [{ role: 'player', text: 'Which corner do you see?' }] }, describe), /West building corner/);
+  assert.match(fallbackLine({ ...richerContext, history: [{ role: 'player', text: 'What street are you on?' }] }, describe), /the north street/);
+});
+
+test('building corners, street junctions and crossings remain distinct; look and arrival reflect selected actions', () => {
+  const junctionOnly = { ...richerContext, visibleLandmarks: [richerContext.visibleLandmarks[1]], rememberedLandmarks: [] };
+  assert.equal(speechIsGrounded('I cannot see a building corner.', junctionOnly, describe), true);
+  assert.equal(speechIsGrounded('I cannot see a street junction.', junctionOnly, describe), false);
+  const looking = { ...richerContext, history: [{ role: 'player', text: 'Turn to look at the fruit shop.' }] };
+  const line = fallbackLine(looking, { type: 'look', facing: 'west', label: 'Look west' });
+  assert.match(line, /Fruita Fresca/); assert.doesNotMatch(line, /walking|heading/);
+  assert.match(fallbackLine(richerContext, { id: 'arrival', type: 'wait', label: 'Wait at the home entrance' }), /at the entrance.*accept it now/);
+  assert.doesNotMatch(fallbackLine(richerContext, { id: 'wait', type: 'wait', label: 'Stop and wait' }), /entrance|accept/);
+});
+
+test('memory-only facts remain known without being described as currently visible or given live distances', () => {
+  const facts = courierGrounding(richerContext);
+  assert.equal(facts.remembered.some(item => item.id === 'fruit'), false);
+  assert.equal(facts.remembered.find(item => item.id === 'other-bar')?.distance, undefined);
+  assert.equal(facts.remembered.find(item => item.id === 'old-tree')?.direction, undefined);
+  assert.equal(speechIsGrounded('I can see Bar Ponent.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('Bar Ponent is visible.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('I remember Bar Ponent from earlier.', richerContext, describe), true);
+  const outOfView = { ...richerContext, observations: [], rememberedPlaces: [richerContext.rememberedPlaces[0]] };
+  assert.equal(speechIsGrounded('I cannot see the fruit shop now.', outOfView, describe), true);
+  assert.equal(speechIsGrounded('I can see the produce shop.', outOfView, describe), false);
+  assert.equal(speechIsGrounded('I do not know any fruit shop.', outOfView, describe), false);
+  assert.match(fallbackLine(outOfView, describe), /remember Fruita Fresca.*out of view/);
+});
+
+test('furthest answers compare actual visible facts and never borrow remembered distance or invent metre conversions', () => {
+  const facts = courierGrounding(richerContext);
+  assert.equal(facts.nearestVisible?.id, 'corner');
+  assert.equal(facts.furthestVisible?.id, 'crossing');
+  const question = { ...richerContext, history: [{ role: 'player', text: 'What is the furthest thing you can see?' }] };
+  assert.match(fallbackLine(question, describe), /furthest thing.*North crossing to the north/);
+  assert.equal(speechIsGrounded('The fruit shop is about 210 units south.', richerContext, describe), true);
+  assert.equal(speechIsGrounded('The fruit shop is 900 units away.', richerContext, describe), false);
+  assert.equal(speechIsGrounded('The fruit shop is 213 metres away.', richerContext, describe), false);
+});
+
+test('first clue still hides all rich landmarks and urgent dialogue skips optional humor', () => {
+  const opening = { ...richerContext, factsLearned: { firstClueSpoken: false } };
+  const summary = courierGrounding(opening);
+  assert.deepEqual(summary.visible, []); assert.deepEqual(summary.remembered, []);
+  assert.equal(summary.currentRoad, null);
+  assert.equal(speechIsGrounded('I am near a bar and a fruit shop.', opening, describe), false);
+  const stable = JSON.parse(dialogueMessages(richerContext, { type: 'move', label: 'Follow the clear street' })[1].content);
+  assert.equal(stable.optionalHumor.cue, deliveryPhrasebook.courier.move);
+  const urgent = JSON.parse(dialogueMessages({ ...richerContext, remainingMs: 10_000 }, { type: 'move' })[1].content);
+  assert.equal(urgent.optionalHumor, null);
+  assert.equal(JSON.parse(dialogueMessages(opening, describe)[1].content).optionalHumor, null);
+});
+
+test('curated bilingual delivery flavor keeps collection distinct from successful receipt', () => {
+  assert.equal(deliveryCoachFlavor('clarify').spanish, '¿Puede hablar más despacio?');
+  assert.equal(deliveryCoachFlavor('clarify').translation, 'Can you speak more slowly?');
+  assert.equal(deliveryOutcomeFlavor('collection').spanish, 'Punto de recogida');
+  assert.match(deliveryOutcomeFlavor('collection').note, /still need to collect/);
+  assert.notEqual(deliveryOutcomeFlavor('returned').note, deliveryOutcomeFlavor('received').note);
 });

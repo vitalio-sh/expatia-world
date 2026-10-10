@@ -15,7 +15,7 @@ const clarify=await api('session/'+id+'/turn',{text:'Which bar are you beside? C
 const wrong=await api('session/'+id+'/turn',{text:'My entrance is on the north side. Please meet me there.',turnId:'wrong'});
 await new Promise(r=>setTimeout(r,1700));
 const correct=await api('session/'+id+'/turn',{text:'Sorry, I meant the south side of the central building. My entrance is at the bottom. Please meet me there.',turnId:'correct'});
-for(let i=0;i<9;i++){await new Promise(r=>setTimeout(r,100));await api('session/'+id+'/move',{dx:0,dy:1,dt:.1});}
+// The resident stays in their apartment; guide only the courier.
 let arrival;for(let i=0;i<120;i++){await new Promise(r=>setTimeout(r,100));const g=(await api('session/'+id)).game;if(g.canHandoff){arrival=g;break;}}
 if(!arrival)throw Error('Courier did not physically reach handoff');
 const outcome=(await api('session/'+id+'/handoff',{})).game;

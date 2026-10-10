@@ -22,9 +22,16 @@ export interface KnownBuilding {
   openingHours: OpeningInterval[];
 }
 export interface Observation extends KnownBuilding { distance: number; direction: Direction; open: boolean }
+export type LandmarkType = 'corner' | 'road' | 'intersection' | 'crossing' | 'wall' | 'fruit-display' | 'awning' | 'entrance' | 'fountain' | 'tree';
+export interface Landmark {
+  id: string; type: LandmarkType; label: string; description: string; point: Point;
+  approach?: Point; buildingId?: string; crossTo?: Point[]; affordances: ('walk' | 'cross' | 'look')[];
+}
+export interface KnownLandmark extends Landmark { observedAt: number; source: 'observed' }
+export interface LandmarkObservation extends KnownLandmark { distance: number; direction: Direction }
 export interface ActionCandidate {
-  id: string; type: 'describe' | 'reveal' | 'clarify' | 'wait' | 'move' | 'continue' | 'drop' | 'return';
-  label: string; reason: string; target?: Point; targetId?: string; route?: Point[];
+  id: string; type: 'describe' | 'reveal' | 'clarify' | 'wait' | 'move' | 'continue' | 'drop' | 'return' | 'look';
+  label: string; reason: string; target?: Point; targetId?: string; route?: Point[]; facing?: Direction;
 }
 export interface Decision {
   id: string; sequence: number; trigger: 'opening' | 'directions' | 'timeout';
@@ -41,7 +48,7 @@ export interface Game {
   courier: Actor; resident: Actor; route: Point[]; routeTargetId: string | null;
   previousDestination: Point | null; parcel: 'courier' | 'resident' | 'drop' | 'returned';
   dropLocationId: string | null; outcome: Outcome | null; history: HistoryEntry[];
-  weather: Weather; knowledge: Record<string, KnownBuilding>;
+  weather: Weather; knowledge: Record<string, KnownBuilding>; landmarkKnowledge: Record<string, KnownLandmark>;
   facts: { homeSide: Direction | null; signDisclosed: boolean; firstClueSpoken: boolean; lastClarification: string | null };
   decision: Decision | null; decisions: Decision[]; sequence: number;
   timeoutPending: boolean; timeoutStartedAt: number | null; arrivalSequence: number;
@@ -57,6 +64,7 @@ export const HOME_POLYGON: Point[] = [
   { x: 592, y: 629 }, { x: 364, y: 629 }, { x: 279, y: 543 }, { x: 279, y: 304 },
 ];
 export const HOME_ENTRANCE: Point = { x: 480, y: 645 };
+export const RESIDENT_POSITION: Point = { x: 480, y: 440 };
 export const BUILDINGS: Building[] = [
   { id: 'bar-llevant', name: 'Bar Llevant', category: 'bar', footprint: rect(60, 0, 220, 155), entrance: { x: 150, y: 175 }, sign: { x: 150, y: 155 }, openingHours: hours('08:00', '23:30'), acceptsParcels: true, accessible: true, sheltered: true, color: '#b66759' },
   { id: 'bar-ponent', name: 'Bar Ponent', category: 'bar', footprint: rect(340, 0, 220, 155), entrance: { x: 430, y: 175 }, sign: { x: 430, y: 155 }, openingHours: hours('10:00', '22:00', [1, 2, 3, 4, 5, 6]), acceptsParcels: false, accessible: true, sheltered: true, color: '#59847e' },
@@ -65,7 +73,41 @@ export const BUILDINGS: Building[] = [
   { id: 'forn', name: 'Forn de la Plaça', category: 'bakery', footprint: rect(785, 295, 175, 235), entrance: { x: 765, y: 460 }, sign: { x: 785, y: 460 }, openingHours: hours('06:30', '20:00'), acceptsParcels: true, accessible: true, sheltered: true, color: '#c88b64' },
   { id: 'perruqueria', name: 'Perruqueria Ona', category: 'hairdresser', footprint: rect(340, 710, 280, 185), entrance: { x: 480, y: 915 }, sign: { x: 480, y: 895 }, openingHours: hours('09:00', '19:00', [2, 3, 4, 5, 6]), acceptsParcels: false, accessible: true, sheltered: true, color: '#9294ad' },
 ];
-export const WORLD_MAP = { size: 960, home: { id: 'home', name: 'Your home', footprint: HOME_POLYGON, entrance: HOME_ENTRANCE }, buildings: BUILDINGS, sightRange: 310, sightDescription: 'Four cardinal viewing sectors, 310 units, with solid-building occlusion.' };
+export const ROADS = [
+  { id: 'north-street', type: 'road', label: 'north street', footprint: rect(12, 185, 936, 50), direction: 'east-west' },
+  { id: 'south-street', type: 'road', label: 'south street', footprint: rect(12, 655, 936, 55), direction: 'east-west' },
+  { id: 'west-street', type: 'pedestrian street', label: 'west pedestrian street', footprint: rect(185, 235, 80, 420), direction: 'north-south' },
+  { id: 'east-street', type: 'pedestrian street', label: 'east pedestrian street', footprint: rect(695, 235, 80, 420), direction: 'north-south' },
+];
+export const CROSSINGS: Landmark[] = [
+  { id: 'crossing-nw', type: 'crossing', label: 'northwest zebra crossing', description: 'White pedestrian stripes across the north street near the first bar.', point: { x: 180, y: 210 }, crossTo: [{ x: 180, y: 175 }, { x: 180, y: 250 }], affordances: ['cross'] },
+  { id: 'crossing-ne', type: 'crossing', label: 'northeast zebra crossing', description: 'White pedestrian stripes across the north street near the supermarket.', point: { x: 780, y: 210 }, crossTo: [{ x: 780, y: 175 }, { x: 780, y: 250 }], affordances: ['cross'] },
+  { id: 'crossing-sw', type: 'crossing', label: 'southwest zebra crossing', description: 'White pedestrian stripes across the south street west of the home.', point: { x: 180, y: 680 }, crossTo: [{ x: 180, y: 640 }, { x: 180, y: 730 }], affordances: ['cross'] },
+  { id: 'crossing-se', type: 'crossing', label: 'southeast zebra crossing', description: 'White pedestrian stripes across the south street east of the home.', point: { x: 780, y: 680 }, crossTo: [{ x: 780, y: 640 }, { x: 780, y: 730 }], affordances: ['cross'] },
+];
+export const LANDMARKS: Landmark[] = [
+  ...CROSSINGS,
+  ...BUILDINGS.flatMap(building => building.footprint.map((point, index) => {
+    const center = { x: building.footprint.reduce((sum, p) => sum + p.x, 0) / 4, y: building.footprint.reduce((sum, p) => sum + p.y, 0) / 4 };
+    const approach = { x: point.x + Math.sign(point.x - center.x) * 20, y: point.y + Math.sign(point.y - center.y) * 20 };
+    return { id: `${building.id}-corner-${index}`, type: 'corner' as const, label: `${['northwest','northeast','southeast','southwest'][index]} corner of ${building.name}`, description: `The solid ${building.category} walls meet at this corner.`, buildingId: building.id, point, approach, affordances: ['walk','look'] as ('walk'|'look')[] };
+  })),
+  ...[{ id: 'nw', x: 260, y: 285, name: 'northwest', facing: 'south' }, { id: 'ne', x: 700, y: 285, name: 'northeast', facing: 'south' }, { id: 'sw', x: 260, y: 565, name: 'southwest', facing: 'east' }, { id: 'se', x: 700, y: 565, name: 'southeast', facing: 'west' }].map(c => ({ id: `home-corner-${c.id}`, type: 'corner' as const, label: `${c.name} chamfered corner`, description: `The cut-off ${c.name} corner of the central apartment block; the wall turns here.`, point: { x: c.x, y: c.y }, approach: { x: c.x, y: c.y }, affordances: ['walk', 'look'] as ('walk'|'look')[] })),
+  ...[{ id: 'nw', x: 230, y: 250, name: 'northwest' }, { id: 'ne', x: 730, y: 250, name: 'northeast' }, { id: 'sw', x: 230, y: 640, name: 'southwest' }, { id: 'se', x: 730, y: 640, name: 'southeast' }].map(c => ({ id: `intersection-${c.id}`, type: 'intersection' as const, label: `${c.name} street junction`, description: `The ${c.name} junction where a side pedestrian street meets a horizontal street.`, point: { x: c.x, y: c.y }, approach: { x: c.x, y: c.y }, crossTo: [{ x: c.x - 40, y: c.y }, { x: c.x + 40, y: c.y }], affordances: ['walk', 'cross'] as ('walk'|'cross')[] })),
+  { id: 'home-wall-north', type: 'wall', label: 'north apartment wall', description: 'A solid apartment wall; walking into it is blocked.', point: { x: 480, y: 220 }, approach: { x: 480, y: 200 }, affordances: ['walk','look'] },
+  { id: 'home-wall-west', type: 'wall', label: 'west apartment wall', description: 'The solid west side of the apartment block beside the pedestrian street.', point: { x: 279, y: 430 }, approach: { x: 260, y: 430 }, affordances: ['walk','look'] },
+  { id: 'home-wall-east', type: 'wall', label: 'east apartment wall', description: 'The solid east side of the apartment block beside the pedestrian street.', point: { x: 679, y: 430 }, approach: { x: 700, y: 430 }, affordances: ['walk','look'] },
+  { id: 'home-door', type: 'entrance', label: 'south apartment entrance', description: 'The apartment entrance in the south wall.', point: HOME_ENTRANCE, approach: HOME_ENTRANCE, affordances: ['walk'] },
+  { id: 'fruit-display', type: 'fruit-display', label: 'fruit crates', description: 'Crates of oranges, apples and produce outside a fruit shop.', point: { x: 180, y: 495 }, approach: { x: 195, y: 495 }, buildingId: 'fruita', affordances: ['walk','look'] },
+  { id: 'fruit-awning', type: 'awning', label: 'striped fruit-shop awning', description: 'A green-and-cream striped awning above the fruit shop.', point: { x: 175, y: 440 }, buildingId: 'fruita', affordances: ['look'] },
+  { id: 'bar-llevant-awning', type: 'awning', label: 'red bar awning', description: 'A red awning outside a bar.', point: { x: 150, y: 155 }, buildingId: 'bar-llevant', affordances: ['look'] },
+  { id: 'bar-ponent-awning', type: 'awning', label: 'blue bar awning', description: 'A blue awning outside a second bar.', point: { x: 430, y: 155 }, buildingId: 'bar-ponent', affordances: ['look'] },
+  { id: 'courtyard-fountain', type: 'fountain', label: 'courtyard fountain', description: 'A fountain inside the private apartment courtyard, behind solid walls.', point: { x: 480, y: 420 }, affordances: ['look'] },
+  { id: 'southwest-tree', type: 'tree', label: 'orange tree', description: 'A leafy orange tree beside the southwest pedestrian area.', point: { x: 100, y: 785 }, affordances: ['look'] },
+];
+export const WALLS = [{ id: 'home', name: 'central apartment block', category: 'apartment', footprint: HOME_POLYGON }, ...BUILDINGS].flatMap(building => building.footprint.map((point, index) => ({ id: `${building.id}-wall-segment-${index}`, buildingId: building.id, label: `${building.name} wall`, type: 'wall', from: point, to: building.footprint[(index + 1) % building.footprint.length], solid: true })));
+export const VIEW_ANGLE_DEGREES = 140;
+export const WORLD_MAP = { size: 960, home: { id: 'home', name: 'Your home', footprint: HOME_POLYGON, entrance: HOME_ENTRANCE }, buildings: BUILDINGS, roads: ROADS, crossings: CROSSINGS, landmarks: LANDMARKS, walls: WALLS, residentPosition: RESIDENT_POSITION, sightRange: 310, sightDescription: 'Forward 140-degree view, 310 units, facing the courier heading; solid walls occlude sight. Observed landmarks remain in memory.' };
 export const SIGHT_RANGE = 310;
 export const ACTOR_RADIUS = 10;
 export const COURIER_SPEED = 118;
@@ -101,13 +143,18 @@ export function segmentClear(a: Point, b: Point, actor: 'courier' | 'resident' =
   for (let i = 0; i <= steps; i++) if (!walkable({ x: a.x + (b.x - a.x) * i / steps, y: a.y + (b.y - a.y) * i / steps }, actor)) return false;
   return true;
 }
-export function visiblePoint(a: Point, b: Point, excludedBuilding?: string) {
+export function visiblePoint(a: Point, b: Point, _excludedBuilding?: string, facing?: Direction) {
   const dx = Math.abs(b.x - a.x), dy = Math.abs(b.y - a.y);
-  if (distance(a, b) > SIGHT_RANGE || Math.min(dx, dy) > 36 + Math.max(dx, dy) * 0.38) return false;
+  const d = distance(a, b);
+  if (d > SIGHT_RANGE) return false;
+  if (facing && d > 1) {
+    const forward = { north: { x: 0, y: -1 }, east: { x: 1, y: 0 }, south: { x: 0, y: 1 }, west: { x: -1, y: 0 } }[facing];
+    if (((b.x - a.x) * forward.x + (b.y - a.y) * forward.y) / d < Math.cos(VIEW_ANGLE_DEGREES * Math.PI / 360)) return false;
+  } else if (!facing && Math.min(dx, dy) > 36 + Math.max(dx, dy) * 0.38) return false;
   const steps = Math.ceil(distance(a, b) / 4);
   for (let i = 1; i < steps; i++) {
     const p = { x: a.x + (b.x - a.x) * i / steps, y: a.y + (b.y - a.y) * i / steps };
-    if (insidePolygon(p, HOME_POLYGON) || BUILDINGS.some(building => building.id !== excludedBuilding && insidePolygon(p, building.footprint))) return false;
+    if (insidePolygon(p, HOME_POLYGON) || BUILDINGS.some(building => insidePolygon(p, building.footprint))) return false;
   }
   return true;
 }

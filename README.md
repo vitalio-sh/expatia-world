@@ -19,7 +19,7 @@ Production uses Sites on Cloudflare, without Vercel. The tracked `.openai/hostin
 
 ## Behavior and limits
 
-Answer starts the authoritative60-second clock once. The player can speak or type, then walk to the south entrance and explicitly receive the parcel. A missed handoff can result in a physically completed collection drop at an observed suitable open shop. Opening hours are authored; Barcelona weather uses current model/forecast data from Open-Meteo, with MET Norway as a fallback. The interface gives the source, forecast validity and retrieval time, plus attribution. Stale/offline results remain explicit. Barcelona time uses Europe/Madrid.
+Answer starts the authoritative60-second clock once. The resident stays in their apartment. The player speaks or types directions to guide the courier to the entrance, then explicitly accepts the parcel. A missed handoff can result in a physically completed collection drop at an observed suitable open shop. Opening hours are authored; Barcelona weather uses current model/forecast data from Open-Meteo, with MET Norway as a fallback. The interface gives the source, forecast validity and retrieval time, plus attribution. Stale/offline results remain explicit. Barcelona time uses Europe/Madrid.
 
 The Worker keeps a round on its owning WebSocket connection. Disconnecting ends that connection; start another call. It does not silently resume or restart the clock. No identity, permanent session storage or user-history database is required for this demo. Per-round provider usage is visible through the decision inspector; it is not a billing invoice.
 

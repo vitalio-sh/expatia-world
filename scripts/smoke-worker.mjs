@@ -109,8 +109,9 @@ async function handoffRound() {
     const correction = await connection.call('/turn', { text: 'Sorry, I meant the south side of the central building. My entrance is at the bottom. Please meet me there.', turnId: 'correct' });
     scenario.correction = correction.game.inspector;
     check(correction.game.inspector?.selected === 'home:south', 'The corrected south entrance was not applied');
-    for (let i = 0; i < 7; i++) { await sleep(110); await connection.call('/move', { dx: 0, dy: 1, dt: .1 }); }
+    scenario.residentStayedHome = { x: before.resident.x, y: before.resident.y };
     scenario.arrival = await connection.until(game => game.canHandoff, 16_000, 150);
+    check(scenario.arrival.resident.x === before.resident.x && scenario.arrival.resident.y === before.resident.y, 'Resident moved despite the apartment-only role');
     const outcome = (await connection.call('/handoff', {})).game;
     check(outcome.phase === 'resolved' && outcome.parcel === 'resident' && outcome.outcome?.kind === 'received', 'Physical handoff did not resolve received outcome');
     scenario.final = outcome; scenario.events = connection.events; scenario.audio = connection.audio;

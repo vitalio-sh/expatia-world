@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, barcelonaTime, distance, findRoute, isOpen, segmentClear, visiblePoint, walkable } from '../src/shared/world.js';
-import { actionCandidates, answerCall, canHandoff, createGame, handoff, moveResident, npcContext, perception, publicGame, recordSpeech, tickGame } from '../src/server/game.js';
+import { BUILDINGS, DEFAULT_WEATHER, HOME_ENTRANCE, RESIDENT_POSITION, WALLS, LANDMARKS, barcelonaTime, distance, findRoute, isOpen, segmentClear, visiblePoint, walkable } from '../src/shared/world.js';
+import { actionCandidates, answerCall, canHandoff, createGame, handoff, moveResident, npcContext, perception, publicGame, recordSpeech, rememberObservations, tickGame } from '../src/server/game.js';
 import { buildJevRequest, decide, queryJev, resolveTimeout } from '../src/server/jev.js';
 
 const SATURDAY_NOON = Date.parse('2026-10-10T10:00:00Z');
@@ -22,11 +22,12 @@ test('entering never starts clock; Answer starts exactly 60 seconds once', () =>
   assert.equal(answerCall(game, start), true); assert.equal(game.deadline, start + 60_000);
   assert.equal(answerCall(game, start + 20_000), false); assert.equal(game.deadline, start + 60_000);
 });
-test('only physical meeting at correct entrance allows handoff', () => {
+test('only courier physical arrival at the correct entrance allows handoff while resident stays inside', () => {
   const game = active(); assert.equal(handoff(game, SATURDAY_NOON + 1), false);
-  game.courier.x = 480; game.courier.y = 200; game.resident.x = 480; game.resident.y = 195;
+  game.courier.x = 480; game.courier.y = 200;
   assert.equal(handoff(game, SATURDAY_NOON + 2), false);
-  Object.assign(game.courier, HOME_ENTRANCE); Object.assign(game.resident, { x: 480, y: 635 });
+  Object.assign(game.courier, HOME_ENTRANCE);
+  assert.deepEqual({x:game.resident.x,y:game.resident.y},RESIDENT_POSITION);
   assert.equal(canHandoff(game, SATURDAY_NOON + 3), true); assert.equal(handoff(game, SATURDAY_NOON + 3), true);
   assert.equal(game.parcel, 'resident'); assert.equal(game.outcome?.kind, 'received'); assert.equal(game.phase, 'resolved');
 });
@@ -37,14 +38,11 @@ test('background/deadline cannot extend timer or turn late claims into success',
   assert.equal(handoff(game, SATURDAY_NOON + 60_000), false); assert.equal(game.phase, 'timeout');
   assert.equal(game.deadline, SATURDAY_NOON + 60_000); assert.equal(publicGame(game, SATURDAY_NOON + 90_000).remainingMs, 0);
 });
-test('resident foyer has solid walls and a real southern exit', () => {
+test('resident is fixed inside the apartment and legacy movement cannot relocate them', () => {
   const game = active();
-  for (let i = 0; i < 30; i++) moveResident(game, -1, 0, 0.1);
-  assert.ok(game.resident.x >= 460); assert.ok(walkable(game.resident, 'resident'));
-  game.resident.x = 480;
-  for (let i = 0; i < 10; i++) moveResident(game, 0, 1, 0.1);
-  assert.ok(game.resident.y > 645); assert.ok(walkable(game.resident, 'resident'));
-  assert.equal(walkable({ x: 480, y: 565 }, 'courier'), false);
+  for (const input of [[1,0,10],[-1,1,1],[0,0,0],[Infinity,NaN,-1]]) assert.equal(moveResident(game, ...input as [number,number,number]), false);
+  assert.deepEqual({x:game.resident.x,y:game.resident.y}, RESIDENT_POSITION); assert.equal(game.resident.moving,false);
+  assert.equal(walkable(RESIDENT_POSITION), false);
 });
 test('range, cardinal blind spots and home occlusion are independent sight constraints', () => {
   const game = fresh(), view = perception(game);
@@ -190,14 +188,70 @@ test('fallback/outage never invents probabilities and stalled timeout returns wi
 });
 
 
-test('zero-vector release stops resident walking without consuming movement time or distance', () => {
+test('facing restricts current perception while observed places remain distinct memory', async () => {
   const game = active();
-  assert.equal(moveResident(game, 0, 1, .1), true);
-  const before = { x: game.resident.x, y: game.resident.y };
-  moveResident(game, 0, 0, 0);
-  assert.equal(game.resident.moving, false);
-  assert.deepEqual({ x: game.resident.x, y: game.resident.y }, before);
-  moveResident(game, 0, 1, 0);
-  assert.deepEqual({ x: game.resident.x, y: game.resident.y }, before);
-  assert.equal(game.resident.moving, false);
+  const result = await decide(game, 'Look south', undefined, offline);
+  assert.equal(result?.selected,'look:south'); assert.equal(game.courier.direction,'south');
+  assert.ok(!perception(game).buildings.some(b=>b.id==='bar-llevant'));
+  assert.ok(game.knowledge['bar-llevant']);
+  const context=npcContext(game);
+  assert.ok(context.rememberedPlaces.some(b=>'name' in b && b.name==='Bar Llevant' && !b.visible));
+  assert.ok(!context.visibleLandmarks.some(l=>l.id==='courtyard-fountain'));
+  assert.ok(!JSON.stringify(context).includes('footprint'));
+});
+test('fruit crates, awning and visible distances are grounded without seeing through shop walls', () => {
+  const game=active(); Object.assign(game.courier,{x:260,y:460,direction:'west'}); rememberObservations(game);
+  const context=npcContext(game), view=perception(game);
+  assert.ok(view.buildings.some(b=>b.id==='fruita'));
+  assert.ok(context.visibleLandmarks.some(l=>l.id==='fruit-display' && l.type==='fruit-display'));
+  assert.ok(context.visibleLandmarks.some(l=>l.id==='fruit-awning'));
+  assert.equal(context.surroundings.furthestVisible?.distance, Math.max(...view.landmarks.map(l=>l.distance),...view.buildings.map(b=>b.distance)));
+  assert.ok(context.rememberedLandmarks.every(l=>!('distance' in l) && !('direction' in l)));
+  assert.equal(visiblePoint({x:190,y:400},{x:20,y:400},undefined,'west'),false);
+  assert.ok(WALLS.some(w=>w.buildingId==='fruita')); assert.ok(LANDMARKS.some(l=>l.buildingId==='forn' && l.type==='corner'));
+});
+test('street crossing follows actual stripes and real JEV selects only observed affordances', async () => {
+  const game=active();
+  const candidates=actionCandidates(game,'directions');
+  assert.ok(candidates.some(c=>c.id==='cross:crossing-nw'));
+  assert.ok(!candidates.some(c=>c.id==='cross:crossing-ne'));
+  const selected='cross:crossing-nw';
+  const result=await decide(game,'Cross the street via the pedestrian crossing',undefined,{...offline,key:'fixture',fetcher:mockJev(()=>selected)});
+  assert.equal(result?.source,'jev'); assert.equal(result?.probabilities?.[selected],1);
+  assert.deepEqual(game.route.slice(-2),[{x:180,y:250},{x:180,y:175}]);
+  let start={x:game.courier.x,y:game.courier.y}; for(const end of game.route){assert.ok(segmentClear(start,end));start=end;}
+  tickGame(game,SATURDAY_NOON+2_000,2); assert.equal(game.courier.x,180); assert.equal(game.courier.y,175);
+});
+test('relative turns use actual courier heading and description requests do not move', async () => {
+  const game=active(); Object.assign(game.courier,{x:230,y:400,direction:'east'}); rememberObservations(game);
+  const result=await decide(game,'Walk left',undefined,offline);
+  assert.equal(result?.selected,'walk:north');
+  const before={x:game.courier.x,y:game.courier.y};
+  const description=await decide(game,'What is the furthest thing you can see?',undefined,offline);
+  assert.equal(description?.selected,'describe-surroundings'); assert.deepEqual({x:game.courier.x,y:game.courier.y},before);
+});
+test('observed corners and intersections have physical routes while hidden ones stay excluded', async () => {
+  const game=active(); await decide(game,'Look south',undefined,offline);
+  const candidates=actionCandidates(game,'directions');
+  assert.ok(candidates.some(c=>c.id==='landmark:home-corner-nw'));
+  assert.ok(!candidates.some(c=>c.id==='landmark:home-corner-ne'));
+  const result=await decide(game,'Go around the building to its northwest corner',undefined,{...offline,key:'fixture',fetcher:mockJev(()=> 'around:home-corner-nw')});
+  assert.equal(result?.selected,'around:home-corner-nw');
+  tickGame(game,SATURDAY_NOON+1_000,1); assert.ok(distance(game.courier,{x:260,y:285})<1);
+  await decide(game,'Look around',undefined,{...offline,now:()=>SATURDAY_NOON+1_000});
+  const junction=actionCandidates(game,'directions').find(c=>c.id==='landmark:intersection-nw'); assert.ok(junction);
+});
+
+test('a visible corner never reveals a business name before its sign is observed', () => {
+  const game=active(); Object.assign(game.courier,{x:40,y:40,direction:'south'}); rememberObservations(game);
+  assert.equal(game.knowledge.fruita,undefined);
+  const corner=perception(game).landmarks.find(l=>l.id==='fruita-corner-0'); assert.ok(corner);
+  assert.equal(corner.label,'northwest corner of a fruit shop');
+  const request=buildJevRequest(game,actionCandidates(game,'directions'),'directions','Go around that fruit shop',SATURDAY_NOON);
+  assert.ok(!JSON.stringify(request).includes('Fruita Fresca'));
+  assert.ok(npcContext(game).rememberedLandmarks.some(l=>l.id==='fruita-corner-0' && !l.label.includes('Fruita Fresca')));
+  Object.assign(game.courier,{x:260,y:460,direction:'west'}); rememberObservations(game);
+  assert.equal(game.knowledge['fruita' as string].name,'Fruita Fresca');
+  Object.assign(game.courier,{x:40,y:40,direction:'south'}); rememberObservations(game);
+  assert.equal(perception(game).landmarks.find(l=>l.id==='fruita-corner-0')?.label,'northwest corner of Fruita Fresca');
 });

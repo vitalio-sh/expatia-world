@@ -94,7 +94,7 @@ test('Worker RPC world and spoken phrase history use one scenario state', async 
 test('Worker deadline backgrounding is authoritative and invalid handoff never grants parcel', async () => {
   const f = fixture(); await f.session.rpc('answer', path('/answer')); await settle();
   assert.equal((await f.session.rpc('early', path('/handoff'))).status, 409);
-  Object.assign(f.session.game.courier, HOME_ENTRANCE); Object.assign(f.session.game.resident, HOME_ENTRANCE);
+  Object.assign(f.session.game.courier, HOME_ENTRANCE);
   f.advance(60_000);
   const expired = await f.session.rpc('late', path('/handoff'));
   assert.equal(expired.status, 409); assert.notEqual(f.session.game.parcel, 'resident'); assert.equal(f.session.game.deadline, NOW + 60_000);
@@ -102,7 +102,7 @@ test('Worker deadline backgrounding is authoritative and invalid handoff never g
 });
 test('Worker valid handoff resolves world state and closes provider voice', async () => {
   const f = fixture(); await f.session.rpc('answer', path('/answer')); await settle();
-  Object.assign(f.session.game.courier, HOME_ENTRANCE); Object.assign(f.session.game.resident, HOME_ENTRANCE);
+  Object.assign(f.session.game.courier, HOME_ENTRANCE);
   const result = await f.session.rpc('handoff', path('/handoff'));
   assert.equal(result.status, 200); assert.equal(f.session.game.parcel, 'resident'); assert.equal(f.session.game.outcome?.kind, 'received'); assert.equal(f.counts().disposed, true);
   f.session.dispose();
@@ -120,12 +120,13 @@ test('Worker microphone is unavailable before answering and cross-session messag
   f.session.message({ type: 'rpc', sessionId: 'different-session', requestId: 'bad', path: path('/answer') });
   assert.equal(f.session.game.phase, 'incoming'); f.session.dispose();
 });
-test('Worker movement bounds supplied dt by real elapsed time and wrong-path RPC cannot act', async () => {
+test('Worker ignores resident movement and wrong-path RPC cannot act', async () => {
   const f = fixture(); const y = f.session.game.resident.y;
   await f.session.rpc('move1', path('/move'), { dx: 0, dy: 1, dt: 10 });
   assert.equal(f.session.game.resident.y, y);
   f.advance(100); await f.session.rpc('move2', path('/move'), { dx: 0, dy: 1, dt: 10 });
-  assert.ok(f.session.game.resident.y > y && f.session.game.resident.y - y <= 13.21);
+  assert.equal(f.session.game.resident.y, y);
+  assert.equal(f.session.game.resident.moving, false);
   assert.equal((await f.session.rpc('bad-path', '/api/session/another/answer')).status, 404);
   assert.equal(f.session.game.phase, 'incoming'); f.session.dispose();
 });

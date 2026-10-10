@@ -40,3 +40,12 @@ Checkpoints after foundation: `517c2eb` integrated art/world/voice; `93464cf` Si
 Independent integration review found and fixed cancelled NPC turn ownership, an outer audio-unlock permission race, retained mute across replay, and resident walking after release. No further material findings in hook order or art/secret dispatch.
 
 Final application source checkpoint `afb57cb59aac55c825961fb1f5bc613a730ae2be` is deployed as Site version7. A handoff invalidates pending dialogue UI updates, preventing cancelled replies from restoring old state or showing a false error on a successful result.
+
+
+## Polish request — 10 October, 25-minute pass
+
+User direction supersedes the original resident-movement brief: stay in the apartment and guide the courier. Priorities: full-width mobile neighbourhood, compact always-accessible conversation, four-way compass, shared road/intersection/crosswalk/building-corner semantics and distance/occlusion-aware observations. Use the supplied expat phrasebook only where relevant to this delivery scenario, with English explanations. Preserve the real JEV and voice providers.
+
+GitHub destination: https://github.com/vitalio-sh/expatia-world (existing private repository). The first build had no GitHub remote; preserve the full local history and push it, then publish the same integrated changes to the existing Site.
+
+Implementation verified: 60 tests pass; production TypeScript/build pass. Eight real JEV + dialogue semantic probes passed (`city-semantics-live.json`), including fruit, corner, crossing, intersection, looking south and around-building directions. Actual local Worker handoff and 60-second timeout/drop both passed with stationary resident (`polish-worker-local.json`). Browser viewport checks: map334px at360px, map364px at390px, no horizontal overflow, Answer visible without scrolling. Independent review found and fixed the previously unidentified shop-name leak through corner labels. Final production publication evidence follows in the polish QA report.

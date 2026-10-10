@@ -164,7 +164,7 @@ export function createWorkerSession(client: WorkerSocket, sessionId: string, env
       return { status: 200, result: { game: getState() } };
     }
     if (action === '/handoff') {
-      if (!handoff(game, clock())) return { status: 409, error: 'Meet the courier at your entrance before the deadline.', result: { game: getState() } };
+      if (!handoff(game, clock())) return { status: 409, error: 'Guide the courier to your entrance before the deadline, then accept the parcel.', result: { game: getState() } };
       controller?.abort(); voice.dispose();
       return { status: 200, result: { game: getState() } };
     }
@@ -209,7 +209,7 @@ export default {
       headers.set('X-Content-Type-Options', 'nosniff'); headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
       return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
     }
-    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '0.1.0' });
+    if (url.pathname === '/api/health') return json({ ok: true, product: 'Expatia World', speech: 'eleven_v4_turbo', deployment: 'connection-owned-worker', build: '2026-10-10-city-polish' });
     if (url.pathname === '/api/weather') return json(await getWeather());
     if (url.pathname === '/api/session' && request.method === 'POST') {
       if (!env.EXPATIA_SESSION_SECRET || env.EXPATIA_SESSION_SECRET.length < 32) return json({ error: 'Game session signing is not configured.' }, 503);

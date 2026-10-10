@@ -1,0 +1,303 @@
+{
+  "at": "2026-10-10T12:03:27.207Z",
+  "scope": "Real JEV and dialogue requests; fresh authored scenario per case and frozen test clock. No browser microphone or physical-time movement.",
+  "pass": true,
+  "cases": [
+    {
+      "name": "current and furthest observation",
+      "input": "What can you see from where you are? What is the furthest thing you can see?",
+      "initialFacing": "north",
+      "selected": "describe-surroundings",
+      "label": "Describe what is visible now, including nearest and furthest landmarks",
+      "reason": "Answer environment, fruit, what-can-you-see and furthest-visible questions without moving; distinguish visible facts from memory.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I see a zebra crossing nearby to the north, and Bar Ponent further away to the east.",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 9046,
+        "outputTokens": 310,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 9356,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0011336,
+        "estimatedCostUsd": 0.000228228,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "fruit shop recognition",
+      "input": "Walk to the fruit shop, Fruita Fresca, with the fruit crates.",
+      "initialFacing": "south",
+      "selected": "go:fruita",
+      "label": "Walk to Fruita Fresca",
+      "reason": "Navigate to the fruit shop actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I am walking south toward Fruita Fresca now, passing the northeast corner.",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 11442,
+        "outputTokens": 409,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 11851,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0014488,
+        "estimatedCostUsd": 0.000283332,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "building corner",
+      "input": "Go to the northwest corner of the central apartment building.",
+      "initialFacing": "east",
+      "selected": "landmark:home-corner-nw",
+      "label": "Approach northwest chamfered corner",
+      "reason": "Previously observed corner: The cut-off northwest corner of the central apartment block; the wall turns here.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I am heading toward the northwest corner of the central apartment block now.",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 9794,
+        "outputTokens": 360,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 10154,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0012347,
+        "estimatedCostUsd": 0.00024339,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "cross the street",
+      "input": "Cross the street using the nearest pedestrian crossing.",
+      "initialFacing": "north",
+      "selected": "cross:crossing-nw",
+      "label": "Cross northwest zebra crossing",
+      "reason": "Cross the observed crossing via its actual white pedestrian stripes; first approach the near side, then walk across to the opposite side.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I am crossing the street now using the nearby zebra crossing.",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 9132,
+        "outputTokens": 303,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 9435,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0011454,
+        "estimatedCostUsd": 0.000227388,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "intersection",
+      "input": "Walk to the nearest intersection.",
+      "initialFacing": "east",
+      "selected": "landmark:intersection-nw",
+      "label": "Approach northwest street junction",
+      "reason": "Previously observed intersection: The northwest junction where a side pedestrian street meets a horizontal street.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I've reached the northwest street junction. Where should I head next?",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 9753,
+        "outputTokens": 361,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 10114,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0012279,
+        "estimatedCostUsd": 0.00024297000000000004,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "cross intersection",
+      "input": "Cross the nearest intersection.",
+      "initialFacing": "east",
+      "selected": "cross:intersection-nw",
+      "label": "Cross northwest street junction",
+      "reason": "Cross the observed intersection via its actual junction; first approach the near side, then walk across to the opposite side.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I am crossing the northwest street junction now.",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 9766,
+        "outputTokens": 354,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 10120,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0012174,
+        "estimatedCostUsd": 0.00024288600000000002,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "turn to look",
+      "input": "Look south.",
+      "initialFacing": "north",
+      "selected": "look:south",
+      "label": "Look south",
+      "reason": "Turn to inspect the finite forward field of view; no walking or hidden map information.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I see a fruit shop straight ahead with crates of produce nearby and the northeast corner of the building closer to me. Which way should I go?",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 9993,
+        "outputTokens": 317,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 10310,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0014498,
+        "estimatedCostUsd": 0.000226884,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "around building",
+      "input": "Go around the central building to my entrance on the south side.",
+      "initialFacing": "north",
+      "selected": "home:south",
+      "label": "Go to the south side described by the resident",
+      "reason": "Resident said the entrance is on the south side. This is a conversational belief, not proof; verify on arrival.",
+      "source": "jev",
+      "model": "jev-1.13.0",
+      "speech": "I am heading towards the south side as you suggested.",
+      "speechLive": true,
+      "grounded": true,
+      "routeLegal": true,
+      "intentMatched": true,
+      "usage": {
+        "calls": 2,
+        "liveCalls": 2,
+        "inputTokens": 9216,
+        "outputTokens": 308,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 9524,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0011459,
+        "estimatedCostUsd": 0.000230496,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    }
+  ]
+}
