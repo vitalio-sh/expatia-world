@@ -1,4 +1,4 @@
-import { actionCandidates, applyDecision, enterTimeout, learnPlayerFacts, navigationText, npcContext, perception, recordHistory, rememberObservations, routeDistance, scanSurroundings, tickGame } from './game.js';
+import { actionCandidates, applyDecision, enterTimeout, explicitNavigationAction, hasNegatedNavigation, learnPlayerFacts, navigationText, npcContext, perception, recordHistory, rememberObservations, routeDistance, scanSurroundings, tickGame } from './game.js';
 import { barcelonaTime, distance, type ActionCandidate, type Decision, type Game } from '../shared/world.js';
 import { recordUsage } from './usage.js';
 
@@ -74,6 +74,7 @@ export function fallbackChoice(game: Game, candidates: ActionCandidate[], trigge
   if (trigger === 'opening') return candidates[0];
   if (trigger === 'timeout') return candidates.filter(c => c.type === 'drop').sort((a, b) => routeDistance(game.courier, a.route) - routeDistance(game.courier, b.route))[0] ?? byId('return')!;
   const normalized = navigationText(text);
+  if (hasNegatedNavigation(text)) return byId('clarify')!;
   if (/\b(stop|wait|stay|hold on)\b/.test(normalized)) return byId('wait')!;
   if (/\b(go|come|turn) back\b|wrong way|backtrack/.test(normalized) && byId('go-back')) return byId('go-back')!;
   const described = /furthest|farthest|what (?:can|do) you see|what see|what.*around you|can you see.*(?:fruit|crate|corner|street|cross)|describe|surroundings/.test(normalized);
@@ -108,8 +109,12 @@ export function fallbackChoice(game: Game, candidates: ActionCandidate[], trigge
 async function evaluate(game: Game, trigger: Decision['trigger'], text: string, signal?: AbortSignal, options: DecisionOptions = {}): Promise<Decision> {
   const clock = options.now ?? Date.now, now = clock();
   rememberObservations(game, now);
-  const candidates = actionCandidates(game, trigger, now, text), sequence = ++game.sequence;
-  const started = Date.now(), fallback = fallbackChoice(game, candidates, trigger, text), view = perception(game, now);
+  const legal = actionCandidates(game, trigger, now, text);
+  const explicit = trigger === 'directions' ? explicitNavigationAction(game, legal, text) : null;
+  // An unambiguous executable command has one legal intended action. JEV's
+  // actual choice/probabilities remain its response, never fabricated scores.
+  const candidates = explicit ? [explicit] : legal, sequence = ++game.sequence;
+  const started = Date.now(), fallback = explicit ?? fallbackChoice(game, candidates, trigger, text), view = perception(game, now);
   const decision: Decision = {
     id: globalThis.crypto.randomUUID(), sequence, trigger, source: 'fallback', model: null,
     selected: fallback.id, action: fallback, candidates, probabilities: null, confidence: null,
@@ -119,7 +124,7 @@ async function evaluate(game: Game, trigger: Decision['trigger'], text: string, 
       ...view.buildings.map(b => `Currently visible: ${b.name} (${b.category}), ${b.direction}, ${b.distance} units; ${b.open ? 'open' : 'closed'}.`),
       `Barcelona ${barcelonaTime(now).label}; weather: ${game.weather.description} (${game.weather.status}).`,
       ...(game.facts.homeSide ? [`Resident reported a ${game.facts.homeSide} entrance; this remains a belief until observed.`] : []),
-    ], reason: 'unconfigured', elapsedMs: 0, discarded: false,
+    ], reason: explicit ? 'explicit_instruction_unconfigured' : 'unconfigured', elapsedMs: 0, discarded: false,
   };
   const key = options.key ?? process.env.JEV_API_KEY;
   if (signal?.aborted) decision.reason = 'aborted';
@@ -135,7 +140,7 @@ async function evaluate(game: Game, trigger: Decision['trigger'], text: string, 
         inputTokens: response.usage?.input_tokens, outputTokens: response.usage?.output_tokens, estimatedCostUsd: decision.usage.estimatedUsd,
         elapsedMs: Date.now() - started, live: true, outcome: 'completed' });
     } catch (error) {
-      decision.reason = error instanceof JevProviderError ? error.reason : 'provider_unavailable';
+      decision.reason = (explicit ? 'explicit_instruction:' : '') + (error instanceof JevProviderError ? error.reason : 'provider_unavailable');
       if (options.telemetry !== false) recordUsage({ provider: 'jev', operation: trigger, model: JEV_MODEL, sessionId: game.id, turnId: decision.id,
         elapsedMs: Date.now() - started, live: false, outcome: 'fallback', error: decision.reason });
     }

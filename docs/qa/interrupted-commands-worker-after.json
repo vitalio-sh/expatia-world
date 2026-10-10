@@ -1,0 +1,289 @@
+{
+  "at": "2026-10-10T12:59:39.074Z",
+  "url": "http://localhost:3318",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-bilingual-arrival"
+  },
+  "scope": "Actual production/local signed Worker RPC sequence with real JEV and generated courier speech. Opening interrupted before its first caption. Speech events/history recorded; no human microphone claim or token data.",
+  "openingCaptionsAtInterrupt": 0,
+  "cases": [
+    {
+      "text": "Mira hacia el sur y dime qué ves",
+      "turnId": "probe-command-0",
+      "selected": "look:south",
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "south",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "spokenHistory": [
+        {
+          "text": "Veo la esquina de Fruita Fresca más cerca y las cajas de fruta más lejos hacia el sur.",
+          "turnId": "probe-command-0"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Ve hacia el sur",
+      "turnId": "probe-command-1",
+      "selected": "walk:south",
+      "position": {
+        "x": 210,
+        "y": 376.73200000000026,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "walk:south",
+      "route": [
+        {
+          "x": 210,
+          "y": 470
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Veo la esquina de Fruita Fresca más cerca y las cajas de fruta más lejos hacia el sur.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Voy hacia el sur pasando cerca de Fruita Fresca.",
+          "turnId": "probe-command-1"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Mi portal está en el lado sur. Ven a la entrada",
+      "turnId": "probe-command-2",
+      "selected": "home:south",
+      "position": {
+        "x": 247.7474586121933,
+        "y": 499.52456037003805,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        },
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Veo la esquina de Fruita Fresca más cerca y las cajas de fruta más lejos hacia el sur.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Voy hacia el sur pasando cerca de Fruita Fresca.",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Entendido, voy hacia la entrada sur.",
+          "turnId": "probe-command-2"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur",
+        "Mi portal está en el lado sur. Ven a la entrada"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Sí, sigue.",
+      "turnId": "probe-command-3",
+      "selected": "continue",
+      "position": {
+        "x": 325.0292413094109,
+        "y": 605.0292413094108,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Veo la esquina de Fruita Fresca más cerca y las cajas de fruta más lejos hacia el sur.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Voy hacia el sur pasando cerca de Fruita Fresca.",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Entendido, voy hacia la entrada sur.",
+          "turnId": "probe-command-2"
+        },
+        {
+          "text": "Sigo avanzando hacia el sur acercándome a la esquina del edificio.",
+          "turnId": "probe-command-3"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur",
+        "Mi portal está en el lado sur. Ven a la entrada",
+        "Sí, sigue."
+      ],
+      "phase": "active"
+    }
+  ],
+  "finalHistory": [
+    {
+      "role": "player",
+      "text": "Mira hacia el sur y dime qué ves"
+    },
+    {
+      "role": "courier",
+      "text": "Veo la esquina de Fruita Fresca más cerca y las cajas de fruta más lejos hacia el sur.",
+      "turnId": "probe-command-0"
+    },
+    {
+      "role": "player",
+      "text": "Ve hacia el sur"
+    },
+    {
+      "role": "courier",
+      "text": "Voy hacia el sur pasando cerca de Fruita Fresca.",
+      "turnId": "probe-command-1"
+    },
+    {
+      "role": "player",
+      "text": "Mi portal está en el lado sur. Ven a la entrada"
+    },
+    {
+      "role": "courier",
+      "text": "Entendido, voy hacia la entrada sur.",
+      "turnId": "probe-command-2"
+    },
+    {
+      "role": "player",
+      "text": "Sí, sigue."
+    },
+    {
+      "role": "courier",
+      "text": "Sigo avanzando hacia el sur acercándome a la esquina del edificio.",
+      "turnId": "probe-command-3"
+    }
+  ],
+  "events": [
+    {
+      "type": "npc.cancel",
+      "turnId": "opening-immediately-interrupted",
+      "atMs": 353
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-0",
+      "atMs": 902
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-0",
+      "text": "Veo la esquina de Fruita Fresca más cerca y las cajas de fruta más lejos hacia el sur.",
+      "atMs": 2163
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 2301
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 2304
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-1",
+      "atMs": 2564
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-1",
+      "text": "Voy hacia el sur pasando cerca de Fruita Fresca.",
+      "atMs": 3410
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 3655
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 3663
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-2",
+      "atMs": 4006
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-2",
+      "text": "Entendido, voy hacia la entrada sur.",
+      "atMs": 4653
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 4838
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 4844
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-3",
+      "atMs": 5132
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-3",
+      "text": "Sigo avanzando hacia el sur acercándome a la esquina del edificio.",
+      "atMs": 5840
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-3",
+      "atMs": 5952
+    }
+  ],
+  "totalMs": 5952
+}

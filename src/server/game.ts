@@ -145,13 +145,16 @@ export function tickGame(game: Game, now = Date.now(), dt = Math.max(0, (now - g
 
 /** Deterministic navigation vocabulary only. Original player quotes stay in history. */
 export function navigationText(text: string) {
-  const vocabulary: Record<string,string> = { no:'not', es:'is', ese:'that', esa:'that', si:'yes', vale:'okay', sigue:'continue', siga:'continue', continua:'continue', continue:'continue', adelante:'forward', gira:'turn', gire:'turn', girar:'turn', vuelve:'go back', vuelva:'go back', vete:'go', vaya:'go', camina:'walk', camine:'walk', anda:'walk', andando:'walking', bajar:'go south', baja:'go south', perdon:'sorry', otro:'other', otra:'other', que:'what', cual:'which', como:'how', llama:'called', ves:'see', ve:'go', ven:'come', mira:'look', cruza:'cross', rodea:'go around', edificio:'building', fruteria:'fruit shop', frutas:'fruit', fruta:'fruit', calle:'street', interseccion:'intersection', cruce:'intersection', esquina:'corner', entrada:'entrance', portal:'door', puerta:'door', casa:'home', apartamento:'apartment', piso:'flat', lado:'side', sur:'south', norte:'north', este:'east', oeste:'west', abajo:'bottom', arriba:'top', derecha:'right', izquierda:'left', recto:'straight', delante:'forward', atras:'back', espera:'wait', detente:'stop', hacia:'toward', esta:'is', en:'on', al:'on the', el:'the', la:'the', mi:'my', tu:'your' };
+  const vocabulary: Record<string,string> = { por:'on', de:'on', del:'on the', mueve:'move', mover:'move', ir:'go', venir:'come', llegues:'reach', llegar:'reach', vuelve:'go back', no:'not', es:'is', ese:'that', esa:'that', si:'yes', vale:'okay', sigue:'continue', siga:'continue', continua:'continue', continue:'continue', adelante:'forward', gira:'turn', gire:'turn', girar:'turn', vuelva:'go back', vete:'go', vaya:'go', camina:'walk', camine:'walk', anda:'walk', andando:'walking', bajar:'go south', baja:'go south', perdon:'sorry', otro:'other', otra:'other', que:'what', cual:'which', como:'how', llama:'called', ves:'see', ve:'go', ven:'come', mira:'look', cruza:'cross', rodea:'go around', edificio:'building', fruteria:'fruit shop', frutas:'fruit', fruta:'fruit', calle:'street', interseccion:'intersection', cruce:'intersection', esquina:'corner', entrada:'entrance', portal:'door', puerta:'door', casa:'home', apartamento:'apartment', piso:'flat', lado:'side', sur:'south', norte:'north', este:'east', oeste:'west', abajo:'bottom', arriba:'top', derecha:'right', izquierda:'left', recto:'straight', delante:'forward', atras:'back', espera:'wait', detente:'stop', hacia:'toward', esta:'is', en:'on', al:'on the', el:'the', la:'the', mi:'my', tu:'your' };
   return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/^\s*para(?:te)?(?:\s+(?:aqui|ahi|un momento|por favor))?[.!?]*\s*$/, 'stop')
     .replace(/\bpaso de peatones\b/g,'pedestrian crossing')
     .replace(/\b[a-z]+\b/g, word=>vocabulary[word]??word)
     .replace(/\bside\s+(north|south|east|west)\b/g,'$1 side')
     .replace(/\b(entrance|door)\s*,\s*((?:on|at)\s+(?:the\s+)?(?:north|south|east|west)\s+side)/g,'$1 $2');
+}
+export function hasNegatedNavigation(text: string) {
+  return /\b(?:not|don't|do not)\s+(?:go|walk|head|come|reach|approach|navigate|move|turn|look|face|wait|stop|mires|vayas|vengas|camines|gires|avances)\b/.test(navigationText(text));
 }
 export function learnPlayerFacts(game: Game, text: string) {
   // Learn an explicit side claim, rather than treating every direction elsewhere
@@ -177,14 +180,14 @@ export function learnPlayerFacts(game: Game, text: string) {
       const index = match.index!, before = clause.slice(Math.max(0, index - 20), index), after = clause.slice(index + match[0].length, index + match[0].length + 35);
       if (/\bnot\b[^,.!?]*$|isn't\s+(?:on\s+the\s+)?$/.test(before)) continue;
       const sideNoun = /^\s+(?:side|entrance|door|end|face)\b/.test(after);
-      const entranceBefore = /\b(entrance|door)\b[^.!?;,]{0,45}\b(on|at|faces|facing|is)\b[^.!?;,]{0,15}$/.test(clause.slice(0, index));
+      const entranceBefore = /\b(entrance|door)\b[^.!?;,]{0,45}\b(on|at|faces|facing|is)\b[^.!?;,]{0,15}$/.test(clause.slice(0, index)) || /\b(entrance|door)\s+(?:the\s+)?$/.test(clause.slice(0,index));
       if (sideNoun || entranceBefore) positions.push({ side: match[0], index });
     }
     if (positions.length === 1) game.facts.homeSide = mapping[positions[0].side];
   }
 }
 export function npcContext(game: Game, now = game.updatedAt) {
-  const view = perception(game, now), opening = !game.facts.firstClueSpoken;
+  const view = perception(game, now), opening = !game.facts.firstClueSpoken && !game.history.some(h => h.role === 'player');
   const visibleFacts = [...view.landmarks.map(l => ({ id: l.id, label: l.label, type: l.type as string, distance: l.distance, direction: l.direction })), ...view.buildings.map(b => ({ id: b.id, label: b.name, type: b.category, distance: b.distance, direction: b.direction }))].sort((a, b) => a.distance - b.distance);
   const road = ROADS.find(r => insidePolygon(game.courier, r.footprint));
   const lastCourier = game.history.filter(h => h.role === 'courier').at(-1)?.text ?? '';
@@ -292,6 +295,38 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   return candidates;
 }
 
+/** Explicit legal user commands do not require a fresh entrance interrogation. */
+export function explicitNavigationAction(game: Game, candidates: ActionCandidate[], text: string): ActionCandidate | null {
+  const normalized = navigationText(text), byId = (id: string) => candidates.find(c=>c.id===id) ?? null;
+  if (hasNegatedNavigation(text)) return null;
+  const asksInformation = /\b(what|which|name|called|see|describe|where)\b/.test(normalized);
+  const verb = /\b(go|walk|head|come|reach|approach|navigate|around|move|turn)\b/.test(normalized);
+  if (/\b(stop|wait|stay|hold on)\b/.test(normalized)) return byId('wait');
+  const directions = [...normalized.matchAll(/\b(north|south|east|west|left|right|top|bottom|up|down)\b/g)].map(m=>({north:'north',south:'south',east:'east',west:'west',left:'west',right:'east',top:'north',bottom:'south',up:'north',down:'south'}[m[0]]!));
+  const uniqueDirections = [...new Set(directions)];
+  if (/\b(look|face)\b/.test(normalized)) return uniqueDirections.length===1 ? byId(`look:${uniqueDirections[0]}`) : /\baround\b/.test(normalized) ? byId('look:around') : null;
+  if (asksInformation) return null;
+  const lastCourier = navigationText(game.history.filter(h=>h.role==='courier').at(-1)?.text ?? '');
+  const sideAnswer = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier) && uniqueDirections.length===1 && normalized.split(/\s+/).length<=7 && !verb;
+  const entranceRequest = /\b(entrance|door|home|house|apartment|flat)\b/.test(normalized) && (verb || uniqueDirections.length===1);
+  if (game.facts.homeSide && (sideAnswer || entranceRequest)) return byId(`home:${game.facts.homeSide}`);
+  if (/\b(yes|okay|continue)\b/.test(normalized) && !verb && uniqueDirections.length===0) {
+    if (byId('continue')) return byId('continue');
+    const lastMove=[...game.decisions].reverse().find(d=>d.action.type==='move');
+    return lastMove ? byId(lastMove.selected) : null;
+  }
+  if (verb) {
+    const named=Object.values(game.knowledge).filter(b=>normalized.includes(navigationText(b.name)));
+    if(named.length===1) return byId(`go:${named[0].id}`);
+    const category= /\b(fruit|greengrocer)\b/.test(normalized)?'fruit shop':/\b(bakery|forn)\b/.test(normalized)?'bakery':/\b(supermarket|mercat)\b/.test(normalized)?'supermarket':null;
+    if(category){const places=Object.values(game.knowledge).filter(b=>b.category===category);if(places.length===1)return byId(`go:${places[0].id}`);}
+  }
+  const simpleTerrain = !/\b(entrance|door|home|house|apartment|flat|building|bar|fruit|shop|bakery|supermarket|corner|intersection|crossing|crate|not)\b/.test(normalized);
+  if (simpleTerrain && uniqueDirections.length===1 && (verb || normalized.split(/\s+/).length<=5)) return byId(`walk:${uniqueDirections[0]}`);
+  if (simpleTerrain && uniqueDirections.length===0 && /\b(forward|straight)\b/.test(normalized)) return byId('continue') ?? byId(`walk:${game.courier.direction}`);
+  return null;
+}
+
 export function applyDecision(game: Game, decision: Decision, now = game.updatedAt) {
   tickGame(game, now, 0);
   if (decision.discarded || decision.sequence !== game.sequence || (decision.trigger === 'timeout' ? game.phase !== 'timeout' : game.phase !== 'active')) return false;
@@ -327,7 +362,7 @@ export function publicGame(game: Game, now = Date.now()) {
   return {
     id: game.id, phase: game.phase, startedAt: game.startedAt, deadline: game.deadline,
     serverNow: now, remainingMs: remainingMs(game, now), courier: { ...game.courier }, resident: { ...game.resident },
-    route: game.route.map(p => ({ ...p })), routeTargetId: game.routeTargetId, parcel: game.parcel,
+    route: game.route.map(p => ({ ...p })), routeTargetId: game.routeTargetId, parcel: game.parcel, facts: { ...game.facts },
     dropLocationId: game.dropLocationId, outcome: game.outcome, history: game.history.map(h => ({ ...h })),
     weather: { ...game.weather }, time: barcelonaTime(now), map: WORLD_MAP, canHandoff: canHandoff(game, now),
     visibleBuildings: view.buildings.map(b => b.id), visibleLandmarks: view.landmarks.map(({ id, type, label, distance, direction }) => ({ id, type, label, distance, direction })), courierView: { facing: game.courier.direction, angle: VIEW_ANGLE_DEGREES, range: SIGHT_RANGE }, furthestVisible: [...view.landmarks.map(l => ({ id: l.id, label: l.label, distance: l.distance })), ...view.buildings.map(b => ({ id: b.id, label: b.name, distance: b.distance }))].sort((a, b) => b.distance - a.distance)[0] ?? null, arrivalSequence: game.arrivalSequence,

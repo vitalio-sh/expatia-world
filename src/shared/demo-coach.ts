@@ -42,36 +42,13 @@ function conversation(game: DemoGame) {
   return { history, players, lastPlayer, courierQuestion, all, map, disclosed, identified, stage, homeTarget, decision };
 }
 
-function homeCue(game: DemoGame, title = 'Guide them to your entrance'): DemoCue {
+function homeCue(game: DemoGame, title = 'Tell them your entrance side'): DemoCue {
   const map = game.map ?? WORLD_MAP;
-  const entrance = map.home.entrance;
-  const center = map.residentPosition;
-  const side = directionBetween(center, entrance);
-  const position = game.courier;
-  const west = !!position && position.x < center.x;
-  const east = !!position && position.x > center.x;
-  // The player's own entrance is known. This gives directions, never claims the
-  // courier already sees the doorway or can pass through the solid courtyard.
-  let spanish = `Mi portal está en el lado ${es[side]} del bloque. `;
-  let english = `My entrance is on the ${side} side of the block. `;
-  if (position && position.y < entrance.y - 55) {
-    if (west || east) {
-      const street = west ? 'west' : 'east';
-      spanish += `Baja por la calle del ${es[street]} y rodea la esquina hasta el portal.`;
-      english += `Go south along the ${street} street, around the corner, and come to the entrance.`;
-    } else {
-      spanish += 'Rodea el edificio por fuera y ven a ese portal.';
-      english += 'Go around the outside of the building and come to that entrance.';
-    }
-  } else if (position && Math.abs(position.x - entrance.x) > 35) {
-    const direction = position.x < entrance.x ? 'east' : 'west';
-    spanish += `Ve hacia el ${es[direction]} por la fachada sur hasta la entrada.`;
-    english += `Go ${direction} along the south frontage to the entrance.`;
-  } else {
-    spanish += 'Ven a la entrada por la calle; estoy en casa.';
-    english += 'Come to the entrance from the street; I’m at home.';
-  }
-  return { title, spanish, english, stage: 2 };
+  const side = directionBetween(map.residentPosition, map.home.entrance);
+  // Give one useful fact, then one action. Never ask the presenter to narrate
+  // every intermediate turn of a route the navigation engine already knows.
+  if (game.facts?.homeSide === side) return { title: 'Ask them to come to your door', spanish: 'Ven a mi portal.', english: 'Come to my entrance.', stage: 2 };
+  return { title, spanish: `Mi portal está en el lado ${es[side]}.`, english: `My entrance is on the ${side} side.`, stage: 2 };
 }
 
 function sightCue(game: DemoGame, title = 'Choose a clear reference'): DemoCue {
@@ -85,31 +62,23 @@ function sightCue(game: DemoGame, title = 'Choose a clear reference'): DemoCue {
     const names = { 'fruit-display': ['las cajas de fruta', 'the fruit crates'], corner: ['la esquina del edificio', 'the building corner'], crossing: ['el paso de peatones', 'the zebra crossing'] };
     const [spanish, english] = names[item.type as keyof typeof names];
     const side = item.direction;
-    return { title, spanish: `¿Ves ${spanish}${side ? ` al ${es[side]}` : ''}? Dime si estás junto a ese punto.`, english: `Can you see ${english}${side ? ` to the ${side}` : ''}? Tell me whether you’re beside it.`, stage: 1 };
+    return { title, spanish: `¿Ves ${spanish}${side ? ` al ${es[side]}` : ''}?`, english: `Can you see ${english}${side ? ` to the ${side}` : ''}?`, stage: 1 };
   }
   const position = game.courier;
   const facing = position ? directionBetween(position, map.home.entrance) : 'south';
-  return { title, spanish: `Mira hacia el ${es[facing]} y dime qué ves.`, english: `Look ${facing} and tell me what you can see.`, stage: 1 };
+  return { title, spanish: `Mira hacia el ${es[facing]}.`, english: `Look ${facing}.`, stage: 1 };
 }
 
 function identifyCue(game: DemoGame, hasConversation: boolean): DemoCue {
   const context = conversation(game);
-  if (context.identified || context.stage > 0) return { title: 'Check their current position', spanish: '¿Qué ves ahora mismo? ¿En qué lado del edificio estás?', english: 'What can you see right now? Which side of the building are you on?', stage: 0 };
+  if (context.identified || context.stage > 0) return { title: 'Check their current position', spanish: '¿Qué ves ahora mismo?', english: 'What can you see right now?', stage: 0 };
   const barVisible = (game.visibleBuildings ?? []).some(id => (game.map ?? WORLD_MAP).buildings.find(building => building.id === id)?.category === 'bar');
-  if (!hasConversation || barVisible || /\bbar\b/.test(context.all)) return { title: 'Find the courier', spanish: `${hasConversation ? '' : 'Hola, buenas. '}¿Puedes leer el nombre del bar?`, english: `${hasConversation ? '' : 'Hello! '}Can you read the bar’s name?`, stage: 0 };
-  return { title: 'Find the courier', spanish: '¿Dónde estás ahora? Dime un punto de referencia que puedas ver.', english: 'Where are you now? Tell me one landmark you can see.', stage: 0 };
+  if (!hasConversation || barVisible || /\bbar\b/.test(context.all)) return { title: 'Find the courier', spanish: '¿Cómo se llama el bar?', english: 'What is the bar called?', stage: 0 };
+  return { title: 'Find the courier', spanish: '¿Qué ves cerca de ti?', english: 'What can you see nearby?', stage: 0 };
 }
 
-function walkingCue(game: DemoGame): DemoCue {
-  const context = conversation(game);
-  const position = game.courier;
-  const next = game.route?.find(point => !position || Math.hypot(point.x - position.x, point.y - position.y) > 12);
-  const heading = position && next ? directionBetween(position, next) : position?.direction;
-  const target = game.routeTargetId ?? context.decision?.action?.targetId;
-  const knownPlace = context.disclosed.find(place => place.id === target);
-  const suffix = context.homeTarget ? 'hasta mi portal, en el lado sur del edificio' : knownPlace ? `hasta ${knownPlace.name}` : 'hasta el punto que acordamos';
-  const translation = context.homeTarget ? 'to my entrance on the south side of the building' : knownPlace ? `to ${knownPlace.name}` : 'to the point we agreed on';
-  return { title: 'Keep the route going', spanish: `Sí, sigue${heading ? ` hacia el ${es[heading]}` : ' por esa ruta'} ${suffix}. Avísame cuando llegues.`, english: `Yes, keep going${heading ? ` ${heading}` : ' along that route'} ${translation}. Tell me when you arrive.`, stage: 3 };
+function walkingCue(_game: DemoGame): DemoCue {
+  return { title: 'They are walking — no need to speak', spanish: 'Sí, sigue.', english: 'Yes, keep going. Let them finish this route.', stage: 3 };
 }
 
 /** Spanish presenter suggestions only: choosing a cue never sends or moves anything. */
@@ -120,7 +89,7 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
     if (game.outcome?.kind === 'returned' || game.parcel === 'returned') return { title: 'Arrange another delivery', spanish: 'Entendido. Tendré que organizar otra entrega.', english: 'Understood. I’ll need to arrange another delivery.', stage: 3 };
     return { title: 'Parcel received', spanish: 'Perfecto, gracias. ¡Hasta luego!', english: 'Perfect, thank you. See you!', stage: 3 };
   }
-  if (game.canHandoff) return { title: 'At your door', spanish: 'Perfecto, ya puedes entregarme el paquete. Gracias.', english: 'The courier has reached your entrance. Click Receive parcel to finish.', stage: 3 };
+  if (game.canHandoff) return { title: 'At your door', spanish: 'Perfecto, ya puedes entregarme el paquete. Gracias.', english: 'The courier has reached your entrance. Click Collect your parcel to finish.', stage: 3 };
   if (!options.lifeline) {
     if (options.manual === 0) return identifyCue(game, context.players.length > 0);
     if (options.manual === 1) return sightCue(game);
@@ -128,11 +97,12 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
   }
   const askingHome = /(?:que|cual|which|what).{0,28}(?:lado|side|entrada|entrance|puerta|door)|donde.{0,25}(?:casa|portal|entrada)|where.{0,25}(?:home|entrance|door)/.test(context.courierQuestion);
   const askingLook = /hacia donde miro|donde (?:miro|mirar)|que (?:punto de referencia|referencia) busco|where.{0,12}look|what.{0,24}look for/.test(context.courierQuestion);
+  if (!options.lifeline && (game.courier?.moving || (game.route?.length ?? 0) > 0) && (!askingHome || game.facts?.homeSide)) return walkingCue(game);
   const recovery = options.lifeline || !!options.recovery || unclearWords.test(context.courierQuestion) || context.decision?.action?.type === 'clarify';
   if (recovery) {
     const cue = askingLook ? sightCue(game) : askingHome || context.stage >= 2 || context.identified ? homeCue(game) : sightCue(game);
-    if (options.lifeline) return { ...cue, title: 'Ask for a slower reply', spanish: `¿Puedes hablar más despacio? ${cue.spanish}`, english: `Can you speak more slowly? ${cue.english}` };
-    return { ...cue, title: options.lifeline ? 'Say it slowly, with context' : 'Try one clear instruction', spanish: `Perdona, lo repito despacio: ${cue.spanish}`, english: `Repeat slowly: ${cue.english}` };
+    if (options.lifeline) return { ...cue, title: 'Ask for a slower reply', spanish: 'Más despacio, por favor.', english: 'More slowly, please.' };
+    return { ...cue, title: 'Try this short phrase' };
   }
   const question = context.courierQuestion;
   if (askingHome) return homeCue(game, 'Answer the entrance question');
@@ -142,7 +112,7 @@ export function chooseDemoCue(game: DemoGame = {}, options: DemoCueOptions = {})
   if (context.stage >= 2) return homeCue(game);
   if (context.identified && /es (?:el|la|ese|esa)|el que dices|te refieres|is (?:that|this)|do you mean/.test(question)) {
     const cue = homeCue(game, 'Confirm and give the next direction');
-    return { ...cue, spanish: `Gracias, esa referencia me ayuda. ${cue.spanish}`, english: `Thank you, that landmark helps. ${cue.english}` };
+    return cue;
   }
   if (context.identified && /(?:por donde|hacia donde|que camino|which way|where.{0,12}(?:go|next)|por donde sigo)/.test(question)) return homeCue(game, 'Answer the next-direction question');
   if (context.identified) return sightCue(game, 'Build on the landmark they gave');

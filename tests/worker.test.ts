@@ -161,3 +161,64 @@ test('Worker streaming retains the final clarification and one coherent courier 
     assert.equal(f.session.game.routeTargetId,'home-south');
   } finally {f.session.dispose();}
 });
+
+test('interrupting an unspoken greeting preserves the next command and its history instead of reopening onboarding', async () => {
+  const socket = new Socket(); let releaseOpening!: () => void, dialogueCalls = 0;
+  const contexts: any[] = [];
+  const session = createWorkerSession(socket, SESSION_ID, {}, DEFAULT_WEATHER, { clock: () => NOW, timers: false, decisionOptions: { key: '', telemetry: false },
+    voice: { async prepare() { return true; }, async createTurn() { return { sendPhrase() {}, async finish() {}, cancel() {} }; }, handle() {}, dispose() {} },
+    dialogue: async (context, _decision, signal, onPhrase) => {
+      contexts.push(context); dialogueCalls++;
+      if (dialogueCalls === 1) await new Promise<void>(resolve => { releaseOpening = resolve; });
+      signal?.throwIfAborted();
+      const text = 'Voy hacia tu entrada por el sur.'; onPhrase?.(text);
+      return { text, model: 'test-fixture', live: false };
+    },
+  });
+  try {
+    await session.rpc('answer', path('/answer')); await settle();
+    assert.equal(session.game.facts.firstClueSpoken, false);
+    session.message({ type: 'interrupt', sessionId: SESSION_ID }); releaseOpening();
+    const text = 'Mi portal está en el lado sur. Ven a la entrada.';
+    const result = await session.rpc('spoken-command', path('/turn'), { text, turnId: 'microphone-command' });
+    assert.equal(result.status, 200);
+    assert.equal(session.game.facts.homeSide, 'south');
+    assert.equal(session.game.routeTargetId, 'home-south');
+    assert.deepEqual(session.game.history.filter(entry => entry.role === 'player').map(entry => entry.text), [text]);
+    assert.equal(contexts.at(-1).policy.includes('FIRST CLUE'), false);
+    assert.equal(contexts.at(-1).history.filter((entry: any) => entry.role === 'player').at(-1).text, text);
+    assert.equal(session.game.history.some(entry => entry.role === 'courier' && entry.turnId === 'opening'), false);
+  } finally { session.dispose(); }
+});
+
+test('interrupting after visible speech preserves its words and applied route for the next player question', async () => {
+  const socket = new Socket(); let releaseReply!: () => void, dialogueCalls = 0;
+  const contexts: any[] = [];
+  const session = createWorkerSession(socket, SESSION_ID, {}, DEFAULT_WEATHER, { clock: () => NOW, timers: false, decisionOptions: { key: '', telemetry: false },
+    voice: { async prepare() { return true; }, async createTurn(turnId) { return { sendPhrase(text) { socket.send(JSON.stringify({ type: 'npc.caption', turnId, text })); }, async finish() {}, cancel() {} }; }, handle() {}, dispose() {} },
+    dialogue: async (context, _decision, signal, onPhrase) => {
+      contexts.push(context); dialogueCalls++;
+      const text = dialogueCalls === 1 ? '¿Por qué lado está tu portal?' : 'Voy hacia tu portal por el sur.';
+      onPhrase?.(text);
+      if (dialogueCalls === 2) await new Promise<void>(resolve => { releaseReply = resolve; });
+      signal?.throwIfAborted();
+      return { text, model: 'test-fixture', live: false };
+    },
+  });
+  try {
+    await session.rpc('answer', path('/answer')); await settle();
+    const moving = session.rpc('moving', path('/turn'), { text: 'Mi portal está en el lado sur. Ven a la entrada.', turnId: 'visible-moving' });
+    await settle();
+    assert.equal(session.game.routeTargetId, 'home-south');
+    assert.equal(session.game.courier.moving, true);
+    assert.ok(socket.messages.some(packet => packet.type === 'npc.caption' && packet.text === 'Voy hacia tu portal por el sur.'));
+    session.message({ type: 'interrupt', sessionId: SESSION_ID });
+    assert.equal(session.game.routeTargetId, 'home-south');
+    assert.equal(session.game.courier.moving, true);
+    releaseReply(); assert.equal((await moving).status, 409);
+    assert.equal((await session.rpc('question', path('/turn'), { text: '¿Qué ves ahora?', turnId: 'next-question' })).status, 200);
+    assert.equal(session.game.routeTargetId, 'home-south');
+    assert.ok(contexts.at(-1).history.some((entry: any) => entry.role === 'courier' && entry.text === 'Voy hacia tu portal por el sur.'));
+    assert.equal(session.game.history.filter(entry => entry.role === 'courier' && entry.turnId === 'visible-moving').length, 1);
+  } finally { session.dispose(); }
+});

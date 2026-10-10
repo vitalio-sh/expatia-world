@@ -1,0 +1,92 @@
+{
+  "testedAt": "2026-10-10T13:00:35.819Z",
+  "scope": "Current source, real JEV, interrupted opening with no courier phrase; physical simulation uses authored clock.",
+  "turns": [
+    {
+      "text": "Mira hacia el sur y dime qué ves.",
+      "selected": "look:south",
+      "source": "jev",
+      "reason": "live",
+      "elapsedMs": 416,
+      "probabilities": {
+        "look:south": 1
+      },
+      "remainingRoutePoints": 0,
+      "facing": "south",
+      "homeSide": null,
+      "openingPolicy": false,
+      "playerHistoryCount": 1
+    },
+    {
+      "text": "Ve hacia el sur.",
+      "selected": "walk:south",
+      "source": "jev",
+      "reason": "live",
+      "elapsedMs": 311,
+      "probabilities": {
+        "walk:south": 1
+      },
+      "remainingRoutePoints": 1,
+      "facing": "south",
+      "homeSide": null,
+      "openingPolicy": false,
+      "playerHistoryCount": 2
+    },
+    {
+      "text": "Mi portal está en el lado sur.",
+      "selected": "home:south",
+      "source": "jev",
+      "reason": "live",
+      "elapsedMs": 282,
+      "probabilities": {
+        "home:south": 1
+      },
+      "remainingRoutePoints": 3,
+      "facing": "south",
+      "homeSide": "south",
+      "openingPolicy": false,
+      "playerHistoryCount": 3
+    },
+    {
+      "text": "Ven a mi portal.",
+      "selected": "home:south",
+      "source": "jev",
+      "reason": "live",
+      "elapsedMs": 257,
+      "probabilities": {
+        "home:south": 1
+      },
+      "remainingRoutePoints": 3,
+      "facing": "south",
+      "homeSide": "south",
+      "openingPolicy": false,
+      "playerHistoryCount": 4
+    },
+    {
+      "text": "Sí, sigue.",
+      "selected": "continue",
+      "source": "jev",
+      "reason": "live",
+      "elapsedMs": 287,
+      "probabilities": {
+        "continue": 1
+      },
+      "remainingRoutePoints": 3,
+      "facing": "south",
+      "homeSide": "south",
+      "openingPolicy": false,
+      "playerHistoryCount": 5
+    }
+  ],
+  "canHandoff": true,
+  "position": {
+    "x": 480,
+    "y": 645
+  },
+  "facts": {
+    "homeSide": "south",
+    "signDisclosed": false,
+    "firstClueSpoken": false,
+    "lastClarification": null
+  }
+}

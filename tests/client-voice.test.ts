@@ -129,6 +129,22 @@ test('server cancellation admits spontaneous arrival speech and rejects cancelle
   } finally { f.cleanup(); }
 });
 
+test('older courier cancellation and arrival frames cannot consume a pending spoken command', async () => {
+  const f = await fixture(async () => microphone().stream);
+  try {
+    f.voice.beginTurn('interrupted-greeting');
+    await f.voice.startRecording('spoken-command');
+    const final = f.voice.stopRecording();
+    f.socket.emit({ type: 'npc.cancel', turnId: 'interrupted-greeting' });
+    f.socket.emit({ type: 'npc.audio_begin', turnId: 'older-arrival' });
+    f.socket.emit({ type: 'npc.caption', turnId: 'older-arrival', text: 'Unrelated arrival remark.' });
+    f.socket.emit({ type: 'stt.final', turnId: 'spoken-command', text: 'Mi portal está en el lado sur. Ven a la entrada.', model: 'scribe_v2_realtime', live: true });
+    assert.equal((await final).text, 'Mi portal está en el lado sur. Ven a la entrada.');
+    assert.deepEqual(f.transcripts, ['Mi portal está en el lado sur. Ven a la entrada.']);
+    assert.deepEqual(f.captions, []);
+  } finally { f.cleanup(); }
+});
+
 test('microphone defaults to Spanish and sends an explicit English selection per recording', async () => {
   const f = await fixture(async () => microphone().stream);
   try {

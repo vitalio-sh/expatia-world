@@ -21,7 +21,39 @@ interface GroundedThing {
   id?: string; label: string; category: string; description?: string;
   distance?: number; direction?: string; observedAt?: number; visible: boolean;
 }
-function isOpening(c: Record<string, any>) { return c.factsLearned?.firstClueSpoken === false || /FIRST CLUE/.test(c.policy || ''); }
+function isOpening(c: Record<string, any>) {
+  // A resident can interrupt before the greeting's first phrase is emitted.
+  if ((c.history || []).some((entry: any) => entry.role === 'player')) return false;
+  return c.factsLearned?.firstClueSpoken === false || /FIRST CLUE/.test(c.policy || '');
+}
+
+const plain = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const movementTypes = ['move', 'continue', 'drop'];
+function dialogueConflict(text: string, context: unknown, decision: unknown): boolean {
+  const c = (context || {}) as Record<string, any>, d = (decision || {}) as Record<string, any>;
+  const action = d.action || (d.type ? d : null), value = plain(text);
+  const asksEntrance = /(?:en que lado|cual.{0,18}lado|donde (?:esta|queda).{0,25}(?:portal|entrada|puerta|casa)|which side|where.{0,25}(?:entrance|door|home))[^?]*\?/.test(value);
+  if (c.factsLearned?.homeSide && asksEntrance) return true;
+  if (movementTypes.includes(action?.type)) {
+    // The route has already been validated. Give one action acknowledgement;
+    // another question makes a successful movement sound like a failed turn.
+    if (value.includes('?')) return true;
+    if (asksEntrance || /(?:por donde (?:voy|sigo)|hacia donde (?:voy|sigo)|que (?:camino|direccion|referencia)|quieres que (?:siga|vaya)|which way|where.{0,14}(?:go|next))[^?]*\?/.test(value)) return true;
+    if (/\b(?:me quedo|espero aqui|no me muevo|no puedo avanzar|i(?: am|'m) waiting)\b/.test(value)) return true;
+  }
+  return false;
+}
+
+function movementLine(c: Record<string, any>, action: Record<string, any>): string {
+  const destination = action.targetId || (/^home[:-]/.test(action.id || '') ? action.id : null) || c.navigation?.destination?.id || c.activeDestination;
+  const side = c.factsLearned?.homeSide || String(destination || '').match(/^home[:-](north|south|east|west)$/)?.[1];
+  if (side && (/^home[:-]/.test(String(destination || '')) || /entrance/.test(action.label || ''))) return `Vale, voy hacia tu portal en el lado ${directionEs[side] || side}.`;
+  const place = [...(c.observations || []), ...(c.rememberedPlaces || []), ...(c.visibleLandmarks || []), ...(c.rememberedLandmarks || [])].find((item: any) => item.id === destination);
+  if (place) return `Vale, sigo la ruta hacia ${spanishLandmarkLabel(place.name || place.label)}. Te aviso al llegar.`;
+  const direction = String(action.id || '').match(/^walk:(north|south|east|west)$/)?.[1];
+  if (direction) return `Vale, camino hacia el ${directionEs[direction]} por la calle despejada.`;
+  return 'Vale, sigo la ruta que me has indicado. Te aviso al llegar.';
+}
 function thing(item: any, visible: boolean): GroundedThing | null {
   if (!item || typeof item !== 'object') return null;
   const label = item.name || item.label || item.category || item.type;
@@ -100,11 +132,12 @@ export function fallbackLine(context: unknown, decision: unknown): string {
   if (selectedAction?.id === 'arrival' && c?.parcel === 'drop') return 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.';
   if (/return/.test(action)) return 'No encuentro un lugar adecuado para dejarlo, así que me llevo el paquete de vuelta.';
   if (/drop/.test(action)) return c?.parcel === 'drop' ? 'El paquete está en el punto de recogida. Todavía tienes que ir a buscarlo.' : 'Voy a llevar el paquete a un punto de recogida adecuado. Tendrás que ir a buscarlo.';
+  if (selectedAction && movementTypes.includes(selectedAction.type)) return movementLine(c || {}, selectedAction);
   if (c && /clarify|ask/.test(action)) {
     const latest = [...(c.history || [])].reverse().find((h: any) => h.role === 'player')?.text || '';
-    if (/\b(home|house|apartment|flat|entrance|door|building|casa|portal|entrada|puerta|edificio|piso)\b/i.test(latest)) {
+    if (c.factsLearned?.homeSide || /\b(home|house|apartment|flat|entrance|door|building|casa|portal|entrada|puerta|edificio|piso)\b/i.test(latest)) {
       const side = c.factsLearned?.homeSide;
-      return side ? `Recuerdo que tu entrada está al ${directionEs[side] || side}. ¿Quieres que siga hacia esa entrada?` : 'Entendido, buscas tu portal. ¿En qué lado está la entrada?';
+      return side ? `Recuerdo que tu portal está al ${directionEs[side] || side}. ¿Qué esquina o punto de referencia uso para llegar?` : 'Entendido, buscas tu portal. ¿En qué lado está la entrada?';
     }
   }
   if (c && !isOpening(c) && /describe|clarify|ask|look/.test(action)) { const detail = surroundingsLine(c); if (detail) return detail; }
@@ -124,6 +157,7 @@ export function fallbackLine(context: unknown, decision: unknown): string {
 /** Fail closed on distinctive invented facts and false outcomes before forwarding a phrase. */
 export function speechIsGrounded(text: string, context: unknown, decision: unknown): boolean {
   if (isServiceErrorText(text)) return false;
+  if (dialogueConflict(text, context, decision)) return false;
   const c = (context || {}) as Record<string, any>;
   const d = (decision || {}) as Record<string, any>;
   const action = d.action || (d.type ? d : null);
@@ -189,14 +223,16 @@ export function dialogueMessages(context: unknown, decision: unknown) {
     ? deliveryPhrasebook.courier[action?.type === 'clarify' ? 'clarify' : 'move'] : c.parcel === 'resident' ? deliveryPhrasebook.courier.received : null;
   const conversation = (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'player' || entry.role === 'courier').map((entry: any) => ({ role: entry.role === 'player' ? 'user' : 'assistant', content: String(entry.text) }));
   const projection = { ...c, history: (Array.isArray(c.history) ? c.history : []).filter((entry: any) => entry.role === 'event') };
-  return [{ role: 'system', content: instructions }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
+  const followup = '\nWhen move or continue is selected, acknowledge following that route/destination. Do not ask where to go, ask the entrance side, or ask permission to start a route already selected. factsLearned.homeSide is already the answer to the entrance-side question: never ask it again. If clarify is selected with a known side, acknowledge that side and ask only for the missing route reference; do not claim movement.';
+  const mode = isOpening(c) ? '' : '\nThis is a follow-up directions turn, even if an interrupted greeting was never emitted. The first-line/greeting restrictions do not apply. Answer the latest resident turn and selected action.';
+  return [{ role: 'system', content: instructions + followup + mode }, ...conversation, { role: 'user', content: JSON.stringify({ courierContext: projection, perceptionSummary: courierGrounding(context), selectedDecision: selected, optionalHumor: humor ? { cue: humor, policy: 'Optional, at most one short gentle aside after the useful information. Skip if it would crowd out the answer, repeat a recent joke, or slow urgent directions. No invented facts or teasing the player.' } : null }) }];
 }
 
 /** Context must be npcContext(game), never the complete world or judge trace. */
 export async function generateDialogue(context: unknown, decision: unknown, signal?: AbortSignal, onPhrase?: PhraseCallback, streamer: typeof openRouterStream = openRouterStream): Promise<DialogueResult> {
   signal?.throwIfAborted();
   const meta = (context || {}) as { sessionId?: string; id?: string; turnId?: string | number };
-  let pending = '', spoken = '', count = 0, guardFailed = false;
+  let pending = '', spoken = '', count = 0, guardFailed = false, actionConflict = false;
   const emits: Promise<void>[] = [];
   const emit = (raw: string) => {
     if (isServiceErrorText(raw)) { guardFailed = true; return; }
@@ -204,7 +240,7 @@ export async function generateDialogue(context: unknown, decision: unknown, sign
     if (!phrase || signal?.aborted || guardFailed) return;
     // A later clarification question must survive a short acknowledgement and detail.
     if (count >= 2 && (isOpening((context || {}) as Record<string, any>) || count >= 3 || !/\?$/.test(phrase))) return;
-    if (!speechIsGrounded(phrase, context, decision)) { guardFailed = true; return; }
+    if (!speechIsGrounded(phrase, context, decision)) { actionConflict ||= dialogueConflict(phrase, context, decision); guardFailed = true; return; }
     count++; spoken += `${spoken ? ' ' : ''}${phrase}`;
     emits.push(Promise.resolve(onPhrase?.(phrase)));
   };
@@ -217,6 +253,13 @@ export async function generateDialogue(context: unknown, decision: unknown, sign
     }, signal, { sessionId: meta.sessionId || meta.id, turnId: meta.turnId, operation: 'courier-dialogue' });
     signal?.throwIfAborted();
     emit(pending);
+    if (actionConflict && spoken) {
+      // A streamed acknowledgement must not leave the chosen movement unexplained.
+      const d = (decision || {}) as Record<string, any>, action = d.action || d;
+      const alreadyAcknowledgedMove = movementTypes.includes(action.type) && /\b(?:voy|camino|sigo|me dirijo)\b/i.test(spoken);
+      const correction = /^Vale[.!]?$/i.test(spoken.trim()) ? fallbackLine(context, decision).replace(/^Vale, /, '').replace(/^./, first => first.toUpperCase()) : fallbackLine(context, decision);
+      if (!alreadyAcknowledgedMove && !spoken.includes(correction)) { spoken += ` ${correction}`; emits.push(Promise.resolve(onPhrase?.(correction))); }
+    }
     await Promise.all(emits);
     if (!spoken) throw new Error(guardFailed ? 'dialogue_grounding_guard' : 'empty_dialogue');
     return { ...result, text: spoken, ...(guardFailed ? { error: 'unsafe_detail_omitted' } : {}) };

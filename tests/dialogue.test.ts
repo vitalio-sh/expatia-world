@@ -154,7 +154,7 @@ test('Spanish speech preserves current sight, colors, truthful arrival and physi
 });
 
 test('first clue still hides all rich landmarks and urgent dialogue skips optional humor', () => {
-  const opening = { ...richerContext, factsLearned: { firstClueSpoken: false } };
+  const opening = { ...richerContext, history: [], factsLearned: { firstClueSpoken: false } };
   const summary = courierGrounding(opening);
   assert.deepEqual(summary.visible, []); assert.deepEqual(summary.remembered, []);
   assert.equal(summary.currentRoad, null);
@@ -214,4 +214,68 @@ test('service failure after valid speech keeps only the useful spoken phrase', a
   assert.deepEqual(phrases, ['Vale.']);
   assert.equal(result.text, 'Vale.');
   assert.equal(result.error, 'stream_interrupted');
+});
+
+test('known entrance and selected movement reject repeated location questions and speak the actual route', async () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, activeDestination: 'home-south', history: [{ role: 'player', text: 'Ven a mi portal.' }, { role: 'courier', text: '¿En qué lado está tu portal?' }, { role: 'player', text: 'Por el sur. Rodea el edificio y ven a la entrada.' }] };
+  const move = { id: 'home:south', type: 'move', targetId: 'home-south', label: 'Navigate to the reported south entrance destination' };
+  assert.equal(speechIsGrounded('¿En qué lado está tu portal?', context, move), false);
+  assert.equal(speechIsGrounded('¿Por dónde sigo?', context, move), false);
+  assert.equal(speechIsGrounded('Vale, voy hacia tu portal en el lado sur.', context, move), true);
+  const phrases: string[] = [];
+  const streamer = (async (_messages, onText) => { onText('¿En qué lado está tu portal?'); return { text: '¿En qué lado está tu portal?', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, move, undefined, phrase => { phrases.push(phrase); }, streamer);
+  assert.match(result.text, /voy hacia tu portal en el lado sur/);
+  assert.doesNotMatch(result.text, /\?/);
+  assert.deepEqual(phrases, [result.text]);
+  assert.equal(result.live, false);
+});
+
+test('a rejected question after streamed acknowledgement is completed with the selected movement', async () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, activeDestination: 'home-south' };
+  const move = { type: 'continue', label: 'Continue current route' };
+  const phrases: string[] = [];
+  const streamer = (async (_messages, onText) => { onText('Vale. '); onText('¿Dónde está tu entrada?'); return { text: 'Vale. ¿Dónde está tu entrada?', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, move, undefined, phrase => { phrases.push(phrase); }, streamer);
+  assert.equal(phrases[0], 'Vale.');
+  assert.match(phrases[1], /Voy hacia tu portal en el lado sur/);
+  assert.doesNotMatch(result.text, /dónde|\?/);
+});
+
+test('known-side clarification acknowledges that answer and asks for a missing route reference only', () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, history: [{ role: 'player', text: 'Por el sur.' }] };
+  assert.match(fallbackLine(context, { type: 'clarify' }), /Recuerdo.*sur.*esquina/);
+  assert.doesNotMatch(fallbackLine(context, { type: 'clarify' }), /En qué lado|Quieres que siga/);
+  assert.equal(speechIsGrounded('¿En qué lado está tu portal?', context, { type: 'clarify' }), false);
+  assert.equal(speechIsGrounded('Recuerdo tu portal al sur. ¿Qué esquina uso para llegar?', context, { type: 'clarify' }), true);
+});
+
+test('interrupted greeting followed by a concrete command is a real directions turn', async () => {
+  const context = { ...richerContext, policy: 'FIRST CLUE: near a bar', factsLearned: { firstClueSpoken: false, homeSide: 'south' }, history: [{ role: 'player', text: 'Mi entrada está al sur. Camina hasta mi portal.' }] };
+  const move = { id: 'home:south', type: 'move', targetId: 'home-south', label: 'Go to reported south entrance' };
+  const expected = 'Voy hacia tu portal en el lado sur.';
+  assert.equal(speechIsGrounded(expected, context, move), true);
+  assert.ok(courierGrounding(context).visible.length > 0);
+  assert.match(dialogueMessages(context, move)[0].content, /interrupted greeting/);
+  const streamer = (async (_messages, onText) => { onText(expected); return { text: expected, model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, move, undefined, undefined, streamer);
+  assert.equal(result.text, expected);
+  assert.equal(result.live, true);
+});
+
+test('movement fallback follows its selected street or known landmark without inventing entrance arrival', () => {
+  assert.match(fallbackLine(richerContext, { id: 'walk:west', type: 'move', label: 'Walk west' }), /camino hacia el oeste/);
+  const place = fallbackLine(richerContext, { type: 'move', targetId: 'fruit', label: 'Go to Fruita Fresca' });
+  assert.match(place, /sigo la ruta hacia Fruita Fresca/);
+  assert.doesNotMatch(place, /portal|Estoy abajo|ya tienes/);
+});
+
+test('a valid movement acknowledgement is not repeated when an unnecessary follow-up question is omitted', async () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, activeDestination: 'home-south' };
+  const move = { type: 'move', targetId: 'home-south', label: 'Go to reported entrance' };
+  const phrases: string[] = [];
+  const streamer = (async (_messages, onText) => { onText('Vale, voy hacia tu portal en el lado sur. '); onText('¿Quieres que siga?'); return { text: '', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, move, undefined, phrase => { phrases.push(phrase); }, streamer);
+  assert.deepEqual(phrases, ['Vale, voy hacia tu portal en el lado sur.']);
+  assert.equal(result.text, phrases[0]);
 });

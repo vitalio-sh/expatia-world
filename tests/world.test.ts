@@ -376,3 +376,49 @@ test('compass movement and finite facing-based perception remain distinct from m
   Object.assign(game.courier,{x:480,y:680,direction:'east'});
   const explicit=await decide(game,'Walk west',undefined,offline);assert.equal(explicit?.selected,'walk:west');
 });
+
+test('an interrupted opening cannot hide known landmarks or restart FIRST CLUE after the player speaks', async () => {
+  const game=fresh();answerCall(game,SATURDAY_NOON);
+  const result=await decide(game,'¿Cómo se llama el bar?',undefined,offline);
+  assert.equal(result?.selected,'reveal:bar-llevant');
+  const context=npcContext(game);assert.equal(context.factsLearned.firstClueSpoken,false);
+  assert.ok(context.observations.some(b=>'name' in b && b.name==='Bar Llevant'));
+  assert.ok(!context.policy.includes('FIRST CLUE'));
+  assert.ok(context.navigation!==null);
+});
+test('clear commands cannot become repeated clarification, with real model accounting preserved', async () => {
+  for(const text of ['Ve hacia el sur.','Walk south.','Ve a la izquierda.']){
+    const game=active();let ids:string[]=[];
+    const result=await decide(game,text,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{ids=Object.keys(criteria);return ids[0];})});
+    assert.equal(ids.length,1);assert.ok(!ids.includes('clarify'));assert.equal(result?.source,'jev');assert.equal(result?.probabilities?.[ids[0]],1);assert.ok(game.route.length);
+  }
+  const game=active();const ignored=await decide(game,'Ve hacia el sur.',undefined,{...offline,key:'fixture',fetcher:mockJev(()=> 'clarify')});
+  assert.equal(ignored?.source,'fallback');assert.equal(ignored?.selected,'walk:south');assert.equal(ignored?.probabilities,null);
+  assert.equal(ignored?.reason,'explicit_instruction:invalid_response');assert.ok(game.route.length);
+});
+test('Spanish portal variants and short followups retain the communicated destination', async () => {
+  const game=active();recordSpeech(game,'¿En qué lado está la entrada?','actual-question',SATURDAY_NOON);
+  const first=await decide(game,'Por abajo.',undefined,offline);assert.equal(first?.selected,'home:south');
+  const second=await decide(game,'Sí, sigue.',undefined,offline);assert.equal(second?.selected,'continue');assert.equal(game.routeTargetId,'home-south');
+  const correction=await decide(game,'Mi portal de arriba.',undefined,offline);assert.equal(game.facts.homeSide,'north');assert.equal(correction?.selected,'home:north');
+  await decide(game,'Ven a mi entrada por el sur.',undefined,offline);assert.equal(game.facts.homeSide,'south');assert.equal(game.routeTargetId,'home-south');
+});
+test('short coach side then entrance request retains learned facts without a new side question', async () => {
+  const game=fresh();answerCall(game,SATURDAY_NOON);
+  await decide(game,'Mira hacia el sur y dime qué ves.',undefined,offline);
+  assert.equal((await decide(game,'Ve hacia el sur.',undefined,offline))?.selected,'walk:south');
+  const side=await decide(game,'Mi portal está en el lado sur.',undefined,offline);
+  assert.equal(side?.selected,'home:south');assert.equal(game.facts.homeSide,'south');
+  assert.equal(publicGame(game,SATURDAY_NOON).facts.homeSide,'south');
+  assert.equal((await decide(game,'Ven a mi portal.',undefined,offline))?.selected,'home:south');
+  assert.equal((await decide(game,'Sí, sigue.',undefined,offline))?.selected,'continue');
+  assert.equal(game.routeTargetId,'home-south');
+});
+test('negated Spanish and English navigation cannot force the forbidden movement or look', async () => {
+  for(const text of ["Don't come to my door.",'Do not walk south.','No mires al sur.','No vengas a mi portal.']){
+    const game=active();game.facts.homeSide='south';let ids:string[]=[];
+    const result=await decide(game,text,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{ids=Object.keys(criteria);return 'clarify';})});
+    assert.ok(ids.includes('clarify'));assert.ok(ids.length>1);assert.equal(result?.selected,'clarify');assert.equal(game.route.length,0);
+    assert.equal((await decide(game,text,undefined,offline))?.selected,'clarify');assert.equal(game.route.length,0);
+  }
+});

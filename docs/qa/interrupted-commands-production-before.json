@@ -1,0 +1,306 @@
+{
+  "at": "2026-10-10T12:58:50.320Z",
+  "url": "https://expatia.world",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-bilingual-arrival"
+  },
+  "scope": "Actual production/local signed Worker RPC sequence with real JEV and generated courier speech. Opening interrupted before its first caption. Speech events/history recorded; no human microphone claim or token data.",
+  "openingCaptionsAtInterrupt": 0,
+  "cases": [
+    {
+      "text": "Mira hacia el sur y dime qué ves",
+      "turnId": "probe-command-0",
+      "selected": "look:south",
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "south",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "spokenHistory": [
+        {
+          "text": "Me he girado para mirar. ¿Qué punto de referencia busco?",
+          "turnId": "probe-command-0"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Ve hacia el sur",
+      "turnId": "probe-command-1",
+      "selected": "look:south",
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "south",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "spokenHistory": [
+        {
+          "text": "Me he girado para mirar. ¿Qué punto de referencia busco?",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Veo Fruita Fresca más adelante con unos cajones de fruta fuera y un toldo a rayas. ¿En qué lado está tu portal?",
+          "turnId": "probe-command-1"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Mi portal está en el lado sur. Ven a la entrada",
+      "turnId": "probe-command-2",
+      "selected": "home:south",
+      "position": {
+        "x": 230.15642413723248,
+        "y": 350.7821206861618,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        },
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Me he girado para mirar. ¿Qué punto de referencia busco?",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Veo Fruita Fresca más adelante con unos cajones de fruta fuera y un toldo a rayas. ¿En qué lado está tu portal?",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Vale, voy hacia el sur bordeando el edificio para llegar a tu portal. A ver si le ahorramos al paquete una visita turística.",
+          "turnId": "probe-command-2"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur",
+        "Mi portal está en el lado sur. Ven a la entrada"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Sí, sigue.",
+      "turnId": "probe-command-3",
+      "selected": "continue",
+      "position": {
+        "x": 260.9117486818727,
+        "y": 504.55874340936396,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        },
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "spokenHistory": [
+        {
+          "text": "Me he girado para mirar. ¿Qué punto de referencia busco?",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Veo Fruita Fresca más adelante con unos cajones de fruta fuera y un toldo a rayas. ¿En qué lado está tu portal?",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Vale, voy hacia el sur bordeando el edificio para llegar a tu portal. A ver si le ahorramos al paquete una visita turística.",
+          "turnId": "probe-command-2"
+        },
+        {
+          "text": "Sigo avanzando hacia el sur bordeando el edificio. Ya casi llego.",
+          "turnId": "probe-command-3"
+        }
+      ],
+      "playerHistory": [
+        "Mira hacia el sur y dime qué ves",
+        "Ve hacia el sur",
+        "Mi portal está en el lado sur. Ven a la entrada",
+        "Sí, sigue."
+      ],
+      "phase": "active"
+    }
+  ],
+  "finalHistory": [
+    {
+      "role": "player",
+      "text": "Mira hacia el sur y dime qué ves"
+    },
+    {
+      "role": "courier",
+      "text": "Me he girado para mirar. ¿Qué punto de referencia busco?",
+      "turnId": "probe-command-0"
+    },
+    {
+      "role": "player",
+      "text": "Ve hacia el sur"
+    },
+    {
+      "role": "courier",
+      "text": "Veo Fruita Fresca más adelante con unos cajones de fruta fuera y un toldo a rayas. ¿En qué lado está tu portal?",
+      "turnId": "probe-command-1"
+    },
+    {
+      "role": "player",
+      "text": "Mi portal está en el lado sur. Ven a la entrada"
+    },
+    {
+      "role": "courier",
+      "text": "Vale, voy hacia el sur bordeando el edificio para llegar a tu portal. A ver si le ahorramos al paquete una visita turística.",
+      "turnId": "probe-command-2"
+    },
+    {
+      "role": "player",
+      "text": "Sí, sigue."
+    },
+    {
+      "role": "courier",
+      "text": "Sigo avanzando hacia el sur bordeando el edificio. Ya casi llego.",
+      "turnId": "probe-command-3"
+    }
+  ],
+  "events": [
+    {
+      "type": "npc.cancel",
+      "turnId": "opening-immediately-interrupted",
+      "atMs": 1484
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-0",
+      "atMs": 1763
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-0",
+      "text": "Me he girado para mirar. ¿Qué punto de referencia busco?",
+      "atMs": 2295
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 2361
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 2361
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-1",
+      "atMs": 2582
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-1",
+      "text": "Veo Fruita Fresca más adelante con unos cajones de fruta fuera y un toldo a rayas.",
+      "atMs": 3396
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-1",
+      "text": "¿En qué lado está tu portal?",
+      "atMs": 3396
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 3558
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 3568
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-2",
+      "atMs": 3831
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-2",
+      "text": "Vale, voy hacia el sur bordeando el edificio para llegar a tu portal.",
+      "atMs": 4532
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-2",
+      "text": "A ver si le ahorramos al paquete una visita turística.",
+      "atMs": 4546
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 4825
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 4852
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-3",
+      "atMs": 5119
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-3",
+      "text": "Sigo avanzando hacia el sur bordeando el edificio.",
+      "atMs": 5888
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-3",
+      "text": "Ya casi llego.",
+      "atMs": 5888
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-3",
+      "atMs": 6188
+    }
+  ],
+  "totalMs": 6189
+}
