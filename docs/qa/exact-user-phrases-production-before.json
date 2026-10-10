@@ -1,0 +1,562 @@
+{
+  "at": "2026-10-10T13:10:22.909Z",
+  "url": "https://expatia.world",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-command-context"
+  },
+  "scope": "Actual production/local signed Worker RPC sequence with real JEV and generated courier speech. Exact user-reported phrases after the opening greeting. Speech events/history recorded; no human microphone claim or token data.",
+  "openingCaptionCountBeforeFirstPlayerTurn": 2,
+  "cases": [
+    {
+      "text": "Ah, ¿cómo se llama, eh, el bar?",
+      "turnId": "probe-command-0",
+      "selected": "reveal:bar-llevant",
+      "action": {
+        "id": "reveal:bar-llevant",
+        "type": "reveal",
+        "targetId": "bar-llevant",
+        "label": "Read the visible Bar Llevant sign",
+        "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+      },
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "north",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "facts": {
+        "homeSide": null,
+        "signDisclosed": true,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "homeSide": null,
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "user-phrases-opening"
+        },
+        {
+          "text": "El cartel dice Bar Llevant.",
+          "turnId": "probe-command-0"
+        }
+      ],
+      "playerHistory": [
+        "Ah, ¿cómo se llama, eh, el bar?"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Mi portal, eh, está en la de sur.",
+      "turnId": "probe-command-1",
+      "selected": "clarify",
+      "action": {
+        "id": "clarify",
+        "type": "clarify",
+        "label": "Ask for a clearer landmark or entrance side",
+        "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+      },
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "north",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "facts": {
+        "homeSide": null,
+        "signDisclosed": true,
+        "firstClueSpoken": true,
+        "lastClarification": "Entendido, el lado sur. ¿Hay algún número de portal o referencia cerca para orientarme?"
+      },
+      "homeSide": null,
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "user-phrases-opening"
+        },
+        {
+          "text": "El cartel dice Bar Llevant.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Entendido, el lado sur. ¿Hay algún número de portal o referencia cerca para orientarme?",
+          "turnId": "probe-command-1"
+        }
+      ],
+      "playerHistory": [
+        "Ah, ¿cómo se llama, eh, el bar?",
+        "Mi portal, eh, está en la de sur."
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Mi portal está en la descripción.",
+      "turnId": "probe-command-2",
+      "selected": "clarify",
+      "action": {
+        "id": "clarify",
+        "type": "clarify",
+        "label": "Ask for a clearer landmark or entrance side",
+        "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+      },
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "north",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "facts": {
+        "homeSide": null,
+        "signDisclosed": true,
+        "firstClueSpoken": true,
+        "lastClarification": "Entendido, el lado sur. ¿Qué hay cerca de tu puerta para orientarme?"
+      },
+      "homeSide": null,
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "user-phrases-opening"
+        },
+        {
+          "text": "El cartel dice Bar Llevant.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Entendido, el lado sur. ¿Hay algún número de portal o referencia cerca para orientarme?",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Entendido, el lado sur. ¿Qué hay cerca de tu puerta para orientarme?",
+          "turnId": "probe-command-2"
+        }
+      ],
+      "playerHistory": [
+        "Ah, ¿cómo se llama, eh, el bar?",
+        "Mi portal, eh, está en la de sur.",
+        "Mi portal está en la descripción."
+      ],
+      "phase": "active"
+    }
+  ],
+  "finalHistory": [
+    {
+      "role": "courier",
+      "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+      "turnId": "user-phrases-opening"
+    },
+    {
+      "role": "player",
+      "text": "Ah, ¿cómo se llama, eh, el bar?"
+    },
+    {
+      "role": "courier",
+      "text": "El cartel dice Bar Llevant.",
+      "turnId": "probe-command-0"
+    },
+    {
+      "role": "player",
+      "text": "Mi portal, eh, está en la de sur."
+    },
+    {
+      "role": "courier",
+      "text": "Entendido, el lado sur. ¿Hay algún número de portal o referencia cerca para orientarme?",
+      "turnId": "probe-command-1"
+    },
+    {
+      "role": "player",
+      "text": "Mi portal está en la descripción."
+    },
+    {
+      "role": "courier",
+      "text": "Entendido, el lado sur. ¿Qué hay cerca de tu puerta para orientarme?",
+      "turnId": "probe-command-2"
+    }
+  ],
+  "events": [
+    {
+      "type": "npc.audio_begin",
+      "turnId": "user-phrases-opening",
+      "atMs": 1144
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "user-phrases-opening",
+      "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar.",
+      "atMs": 2512
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "user-phrases-opening",
+      "text": "¿Por dónde voy?",
+      "atMs": 2512
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "user-phrases-opening",
+      "atMs": 3132
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "user-phrases-opening",
+      "atMs": 3158
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-0",
+      "atMs": 3390
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-0",
+      "text": "El cartel dice Bar Llevant.",
+      "atMs": 4009
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 4126
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 4148
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-1",
+      "atMs": 4374
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-1",
+      "text": "Entendido, el lado sur.",
+      "atMs": 4966
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-1",
+      "text": "¿Hay algún número de portal o referencia cerca para orientarme?",
+      "atMs": 4974
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 5164
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 5164
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-2",
+      "atMs": 5336
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-2",
+      "text": "Entendido, el lado sur.",
+      "atMs": 6049
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-2",
+      "text": "¿Qué hay cerca de tu puerta para orientarme?",
+      "atMs": 6049
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 6265
+    }
+  ],
+  "totalMs": 6267,
+  "priorAttempt": {
+    "at": "2026-10-10T13:09:32.113Z",
+    "url": "https://expatia.world",
+    "health": {
+      "ok": true,
+      "product": "Expatia World",
+      "speech": "eleven_v4_turbo",
+      "deployment": "connection-owned-worker",
+      "build": "2026-10-10-command-context"
+    },
+    "scope": "Actual production/local signed Worker RPC sequence with real JEV and generated courier speech. Exact user-reported phrases after the opening greeting. Speech events/history recorded; no human microphone claim or token data.",
+    "openingCaptionsAtInterrupt": 2,
+    "cases": [
+      {
+        "text": "Ah, ¿cómo se llama, eh, el bar?",
+        "turnId": "probe-command-0",
+        "selected": "reveal:bar-llevant",
+        "position": {
+          "x": 210,
+          "y": 250,
+          "direction": "north",
+          "moving": false
+        },
+        "routeTargetId": null,
+        "route": [],
+        "facts": {
+          "homeSide": null,
+          "signDisclosed": true,
+          "firstClueSpoken": true,
+          "lastClarification": "Estoy enfrente de Bar Llevant. ¿Cómo sigo?"
+        },
+        "homeSide": null,
+        "spokenHistory": [
+          {
+            "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+            "turnId": "user-phrases-opening"
+          },
+          {
+            "text": "Estoy enfrente de Bar Llevant. ¿Cómo sigo?",
+            "turnId": "probe-command-0"
+          }
+        ],
+        "playerHistory": [
+          "Ah, ¿cómo se llama, eh, el bar?"
+        ],
+        "phase": "active"
+      },
+      {
+        "text": "Mi portal, eh, está en la de sur.",
+        "turnId": "probe-command-1",
+        "selected": "walk:south",
+        "position": {
+          "x": 210,
+          "y": 330.12199999999973,
+          "direction": "south",
+          "moving": true
+        },
+        "routeTargetId": "walk:south",
+        "route": [
+          {
+            "x": 210,
+            "y": 470
+          }
+        ],
+        "facts": {
+          "homeSide": null,
+          "signDisclosed": true,
+          "firstClueSpoken": true,
+          "lastClarification": null
+        },
+        "homeSide": null,
+        "spokenHistory": [
+          {
+            "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+            "turnId": "user-phrases-opening"
+          },
+          {
+            "text": "Estoy enfrente de Bar Llevant. ¿Cómo sigo?",
+            "turnId": "probe-command-0"
+          },
+          {
+            "text": "Vale, voy hacia el sur. A ver si le ahorramos al paquete una visita turística.",
+            "turnId": "probe-command-1"
+          }
+        ],
+        "playerHistory": [
+          "Ah, ¿cómo se llama, eh, el bar?",
+          "Mi portal, eh, está en la de sur."
+        ],
+        "phase": "active"
+      },
+      {
+        "text": "Mi portal está en la descripción.",
+        "turnId": "probe-command-2",
+        "selected": "walk:south",
+        "position": {
+          "x": 210,
+          "y": 462.39999999999924,
+          "direction": "south",
+          "moving": true
+        },
+        "routeTargetId": "walk:south",
+        "route": [
+          {
+            "x": 210,
+            "y": 591.4219999999996
+          }
+        ],
+        "facts": {
+          "homeSide": null,
+          "signDisclosed": true,
+          "firstClueSpoken": true,
+          "lastClarification": null
+        },
+        "homeSide": null,
+        "spokenHistory": [
+          {
+            "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+            "turnId": "user-phrases-opening"
+          },
+          {
+            "text": "Estoy enfrente de Bar Llevant. ¿Cómo sigo?",
+            "turnId": "probe-command-0"
+          },
+          {
+            "text": "Vale, voy hacia el sur. A ver si le ahorramos al paquete una visita turística.",
+            "turnId": "probe-command-1"
+          },
+          {
+            "text": "Sigo avanzando hacia el sur, pasando cerca de Fruita Fresca.",
+            "turnId": "probe-command-2"
+          }
+        ],
+        "playerHistory": [
+          "Ah, ¿cómo se llama, eh, el bar?",
+          "Mi portal, eh, está en la de sur.",
+          "Mi portal está en la descripción."
+        ],
+        "phase": "active"
+      }
+    ],
+    "finalHistory": [
+      {
+        "role": "courier",
+        "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+        "turnId": "user-phrases-opening"
+      },
+      {
+        "role": "player",
+        "text": "Ah, ¿cómo se llama, eh, el bar?"
+      },
+      {
+        "role": "courier",
+        "text": "Estoy enfrente de Bar Llevant. ¿Cómo sigo?",
+        "turnId": "probe-command-0"
+      },
+      {
+        "role": "player",
+        "text": "Mi portal, eh, está en la de sur."
+      },
+      {
+        "role": "courier",
+        "text": "Vale, voy hacia el sur. A ver si le ahorramos al paquete una visita turística.",
+        "turnId": "probe-command-1"
+      },
+      {
+        "role": "player",
+        "text": "Mi portal está en la descripción."
+      },
+      {
+        "role": "courier",
+        "text": "Sigo avanzando hacia el sur, pasando cerca de Fruita Fresca.",
+        "turnId": "probe-command-2"
+      }
+    ],
+    "events": [
+      {
+        "type": "npc.audio_begin",
+        "turnId": "user-phrases-opening",
+        "atMs": 4901
+      },
+      {
+        "type": "npc.caption",
+        "turnId": "user-phrases-opening",
+        "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar.",
+        "atMs": 5620
+      },
+      {
+        "type": "npc.caption",
+        "turnId": "user-phrases-opening",
+        "text": "¿Por dónde voy?",
+        "atMs": 5621
+      },
+      {
+        "type": "npc.cancel",
+        "turnId": "user-phrases-opening",
+        "atMs": 6857
+      },
+      {
+        "type": "npc.cancel",
+        "turnId": "user-phrases-opening",
+        "atMs": 6915
+      },
+      {
+        "type": "npc.audio_begin",
+        "turnId": "probe-command-0",
+        "atMs": 7125
+      },
+      {
+        "type": "npc.caption",
+        "turnId": "probe-command-0",
+        "text": "Estoy enfrente de Bar Llevant.",
+        "atMs": 7829
+      },
+      {
+        "type": "npc.caption",
+        "turnId": "probe-command-0",
+        "text": "¿Cómo sigo?",
+        "atMs": 7829
+      },
+      {
+        "type": "npc.cancel",
+        "turnId": "probe-command-0",
+        "atMs": 8069
+      },
+      {
+        "type": "npc.cancel",
+        "turnId": "probe-command-0",
+        "atMs": 8069
+      },
+      {
+        "type": "npc.audio_begin",
+        "turnId": "probe-command-1",
+        "atMs": 8298
+      },
+      {
+        "type": "npc.caption",
+        "turnId": "probe-command-1",
+        "text": "Vale, voy hacia el sur.",
+        "atMs": 8916
+      },
+      {
+        "type": "npc.caption",
+        "turnId": "probe-command-1",
+        "text": "A ver si le ahorramos al paquete una visita turística.",
+        "atMs": 8916
+      },
+      {
+        "type": "npc.cancel",
+        "turnId": "probe-command-1",
+        "atMs": 9076
+      },
+      {
+        "type": "npc.cancel",
+        "turnId": "probe-command-1",
+        "atMs": 9093
+      },
+      {
+        "type": "npc.audio_begin",
+        "turnId": "probe-command-2",
+        "atMs": 9366
+      },
+      {
+        "type": "npc.caption",
+        "turnId": "probe-command-2",
+        "text": "Sigo avanzando hacia el sur, pasando cerca de Fruita Fresca.",
+        "atMs": 10018
+      },
+      {
+        "type": "npc.cancel",
+        "turnId": "probe-command-2",
+        "atMs": 10250
+      }
+    ],
+    "totalMs": 10252
+  },
+  "reproducedFailure": true
+}

@@ -32,6 +32,14 @@ const movementTypes = ['move', 'continue', 'drop'];
 function dialogueConflict(text: string, context: unknown, decision: unknown): boolean {
   const c = (context || {}) as Record<string, any>, d = (decision || {}) as Record<string, any>;
   const action = d.action || (d.type ? d : null), value = plain(text);
+  const asserted = value.replace(/¿[^?]*\?/g, '');
+  const assertedHomeSide = asserted.match(/\b(?:tu|your)\s+(?:portal|entrada|puerta|entrance|door)\b[^.!?]{0,40}\b(sur|norte|este|oeste|north|south|east|west)\b/)?.[1];
+  if (assertedHomeSide) {
+    const translated: Record<string, string> = { sur: 'south', norte: 'north', este: 'east', oeste: 'west' };
+    const claim = translated[assertedHomeSide] || assertedHomeSide;
+    const permitted = c.factsLearned?.homeSide || String(action?.targetId || action?.id || '').match(/^home[:-](north|south|east|west)$/)?.[1];
+    if (claim !== permitted) return true;
+  }
   const asksEntrance = /(?:en que lado|cual.{0,18}lado|donde (?:esta|queda).{0,25}(?:portal|entrada|puerta|casa)|which side|where.{0,25}(?:entrance|door|home))[^?]*\?/.test(value);
   if (c.factsLearned?.homeSide && asksEntrance) return true;
   if (movementTypes.includes(action?.type)) {
@@ -137,6 +145,7 @@ export function fallbackLine(context: unknown, decision: unknown): string {
     const latest = [...(c.history || [])].reverse().find((h: any) => h.role === 'player')?.text || '';
     if (c.factsLearned?.homeSide || /\b(home|house|apartment|flat|entrance|door|building|casa|portal|entrada|puerta|edificio|piso)\b/i.test(latest)) {
       const side = c.factsLearned?.homeSide;
+      if (side && /^home[:-]/.test(String(c.navigation?.destination?.id || c.activeDestination || ''))) return `Recuerdo tu portal al ${directionEs[side] || side}. ¿Qué parte de la ruta quieres aclarar?`;
       return side ? `Recuerdo que tu portal está al ${directionEs[side] || side}. ¿Qué esquina o punto de referencia uso para llegar?` : 'Entendido, buscas tu portal. ¿En qué lado está la entrada?';
     }
   }

@@ -161,7 +161,7 @@ export function learnPlayerFacts(game: Game, text: string) {
   // in a multi-step instruction as an entrance coordinate. It remains a belief.
   const mapping: Record<string, NonNullable<Game['facts']['homeSide']>> = { south: 'south', bottom: 'south', lower: 'south', back: 'south', north: 'north', top: 'north', upper: 'north', east: 'east', right: 'east', west: 'west', left: 'west' };
   const lastCourier = navigationText(game.history.filter(entry => entry.role === 'courier').at(-1)?.text ?? '');
-  const normalized = navigationText(text);
+  const normalized = navigationText(text).replace(/\b(?:eh+|um+|uh+|em+|mmm+)\b/g, ' ').replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
   const shortAnswer = normalized.trim().replace(/[.!?¿¡]/g, '');
   const priorSide = game.facts.homeSide;
   const retractsEntrance = /\b(?:is not|isn't|not is)\s+(?:my|the|your)\s+(?:entrance|door)|\bwrong\s+(?:entrance|door)/.test(normalized);
@@ -172,8 +172,11 @@ export function learnPlayerFacts(game: Game, text: string) {
   }
   const answerSides = shortAnswer.match(/\b(south|north|east|west|left|right|bottom|back|top)\b/g) ?? [];
   const answeringSide = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier);
-  if (answeringSide && answerSides.length === 1 && shortAnswer.split(/\s+/).length <= 7 && !/\b(go|walk|head|turn|cross|look|around|continue)\b/.test(shortAnswer)) game.facts.homeSide = mapping[answerSides[0]];
-  for (const clause of normalized.split(/[.!?;,]/)) {
+  const directionalAnswer = [...new Set(answerSides)];
+  const deniedSide = /\b(?:not|isn't|is not|do not|don't)\b[^.!?;]{0,30}\b(?:south|north|east|west|left|right|bottom|back|top)\b/.test(shortAnswer) && !/^not\s+sorry\b/.test(shortAnswer);
+  const homeTopic = /\b(entrance|door|home|house|flat|apartment)\b/.test(shortAnswer);
+  if ((answeringSide || homeTopic) && directionalAnswer.length === 1 && !deniedSide && !hasNegatedNavigation(text) && !/\b(go|walk|head|turn|cross|look|around|continue)\b/.test(shortAnswer)) game.facts.homeSide = mapping[directionalAnswer[0]];
+  for (const clause of normalized.split(/[.!?;]/)) {
     if (!/\b(entrance|door|home|house|flat|apartment)\b/.test(clause)) continue;
     const positions: { side: string; index: number }[] = [];
     for (const match of clause.matchAll(/\b(south|bottom|lower|back|north|top|upper|east|right|west|left)\b/g)) {
@@ -299,7 +302,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
 export function explicitNavigationAction(game: Game, candidates: ActionCandidate[], text: string): ActionCandidate | null {
   const normalized = navigationText(text), byId = (id: string) => candidates.find(c=>c.id===id) ?? null;
   if (hasNegatedNavigation(text)) return null;
-  const asksInformation = /\b(what|which|name|called|see|describe|where)\b/.test(normalized);
+  const asksInformation = /\b(what|which|name|called|see|describe|where)\b/.test(normalized.replace(/\b(?:creo|pienso|think|believe)\s+what\b/g, ''));
   const verb = /\b(go|walk|head|come|reach|approach|navigate|around|move|turn)\b/.test(normalized);
   if (/\b(stop|wait|stay|hold on)\b/.test(normalized)) return byId('wait');
   const directions = [...normalized.matchAll(/\b(north|south|east|west|left|right|top|bottom|up|down)\b/g)].map(m=>({north:'north',south:'south',east:'east',west:'west',left:'west',right:'east',top:'north',bottom:'south',up:'north',down:'south'}[m[0]]!));
@@ -307,8 +310,8 @@ export function explicitNavigationAction(game: Game, candidates: ActionCandidate
   if (/\b(look|face)\b/.test(normalized)) return uniqueDirections.length===1 ? byId(`look:${uniqueDirections[0]}`) : /\baround\b/.test(normalized) ? byId('look:around') : null;
   if (asksInformation) return null;
   const lastCourier = navigationText(game.history.filter(h=>h.role==='courier').at(-1)?.text ?? '');
-  const sideAnswer = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier) && uniqueDirections.length===1 && normalized.split(/\s+/).length<=7 && !verb;
-  const entranceRequest = /\b(entrance|door|home|house|apartment|flat)\b/.test(normalized) && (verb || uniqueDirections.length===1);
+  const sideAnswer = /\b(entrance|door|side)\b[^?]*\?/.test(lastCourier) && uniqueDirections.length===1 && !verb && !/\bnot\b/.test(normalized.replace(/^\s*not\s*,?\s*sorry\s*,?/,''));
+  const entranceRequest = /\b(entrance|door|home|house|apartment|flat)\b/.test(normalized) && !/\bnot\b/.test(normalized);
   if (game.facts.homeSide && (sideAnswer || entranceRequest)) return byId(`home:${game.facts.homeSide}`);
   if (/\b(yes|okay|continue)\b/.test(normalized) && !verb && uniqueDirections.length===0) {
     if (byId('continue')) return byId('continue');
@@ -322,7 +325,7 @@ export function explicitNavigationAction(game: Game, candidates: ActionCandidate
     if(category){const places=Object.values(game.knowledge).filter(b=>b.category===category);if(places.length===1)return byId(`go:${places[0].id}`);}
   }
   const simpleTerrain = !/\b(entrance|door|home|house|apartment|flat|building|bar|fruit|shop|bakery|supermarket|corner|intersection|crossing|crate|not)\b/.test(normalized);
-  if (simpleTerrain && uniqueDirections.length===1 && (verb || normalized.split(/\s+/).length<=5)) return byId(`walk:${uniqueDirections[0]}`);
+  if (simpleTerrain && uniqueDirections.length===1) return byId(`walk:${uniqueDirections[0]}`);
   if (simpleTerrain && uniqueDirections.length===0 && /\b(forward|straight)\b/.test(normalized)) return byId('continue') ?? byId(`walk:${game.courier.direction}`);
   return null;
 }

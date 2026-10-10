@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { actionCandidates, answerCall, createGame, npcContext, recordSpeech } from '../src/server/game';
+import { actionCandidates, answerCall, createGame, learnPlayerFacts, npcContext, recordHistory, recordSpeech } from '../src/server/game';
 import { courierGrounding, dialogueMessages, generateDialogue, fallbackLine, spanishLandmarkLabel, speechIsGrounded } from '../src/server/dialogue';
 import { deliveryCoachFlavor, deliveryOutcomeFlavor, deliveryPhrasebook } from '../src/shared/phrasebook';
 
@@ -278,4 +278,38 @@ test('a valid movement acknowledgement is not repeated when an unnecessary follo
   const result = await generateDialogue(context, move, undefined, phrase => { phrases.push(phrase); }, streamer);
   assert.deepEqual(phrases, ['Vale, voy hacia tu portal en el lado sur.']);
   assert.equal(result.text, phrases[0]);
+});
+
+test('literal disfluent entrance answer is learned before dialogue acknowledges its actual movement', async () => {
+  const game = createGame(); answerCall(game);
+  recordSpeech(game, '¿En qué lado está tu portal?');
+  const literal = 'Mi portal, eh, está en la de sur.';
+  recordHistory(game, { role: 'player', text: literal, at: game.updatedAt });
+  learnPlayerFacts(game, literal);
+  assert.equal(game.facts.homeSide, 'south');
+  const move = actionCandidates(game, 'directions', game.updatedAt, literal).find(action => action.id === 'home:south')!;
+  assert.ok(move);
+  const context = npcContext(game), phrases: string[] = [];
+  const streamer = (async (_messages, onText) => { onText('Vale, voy hacia tu portal en el lado sur.'); return { text: '', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, move, undefined, phrase => { phrases.push(phrase); }, streamer);
+  assert.equal(result.live, true);
+  assert.match(result.text, /voy hacia tu portal en el lado sur/);
+  assert.doesNotMatch(result.text, /\?/);
+});
+
+test('dialogue cannot verbally learn an entrance side that authoritative facts did not learn', async () => {
+  const context = { ...richerContext, history: [{ role: 'player', text: 'Mi portal, eh, está en la de sur.' }], factsLearned: { firstClueSpoken: true, homeSide: null } };
+  assert.equal(speechIsGrounded('Tu portal está al sur.', context, { type: 'clarify' }), false);
+  const streamer = (async (_messages, onText) => { onText('Tu portal está al sur.'); return { text: '', model: 'fixture', live: true, timings: { elapsedMs: 1 }, usage: undefined }; }) as Parameters<typeof generateDialogue>[4];
+  const result = await generateDialogue(context, { type: 'clarify' }, undefined, undefined, streamer);
+  assert.equal(result.live, false);
+  assert.doesNotMatch(result.text, /(?:portal|entrada).*sur|voy|camino/);
+});
+
+test('clarification after a known entrance route preserves that route context without inventing movement', () => {
+  const context = { ...richerContext, factsLearned: { firstClueSpoken: true, homeSide: 'south' }, activeDestination: 'home-south', navigation: { destination: { id: 'home-south' }, moving: false } };
+  const line = fallbackLine(context, { type: 'clarify' });
+  assert.match(line, /Recuerdo tu portal al sur.*parte de la ruta/);
+  assert.doesNotMatch(line, /en qué lado|voy|camino|sigo la ruta/);
+  assert.equal(speechIsGrounded(line, context, { type: 'clarify' }), true);
 });

@@ -1,0 +1,319 @@
+{
+  "at": "2026-10-10T13:10:39.462Z",
+  "url": "http://localhost:3318",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-spoken-directions"
+  },
+  "scope": "Actual production/local signed Worker RPC sequence with real JEV and generated courier speech. Exact user-reported phrases after the opening greeting. Speech events/history recorded; no human microphone claim or token data.",
+  "openingCaptionCountBeforeFirstPlayerTurn": 2,
+  "cases": [
+    {
+      "text": "Ah, ¿cómo se llama, eh, el bar?",
+      "turnId": "probe-command-0",
+      "selected": "reveal:bar-llevant",
+      "action": {
+        "id": "reveal:bar-llevant",
+        "type": "reveal",
+        "targetId": "bar-llevant",
+        "label": "Read the visible Bar Llevant sign",
+        "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+      },
+      "position": {
+        "x": 210,
+        "y": 250,
+        "direction": "north",
+        "moving": false
+      },
+      "routeTargetId": null,
+      "route": [],
+      "facts": {
+        "homeSide": null,
+        "signDisclosed": true,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "homeSide": null,
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "user-phrases-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant.",
+          "turnId": "probe-command-0"
+        }
+      ],
+      "playerHistory": [
+        "Ah, ¿cómo se llama, eh, el bar?"
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Mi portal, eh, está en la de sur.",
+      "turnId": "probe-command-1",
+      "selected": "home:south",
+      "action": {
+        "id": "home:south",
+        "type": "move",
+        "targetId": "home-south",
+        "target": {
+          "x": 480,
+          "y": 645
+        },
+        "label": "Navigate around the apartment walls to the reported south entrance destination",
+        "reason": "Complete exterior route to the resident's reported south entrance, including all necessary turns around solid walls. Corners are intermediate waypoints, not this destination. This side is a conversational belief, not proof; verify on arrival."
+      },
+      "position": {
+        "x": 230.78125014378253,
+        "y": 353.90625071891304,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        },
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "facts": {
+        "homeSide": "south",
+        "signDisclosed": true,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "homeSide": "south",
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "user-phrases-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Vale, voy hacia el sur bordeando el edificio hacia tu portal.",
+          "turnId": "probe-command-1"
+        }
+      ],
+      "playerHistory": [
+        "Ah, ¿cómo se llama, eh, el bar?",
+        "Mi portal, eh, está en la de sur."
+      ],
+      "phase": "active"
+    },
+    {
+      "text": "Mi portal está en la descripción.",
+      "turnId": "probe-command-2",
+      "selected": "home:south",
+      "action": {
+        "id": "home:south",
+        "type": "move",
+        "targetId": "home-south",
+        "target": {
+          "x": 480,
+          "y": 645
+        },
+        "label": "Navigate around the apartment walls to the reported south entrance destination",
+        "reason": "Complete exterior route to the resident's reported south entrance, including all necessary turns around solid walls. Corners are intermediate waypoints, not this destination. This side is a conversational belief, not proof; verify on arrival."
+      },
+      "position": {
+        "x": 258.3430195438328,
+        "y": 491.715097719164,
+        "direction": "south",
+        "moving": true
+      },
+      "routeTargetId": "home-south",
+      "route": [
+        {
+          "x": 270,
+          "y": 550
+        },
+        {
+          "x": 370,
+          "y": 650
+        },
+        {
+          "x": 480,
+          "y": 645
+        }
+      ],
+      "facts": {
+        "homeSide": "south",
+        "signDisclosed": true,
+        "firstClueSpoken": true,
+        "lastClarification": null
+      },
+      "homeSide": "south",
+      "spokenHistory": [
+        {
+          "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+          "turnId": "user-phrases-opening"
+        },
+        {
+          "text": "Estoy junto a Bar Llevant.",
+          "turnId": "probe-command-0"
+        },
+        {
+          "text": "Vale, voy hacia el sur bordeando el edificio hacia tu portal.",
+          "turnId": "probe-command-1"
+        },
+        {
+          "text": "Sigo avanzando hacia el sur bordeando el edificio para llegar a tu portal.",
+          "turnId": "probe-command-2"
+        }
+      ],
+      "playerHistory": [
+        "Ah, ¿cómo se llama, eh, el bar?",
+        "Mi portal, eh, está en la de sur.",
+        "Mi portal está en la descripción."
+      ],
+      "phase": "active"
+    }
+  ],
+  "finalHistory": [
+    {
+      "role": "courier",
+      "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar. ¿Por dónde voy?",
+      "turnId": "user-phrases-opening"
+    },
+    {
+      "role": "player",
+      "text": "Ah, ¿cómo se llama, eh, el bar?"
+    },
+    {
+      "role": "courier",
+      "text": "Estoy junto a Bar Llevant.",
+      "turnId": "probe-command-0"
+    },
+    {
+      "role": "player",
+      "text": "Mi portal, eh, está en la de sur."
+    },
+    {
+      "role": "courier",
+      "text": "Vale, voy hacia el sur bordeando el edificio hacia tu portal.",
+      "turnId": "probe-command-1"
+    },
+    {
+      "role": "player",
+      "text": "Mi portal está en la descripción."
+    },
+    {
+      "role": "courier",
+      "text": "Sigo avanzando hacia el sur bordeando el edificio para llegar a tu portal.",
+      "turnId": "probe-command-2"
+    }
+  ],
+  "events": [
+    {
+      "type": "npc.audio_begin",
+      "turnId": "user-phrases-opening",
+      "atMs": 1114
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "user-phrases-opening",
+      "text": "Hola, buenas, tengo tu paquete y estoy cerca de un bar.",
+      "atMs": 1876
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "user-phrases-opening",
+      "text": "¿Por dónde voy?",
+      "atMs": 1876
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "user-phrases-opening",
+      "atMs": 2895
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "user-phrases-opening",
+      "atMs": 2896
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-0",
+      "atMs": 3279
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-0",
+      "text": "Estoy junto a Bar Llevant.",
+      "atMs": 4027
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 4088
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-0",
+      "atMs": 4093
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-1",
+      "atMs": 4398
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-1",
+      "text": "Vale, voy hacia el sur bordeando el edificio hacia tu portal.",
+      "atMs": 5191
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 5305
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-1",
+      "atMs": 5311
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "probe-command-2",
+      "atMs": 5567
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "probe-command-2",
+      "text": "Sigo avanzando hacia el sur bordeando el edificio para llegar a tu portal.",
+      "atMs": 6342
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "probe-command-2",
+      "atMs": 6514
+    }
+  ],
+  "totalMs": 6514,
+  "validation": {
+    "exactWordsPreserved": true,
+    "visibleBarNameRevealed": true,
+    "fillerPhraseLearnsSouth": true,
+    "southEntranceRouteStarted": true,
+    "ambiguousFollowupPreservesSouth": true,
+    "noRepeatedEntranceQuestion": true,
+    "actualMovement": true
+  },
+  "passed": true
+}

@@ -422,3 +422,25 @@ test('negated Spanish and English navigation cannot force the forbidden movement
     assert.equal((await decide(game,text,undefined,offline))?.selected,'clarify');assert.equal(game.route.length,0);
   }
 });
+test('literal speech fillers retain the portal side and a malformed followup reuses that destination', async () => {
+  const game=active();recordSpeech(game,'El cartel dice Bar Llevant. ¿En qué lado está tu portal?','sign-and-side',SATURDAY_NOON);
+  const first=await decide(game,'Mi portal, eh, está en la de sur.',undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{assert.deepEqual(Object.keys(criteria),['home:south']);return 'home:south';})});
+  assert.equal(first?.source,'jev');assert.equal(game.facts.homeSide,'south');assert.equal(game.routeTargetId,'home-south');
+  const followup=await decide(game,'Mi portal está en la descripción.',undefined,offline);
+  assert.equal(followup?.selected,'home:south');assert.equal(game.facts.homeSide,'south');
+  assert.ok(game.history.some(h=>h.text==='Mi portal, eh, está en la de sur.'));
+  tickGame(game,SATURDAY_NOON+10_000,10);assert.equal(canHandoff(game,SATURDAY_NOON+10_000),true);
+});
+test('long broken-grammar side replies and bare compass cues distinguish entrance context from street movement', async () => {
+  for(const direction of [{es:'sur',en:'south'},{es:'norte',en:'north'},{es:'este',en:'east'},{es:'oeste',en:'west'}]){
+    const game=active();recordSpeech(game,'¿En qué lado está tu portal?','question',SATURDAY_NOON);
+    const reply=await decide(game,`Pues, eh, creo que mi portal, um, está en la de ${direction.es}.`,undefined,offline);
+    assert.equal(game.facts.homeSide,direction.en);assert.equal(reply?.selected,`home:${direction.en}`);
+    const bare=active();assert.equal((await decide(bare,direction.es,undefined,offline))?.selected,`walk:${direction.en}`);assert.equal(bare.facts.homeSide,null);
+    const filled=active();assert.equal((await decide(filled,`eh, bueno, sí, para el ${direction.es}, por favor`,undefined,offline))?.selected,`walk:${direction.en}`);assert.equal(filled.facts.homeSide,null);
+    const contextual=active();recordSpeech(contextual,'¿En qué lado está tu portal?','question',SATURDAY_NOON);
+    assert.equal((await decide(contextual,direction.es,undefined,offline))?.selected,`home:${direction.en}`);
+    const denied=active();recordSpeech(denied,'¿En qué lado está tu portal?','question',SATURDAY_NOON);
+    await decide(denied,`Mi portal, eh, no está en el lado ${direction.es}.`,undefined,offline);assert.equal(denied.facts.homeSide,null);
+  }
+});

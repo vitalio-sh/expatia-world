@@ -87,7 +87,7 @@ export function fallbackChoice(game: Game, candidates: ActionCandidate[], trigge
     const visible = candidates.filter(c => c.type === 'reveal').sort((a, b) => distance(game.courier, game.knowledge[a.targetId!].entrance) - distance(game.courier, game.knowledge[b.targetId!].entrance));
     return visible.find(c => /bar/.test(normalized) ? game.knowledge[c.targetId!].category === 'bar' : true) ?? byId('clarify')!;
   }
-  const shortSideAnswer = (normalized.match(/\b(north|south|east|west|bottom|top)\b/g)??[]).length === 1 && normalized.split(/\s+/).length <= 7 && !!game.facts.homeSide && /\b(entrance|door|side)\b[^?]*\?/.test(navigationText(game.history.filter(h=>h.role==='courier').at(-1)?.text??''));
+  const shortSideAnswer = (normalized.match(/\b(north|south|east|west|bottom|top)\b/g)??[]).length === 1 && !!game.facts.homeSide && /\b(entrance|door|side)\b[^?]*\?/.test(navigationText(game.history.filter(h=>h.role==='courier').at(-1)?.text??''));
   if (game.facts.homeSide && (shortSideAnswer || /entrance|door|home|house|building|apartment|flat|outside|meet/.test(normalized)) && byId(`home:${game.facts.homeSide}`)) return byId(`home:${game.facts.homeSide}`)!;
   if (/other bar/.test(normalized)) {
     const previous = game.decision?.action.targetId;
