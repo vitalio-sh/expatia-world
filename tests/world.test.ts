@@ -255,3 +255,17 @@ test('a visible corner never reveals a business name before its sign is observed
   Object.assign(game.courier,{x:40,y:40,direction:'south'}); rememberObservations(game);
   assert.equal(perception(game).landmarks.find(l=>l.id==='fruita-corner-0')?.label,'northwest corner of Fruita Fresca');
 });
+
+test('explicit south entrance route wins over intermediate corners while facing south', async () => {
+  const game=active(); await decide(game,'Look south.',undefined,offline);
+  const phrase='Go around the central apartment building to my entrance on the south side.';
+  let checked=false;
+  const result=await decide(game,phrase,undefined,{...offline,key:'fixture',fetcher:mockJev(criteria=>{
+    assert.ok(criteria['home:south']); assert.ok(!Object.keys(criteria).some(id=>id.startsWith('landmark:') || id.startsWith('around:')));
+    assert.ok(JSON.stringify(criteria['home:south']).includes('Complete exterior route'));
+    checked=true;return 'home:south';
+  })});
+  assert.ok(checked);assert.equal(result?.source,'jev');assert.equal(result?.selected,'home:south');
+  assert.deepEqual(game.route.at(-1),HOME_ENTRANCE);
+  tickGame(game,SATURDAY_NOON+10_000,10);assert.ok(canHandoff(game,SATURDAY_NOON+10_000));
+});

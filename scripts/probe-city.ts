@@ -16,7 +16,7 @@ const cases = [
   {name:'intersection',facing:'east',text:'Walk to the nearest intersection.',intent:/intersection|junction/i},
   {name:'cross intersection',facing:'east',text:'Cross the nearest intersection.',intent:/cross:intersection/i},
   {name:'turn to look',text:'Look south.',intent:/look:south/i},
-  {name:'around building',text:'Go around the central building to my entrance on the south side.',intent:/home:south|home-south/i},
+  {name:'around building',facing:'south',text:'Go around the central apartment building to my entrance on the south side.',intent:/home:south|home-south/i},
 ];
 const rows = await Promise.all(cases.map(async sample => {
  const now=Date.now(), game=createGame(undefined,now); answerCall(game,now);

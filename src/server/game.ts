@@ -178,7 +178,7 @@ export function npcContext(game: Game, now = game.updatedAt) {
   };
 }
 
-export function actionCandidates(game: Game, trigger: Decision['trigger'], now = game.updatedAt): ActionCandidate[] {
+export function actionCandidates(game: Game, trigger: Decision['trigger'], now = game.updatedAt, playerText = ''): ActionCandidate[] {
   const view = perception(game, now);
   if (trigger === 'opening') return [{ id: 'describe', type: 'describe', label: 'Describe being near a bar', reason: 'First clue gives the landmark category and deliberately withholds the visible sign.' }];
   const candidates: ActionCandidate[] = [];
@@ -225,7 +225,7 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
     // never silently corrected using the private home solution.
     const entrances: Record<string, Point> = { south: HOME_ENTRANCE, north: { x: 480, y: 200 }, east: { x: 700, y: 470 }, west: { x: 260, y: 470 } };
     const heard = side ?? 'south', target = entrances[heard], route = findRoute(game.courier, target);
-    if (route) candidates.push({ id: `home:${heard}`, type: 'move', targetId: heard === 'south' ? 'home-south' : `home-${heard}`, target, route, label: `Go to the ${heard} side described by the resident`, reason: view.homeEntranceVisible && heard === 'south' ? 'The home entrance is now physically visible.' : `Resident said the entrance is on the ${heard} side. This is a conversational belief, not proof; verify on arrival.` });
+    if (route) candidates.push({ id: `home:${heard}`, type: 'move', targetId: heard === 'south' ? 'home-south' : `home-${heard}`, target, route, label: `Navigate around the apartment walls to the reported ${heard} entrance destination`, reason: view.homeEntranceVisible && heard === 'south' ? 'The home entrance is now physically visible.' : `Complete exterior route to the resident's reported ${heard} entrance, including all necessary turns around solid walls. Corners are intermediate waypoints, not this destination. This side is a conversational belief, not proof; verify on arrival.` });
   }
   for (const [direction, vector] of Object.entries({ north: { x: 0, y: -1 }, south: { x: 0, y: 1 }, east: { x: 1, y: 0 }, west: { x: -1, y: 0 } })) {
     let target = { x: game.courier.x, y: game.courier.y };
@@ -235,6 +235,12 @@ export function actionCandidates(game: Game, trigger: Decision['trigger'], now =
   if (game.previousDestination && distance(game.courier, game.previousDestination) > 20) {
     const route = findRoute(game.courier, game.previousDestination);
     if (route) candidates.push({ id: 'go-back', type: 'move', target: game.previousDestination, route, label: 'Go back to the previous position', reason: 'Recover from a wrong turn using remembered movement, rather than restarting.' });
+  }
+  // An explicitly requested entrance is one destination. Intermediate corners
+  // cannot replace it merely because the sentence also says 'go around'.
+  if (side && /\b(entrance|door)\b/i.test(playerText) && /\b(go|walk|head|come|reach|approach|bring|navigate|around)\b/i.test(playerText)) {
+    const destination = candidates.find(c => c.id === `home:${side}`);
+    if (destination) return candidates.filter(c => c === destination || ['clarify','wait','continue'].includes(c.id));
   }
   return candidates;
 }

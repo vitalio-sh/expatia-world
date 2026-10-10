@@ -24,7 +24,7 @@ export function buildJevRequest(game: Game, candidates: ActionCandidate[], trigg
           'For questions about what is visible, fruits, surroundings or the furthest thing, choose describe-surroundings; describe current sight and memory distinctly. For look/face/turn-to-look requests choose look; look around scans all four headings. Corners, fruit crates, awnings, streets, intersections and crossings are concrete observed landmarks.',
           'For cross street choose a cross:crossing candidate via the nearest observed zebra stripes; for cross intersection choose cross:intersection. Go to a corner/intersection/fruit crates selects its landmark candidate; go around a building selects an observed corner or the communicated entrance side. Approach an observed building selects go:<building>. Relative left/right/forward refer to current courier facing; never assume map east is right.',
           'For sign/name/which-bar clarification choose the reveal candidate for the closest relevant currently visible bar; no movement is needed. A vague instruction to go to a bar may plausibly select one of the observed bars. Corrections and the other bar refer to actual history.',
-          'When the resident explicitly describes a home entrance side, prefer the corresponding home candidate rather than a lone cardinal step. A wrong reported side remains a hypothesis and must not be silently corrected. For simple street directions choose a cardinal movement. Wait only for a stop/wait request.',
+          'When the resident explicitly asks to reach an entrance on a communicated side, select the corresponding home candidate: it already navigates around solid walls to the complete destination. Intermediate corners must never replace a clearly requested entrance destination. When the resident explicitly describes a home entrance side, prefer the corresponding home candidate rather than a lone cardinal step. A wrong reported side remains a hypothesis and must not be silently corrected. For simple street directions choose a cardinal movement. Wait only for a stop/wait request.',
           'At timeout prefer a nearby open accessible shop that explicitly accepts parcels and is suitable for weather. A drop is for later collection, not received delivery. Choose return if none is suitable.',
         ],
         criteria: Object.fromEntries(candidates.map(candidate => [candidate.id, { action: candidate.label, evidence: candidate.reason }])),
@@ -103,7 +103,7 @@ export function fallbackChoice(game: Game, candidates: ActionCandidate[], trigge
 async function evaluate(game: Game, trigger: Decision['trigger'], text: string, signal?: AbortSignal, options: DecisionOptions = {}): Promise<Decision> {
   const clock = options.now ?? Date.now, now = clock();
   rememberObservations(game, now);
-  const candidates = actionCandidates(game, trigger, now), sequence = ++game.sequence;
+  const candidates = actionCandidates(game, trigger, now, text), sequence = ++game.sequence;
   const started = Date.now(), fallback = fallbackChoice(game, candidates, trigger, text), view = perception(game, now);
   const decision: Decision = {
     id: globalThis.crypto.randomUUID(), sequence, trigger, source: 'fallback', model: null,

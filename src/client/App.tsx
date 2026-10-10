@@ -20,7 +20,7 @@ export function App(){
  const mic=async()=>{if(!session||game?.phase!=='active')return;if(recording){setRecording(false);setBusy(true);try{const r=await voice.current.stopRecording();if(r?.text)await send(r.text,r.turnId);else setError('No speech heard. Try again or type your directions.');}catch(e){setError((e as Error).message)}finally{setBusy(false)}}else{voice.current?.interrupt();try{const started=await voice.current.startRecording('mic-'+(++generation.current));if(started&&gameRef.current?.phase==='active'&&gameRef.current?.deadline>Date.now())setRecording(true);else if(started)voice.current?.interrupt();}catch(e){setError('Microphone unavailable. Type your directions below.')}}};
  const handoff=async()=>{if(!session)return;try{const d=await api('session/'+session.id+'/handoff',{},session.token);generation.current++;setGame(d.game);setBusy(false);setError('');setRecording(false);voice.current?.interrupt();}catch(e){setError((e as Error).message)}};
  useEffect(()=>{if((game?.phase==='timeout'||game?.phase==='resolved')&&voice.current?.isRecording){voice.current.interrupt();setRecording(false);}},[game?.phase]);
- const remaining=game?.deadline?Math.max(0,Math.ceil((game.deadline-now)/1000)):60;
+ const remaining=game?.deadline?Math.min(60,Math.max(0,Math.ceil((game.deadline-now)/1000))):60;
  const history=game?.history?.filter((h:any)=>h.role!=='event')??[];
  const weather=game?.weather;
  const weatherTime=(value?:string)=>value?new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',hour:'2-digit',minute:'2-digit'}).format(new Date(value)):'—';
