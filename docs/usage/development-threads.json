@@ -1,0 +1,37 @@
+[
+  {
+    "threadId": "01a12542-03e6-7601-b008-109416d4e0a3",
+    "logPath": "/Users/neo/.codex/sessions/2026/10/10/rollout-2026-10-10T12-00-46-01a12542-03e6-7601-b008-109416d4e0a3.jsonl",
+    "boundary": "Before first model response in this development chat; derived first cumulative minus first request. Includes inherited prompt processing, excludes source chat usage.",
+    "baseline": {
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "total_tokens": 0
+    },
+    "firstMeasuredAt": "2026-10-10T10:01:00.469Z",
+    "latest": {
+      "input_tokens": 424444,
+      "cached_input_tokens": 368896,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 4478,
+      "reasoning_output_tokens": 683,
+      "total_tokens": 428922
+    },
+    "cost": "Development pricing/billed amounts unavailable; cached input is a subset of input, reasoning a subset of output; do not add them again."
+  },
+  {
+    "threadId": "01a12543-908a-7910-b9a6-c7231806eff9",
+    "logPath": "/Users/neo/.codex/sessions/2026/10/10/rollout-2026-10-10T12-02-27-01a12543-908a-7910-b9a6-c7231806eff9.jsonl"
+  },
+  {
+    "threadId": "01a12543-b845-7e63-b24d-94c7c3e68fe0",
+    "logPath": "/Users/neo/.codex/sessions/2026/10/10/rollout-2026-10-10T12-02-37-01a12543-b845-7e63-b24d-94c7c3e68fe0.jsonl"
+  },
+  {
+    "threadId": "01a12543-e1d9-7c70-a19f-15b9b82dc507",
+    "logPath": "/Users/neo/.codex/sessions/2026/10/10/rollout-2026-10-10T12-02-48-01a12543-e1d9-7c70-a19f-15b9b82dc507.jsonl"
+  }
+]

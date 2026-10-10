@@ -10,3 +10,6 @@ build/
 *.tsbuildinfo
 playwright-report/
 test-results/
+
+.runtime/
+art-work/
