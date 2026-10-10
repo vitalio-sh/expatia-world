@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-10T12:18:28.419Z",
+  "url": "https://expatia.world",
+  "scope": "Real native Worker TTD and Scribe relay, synthetic speech from its opening PCM. Timings are measured by this Node client; no browser/hardware audibility or human microphone claim.",
+  "connection": {
+    "realtimeRpc": true,
+    "speechPrepared": true,
+    "elapsedMs": 986
+  },
+  "ttd": {
+    "model": "eleven_v4_turbo",
+    "firstReceivedMs": 881,
+    "audioBytes": 238080,
+    "audioSeconds": 4.96,
+    "serverTimings": {
+      "connectMs": 0,
+      "firstAudioMs": 88,
+      "elapsedMs": 2189
+    },
+    "live": true,
+    "completeTextCharacters": 71
+  },
+  "stt": {
+    "model": "scribe_v2_realtime",
+    "live": true,
+    "commitToFinalMs": 545,
+    "serverCommitToFinalMs": 384,
+    "transcriptMatchesGeneratedWords": true,
+    "transmittedPcmSeconds": 4.96,
+    "silencePaddingIncludedByServer": true
+  },
+  "jev": {
+    "status": "jev",
+    "selected": "describe",
+    "probabilities": {
+      "describe": 1
+    }
+  },
+  "usage": {
+    "calls": 4,
+    "liveCalls": 4,
+    "inputTokens": 3492,
+    "outputTokens": 43,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 3535,
+    "unreportedTokenCalls": 0,
+    "returnedCostUsd": 0.0005296,
+    "estimatedCostUsd": 0.00342192,
+    "voiceCharacters": 70,
+    "audioSeconds": 9.969999999999999,
+    "providers": {
+      "jev": 1,
+      "openrouter": 1,
+      "elevenlabs": 2
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  },
+  "passed": true,
+  "totalMs": 4493
+}

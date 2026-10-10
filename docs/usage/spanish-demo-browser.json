@@ -1,0 +1,66 @@
+{
+  "at": "2026-10-10T12:19:18.008Z",
+  "version": 10,
+  "url": "https://expatia.world/",
+  "scope": "Actual360x800browser. Demo toggle hides/shows. Use text fills without sending. Three exact Spanish script lines auto-advanced; courier replied Spanish and physical handoff succeeded.",
+  "confidence": 0.95,
+  "evidence": [
+    "Currently visible: northeast corner of Fruita Fresca (corner), south, 57 units.",
+    "Currently visible: southeast corner of Fruita Fresca (corner), south, 277 units.",
+    "Currently visible: northwest chamfered corner (corner), east, 61 units.",
+    "Currently visible: west apartment wall (wall), south, 193 units.",
+    "Currently visible: fruit crates (fruit-display), south, 247 units.",
+    "Currently visible: striped fruit-shop awning (awning), south, 193 units.",
+    "Facing south; finite forward sight, solid walls occlude.",
+    "Currently visible: Fruita Fresca (fruit shop), south, 213 units; closed.",
+    "Barcelona Sat, 14:19; weather: Clear sky (live).",
+    "Resident reported a south entrance; this remains a belief until observed."
+  ],
+  "selected": "home:south",
+  "sessionId": "29406f46-1a6e-4093-8d9e-ea1ffbec665d",
+  "sessionUsage": {
+    "audioSeconds": 22.88,
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ],
+    "cachedInputTokens": 0,
+    "calls": 19,
+    "estimatedCostUsd": 0.0144716,
+    "inputTokens": 41676,
+    "liveCalls": 19,
+    "outputTokens": 734,
+    "providers": {
+      "browser": 5,
+      "elevenlabs": 5,
+      "jev": 4,
+      "openrouter": 5
+    },
+    "reasoningTokens": 0,
+    "returnedCostUsd": 0.0067802999999999995,
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "totalTokens": 42410,
+    "unreportedTokenCalls": 0,
+    "voiceCharacters": 341
+  },
+  "usage": {
+    "estimatedUsd": 0.000250572,
+    "inputTokens": 5966,
+    "outputTokens": 43
+  },
+  "world": {
+    "canHandoff": false,
+    "courier": {
+      "direction": "east",
+      "moving": false,
+      "x": 480,
+      "y": 645
+    },
+    "parcel": "resident",
+    "resident": {
+      "direction": "south",
+      "moving": false,
+      "x": 480,
+      "y": 440
+    }
+  }
+}
