@@ -1,0 +1,88 @@
+{
+  "at": "2026-10-10T12:51:17.520Z",
+  "url": "https://expatia.world",
+  "scope": "Live generated synthetic Spanish and English PCM sent over the same authenticated native Worker connection. Both stt.start messages omitted language, proving default Spanish primary with English secondary. Node-client timings; no human microphone, browser audio or audibility claim.",
+  "querySerialization": "language_code=es&secondary_languages=en; official SDK repeated query parameter",
+  "passed": true,
+  "cases": [
+    {
+      "spokenLanguage": "es",
+      "expectedSyntheticWords": "Estoy dentro de casa. La entrada está en el lado sur.",
+      "transcript": "Estoy dentro de casa. La entrada está en el lado sur.",
+      "primaryPreference": "es",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "readyPreference": "es",
+      "readyLanguages": [
+        "es",
+        "en"
+      ],
+      "match": true,
+      "live": true,
+      "commitToFinalMs": 509,
+      "transmittedSeconds": 4,
+      "generatedSpeech": {
+        "model": "eleven_v4_turbo",
+        "characters": 53,
+        "audioSeconds": 4
+      }
+    },
+    {
+      "spokenLanguage": "en",
+      "expectedSyntheticWords": "I am inside my home. The entrance is on the south side.",
+      "transcript": "I am inside my home. The entrance is on the south side.",
+      "primaryPreference": "es",
+      "languages": [
+        "es",
+        "en"
+      ],
+      "readyPreference": "es",
+      "readyLanguages": [
+        "es",
+        "en"
+      ],
+      "match": true,
+      "live": true,
+      "commitToFinalMs": 494,
+      "transmittedSeconds": 3.84,
+      "generatedSpeech": {
+        "model": "eleven_v4_turbo",
+        "characters": 55,
+        "audioSeconds": 3.84
+      }
+    }
+  ],
+  "workerUsage": {
+    "calls": 5,
+    "liveCalls": 5,
+    "inputTokens": 3809,
+    "outputTokens": 44,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 3853,
+    "unreportedTokenCalls": 0,
+    "returnedCostUsd": 0.0005558,
+    "estimatedCostUsd": 0.0031493326666666667,
+    "voiceCharacters": 55,
+    "audioSeconds": 11.940000000000001,
+    "providers": {
+      "jev": 1,
+      "openrouter": 1,
+      "elevenlabs": 3
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  },
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-bilingual-arrival"
+  },
+  "buildVerified": true
+}
