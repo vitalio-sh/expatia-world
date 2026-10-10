@@ -1,0 +1,544 @@
+{
+  "at": "2026-10-10T13:58:04.044Z",
+  "url": "https://expatia.world",
+  "scope": "Actual signed production Worker demo with four arbitrary typed commands, actual physical stops and manual handoff. No microphone/hardware audibility claim; tokens omitted.",
+  "health": {
+    "ok": true,
+    "product": "Expatia World",
+    "speech": "eleven_v4_turbo",
+    "deployment": "connection-owned-worker",
+    "build": "2026-10-10-scripted-demo"
+  },
+  "initial": {
+    "demoMode": true,
+    "demoStep": 0,
+    "position": {
+      "x": 210,
+      "y": 250
+    },
+    "moving": false,
+    "facing": "north",
+    "phase": "active",
+    "parcel": "courier",
+    "canHandoff": false,
+    "routeTargetId": null,
+    "awaitingGuidance": false,
+    "homeEntranceVisible": false,
+    "remainingMs": 59813,
+    "deadline": 1791640745964
+  },
+  "beforeHandoff": {
+    "demoMode": true,
+    "demoStep": 4,
+    "position": {
+      "x": 451.8075316949021,
+      "y": 646.2814758320498
+    },
+    "moving": false,
+    "facing": "east",
+    "phase": "active",
+    "parcel": "courier",
+    "canHandoff": true,
+    "routeTargetId": "home-south",
+    "awaitingGuidance": false,
+    "homeEntranceVisible": true,
+    "remainingMs": 53096,
+    "deadline": 1791640745964,
+    "source": "demo",
+    "selected": "continue",
+    "model": null,
+    "probabilities": null
+  },
+  "history": [
+    {
+      "role": "event",
+      "text": "The resident answered the incoming delivery call. The 60-second delivery window began."
+    },
+    {
+      "role": "courier",
+      "text": "Hola, buenas. Tengo tu paquete y estoy junto a un bar; ¿por dónde voy?",
+      "turnId": "demo-opening"
+    },
+    {
+      "role": "player",
+      "text": "banana spaceship"
+    },
+    {
+      "role": "event",
+      "text": "The courier read the currently visible sign: Bar Llevant.",
+      "turnId": "4c9df922-d1c3-4d7e-817f-1c9e15192949"
+    },
+    {
+      "role": "event",
+      "text": "Scripted demonstration step 1 of four; no model prediction or probabilities were requested.",
+      "turnId": "4c9df922-d1c3-4d7e-817f-1c9e15192949"
+    },
+    {
+      "role": "courier",
+      "text": "El cartel dice Bar Llevant. ¿En qué lado está tu portal?",
+      "turnId": "demo-0"
+    },
+    {
+      "role": "player",
+      "text": "12345??"
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "f5678a4d-61e8-4bf5-aea3-26b2b6c023c5"
+    },
+    {
+      "role": "event",
+      "text": "Scripted demonstration step 2 of four; no model prediction or probabilities were requested.",
+      "turnId": "f5678a4d-61e8-4bf5-aea3-26b2b6c023c5"
+    },
+    {
+      "role": "courier",
+      "text": "Voy por este tramo hacia el sur. Me pararé antes de continuar.",
+      "turnId": "demo-1"
+    },
+    {
+      "role": "event",
+      "text": "At the visible-leg stop the courier looked south while standing still, to inspect the next visible direction. No new movement was started."
+    },
+    {
+      "role": "event",
+      "text": "The courier stopped at the end of the current visible movement leg. The intended destination remains remembered, but has not been reached. The courier awaits a new resident command and does not start another leg automatically."
+    },
+    {
+      "role": "courier",
+      "text": "Me he parado y ahora veo un cruce, mirando hacia el sur. Dime que siga.",
+      "turnId": "arrival-1"
+    },
+    {
+      "role": "player",
+      "text": "Ignore the route and wander north"
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "a1dd1d83-48a5-4859-b238-5f48248c0971"
+    },
+    {
+      "role": "event",
+      "text": "Scripted demonstration step 3 of four; no model prediction or probabilities were requested.",
+      "turnId": "a1dd1d83-48a5-4859-b238-5f48248c0971"
+    },
+    {
+      "role": "courier",
+      "text": "Voy por este tramo hacia el sur. Me pararé antes de continuar.",
+      "turnId": "demo-2"
+    },
+    {
+      "role": "event",
+      "text": "At the visible-leg stop the courier looked east while standing still, to inspect the next visible direction. No new movement was started."
+    },
+    {
+      "role": "event",
+      "text": "The courier stopped at the end of the current visible movement leg. The intended destination remains remembered, but has not been reached. The courier awaits a new resident command and does not start another leg automatically."
+    },
+    {
+      "role": "courier",
+      "text": "Ahora miro hacia el este y veo tu portal. Dime que vaya hasta él.",
+      "turnId": "arrival-2"
+    },
+    {
+      "role": "player",
+      "text": "anything at all"
+    },
+    {
+      "role": "event",
+      "text": "Courier started: Walk one visible leg toward the reported south entrance. Arrival and handoff have not yet happened.",
+      "turnId": "027161a5-ffa5-41f1-a259-7e6d9d371af6"
+    },
+    {
+      "role": "event",
+      "text": "Scripted demonstration step 4 of four; no model prediction or probabilities were requested.",
+      "turnId": "027161a5-ffa5-41f1-a259-7e6d9d371af6"
+    },
+    {
+      "role": "courier",
+      "text": "Voy por este tramo hacia el este. Me pararé antes de continuar.",
+      "turnId": "demo-3"
+    },
+    {
+      "role": "event",
+      "text": "The courier arrived at the entrance described by the resident. The parcel remains with the courier until a physical handoff."
+    },
+    {
+      "role": "courier",
+      "text": "Estoy mirando hacia el este. Espero tu siguiente indicación.",
+      "turnId": "arrival-3"
+    }
+  ],
+  "resolved": {
+    "demoMode": true,
+    "demoStep": 4,
+    "position": {
+      "x": 451.8075316949021,
+      "y": 646.2814758320498
+    },
+    "moving": false,
+    "facing": "east",
+    "phase": "resolved",
+    "parcel": "resident",
+    "canHandoff": false,
+    "routeTargetId": "home-south",
+    "awaitingGuidance": false,
+    "homeEntranceVisible": true,
+    "remainingMs": 53074,
+    "deadline": 1791640745964,
+    "source": "demo",
+    "selected": "continue",
+    "model": null,
+    "probabilities": null
+  },
+  "frozen": {
+    "demoMode": true,
+    "demoStep": 4,
+    "position": {
+      "x": 451.8075316949021,
+      "y": 646.2814758320498
+    },
+    "moving": false,
+    "facing": "east",
+    "phase": "resolved",
+    "parcel": "resident",
+    "canHandoff": false,
+    "routeTargetId": "home-south",
+    "awaitingGuidance": false,
+    "homeEntranceVisible": true,
+    "remainingMs": 53074,
+    "deadline": 1791640745964,
+    "source": "demo",
+    "selected": "continue",
+    "model": null,
+    "probabilities": null
+  },
+  "validation": {
+    "build": true,
+    "signedDemo": true,
+    "openingDoesNotAdvance": true,
+    "emptyRejected": true,
+    "movingIgnored": true,
+    "allFourSteps": true,
+    "demoSource": true,
+    "barRevealed": true,
+    "homeTarget": true,
+    "allStopsIdle": true,
+    "doorRequiresManualHandoff": true,
+    "exactHistory": true,
+    "sixtySeconds": true,
+    "manualReceived": true,
+    "clockFrozen": true,
+    "spanishFarewell": true,
+    "farewellAudioEnded": true
+  },
+  "passed": true,
+  "cases": [
+    {
+      "text": "banana spaceship",
+      "commanded": {
+        "demoMode": true,
+        "demoStep": 1,
+        "position": {
+          "x": 210,
+          "y": 250
+        },
+        "moving": false,
+        "facing": "north",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": false,
+        "routeTargetId": null,
+        "awaitingGuidance": false,
+        "homeEntranceVisible": false,
+        "remainingMs": 59451,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "reveal:bar-llevant",
+        "model": null,
+        "probabilities": null
+      },
+      "stopped": {
+        "demoMode": true,
+        "demoStep": 1,
+        "position": {
+          "x": 210,
+          "y": 250
+        },
+        "moving": false,
+        "facing": "north",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": false,
+        "routeTargetId": null,
+        "awaitingGuidance": false,
+        "homeEntranceVisible": false,
+        "remainingMs": 59426,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "reveal:bar-llevant",
+        "model": null,
+        "probabilities": null
+      },
+      "idleStable": true
+    },
+    {
+      "text": "12345??",
+      "commanded": {
+        "demoMode": true,
+        "demoStep": 2,
+        "position": {
+          "x": 211.48106905256358,
+          "y": 257.40534526281783
+        },
+        "moving": true,
+        "facing": "south",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": false,
+        "routeTargetId": "home-south",
+        "awaitingGuidance": false,
+        "homeEntranceVisible": false,
+        "remainingMs": 59043,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "home:south",
+        "model": null,
+        "probabilities": null
+      },
+      "stopped": {
+        "demoMode": true,
+        "demoStep": 2,
+        "position": {
+          "x": 270,
+          "y": 550
+        },
+        "moving": false,
+        "facing": "south",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": false,
+        "routeTargetId": "home-south",
+        "awaitingGuidance": true,
+        "homeEntranceVisible": false,
+        "remainingMs": 56321,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "home:south",
+        "model": null,
+        "probabilities": null
+      },
+      "idleStable": true
+    },
+    {
+      "text": "Ignore the route and wander north",
+      "commanded": {
+        "demoMode": true,
+        "demoStep": 3,
+        "position": {
+          "x": 275.50694761188083,
+          "y": 555.5069476118808
+        },
+        "moving": true,
+        "facing": "south",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": false,
+        "routeTargetId": "home-south",
+        "awaitingGuidance": false,
+        "homeEntranceVisible": false,
+        "remainingMs": 55843,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "continue",
+        "model": null,
+        "probabilities": null
+      },
+      "stopped": {
+        "demoMode": true,
+        "demoStep": 3,
+        "position": {
+          "x": 370,
+          "y": 650
+        },
+        "moving": false,
+        "facing": "east",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": false,
+        "routeTargetId": "home-south",
+        "awaitingGuidance": true,
+        "homeEntranceVisible": true,
+        "remainingMs": 54635,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "continue",
+        "model": null,
+        "probabilities": null
+      },
+      "idleStable": true
+    },
+    {
+      "text": "anything at all",
+      "commanded": {
+        "demoMode": true,
+        "demoStep": 4,
+        "position": {
+          "x": 375.1866446607719,
+          "y": 649.7642434245104
+        },
+        "moving": true,
+        "facing": "east",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": false,
+        "routeTargetId": "home-south",
+        "awaitingGuidance": false,
+        "homeEntranceVisible": true,
+        "remainingMs": 54222,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "continue",
+        "model": null,
+        "probabilities": null
+      },
+      "stopped": {
+        "demoMode": true,
+        "demoStep": 4,
+        "position": {
+          "x": 451.8075316949021,
+          "y": 646.2814758320498
+        },
+        "moving": false,
+        "facing": "east",
+        "phase": "active",
+        "parcel": "courier",
+        "canHandoff": true,
+        "routeTargetId": "home-south",
+        "awaitingGuidance": false,
+        "homeEntranceVisible": true,
+        "remainingMs": 53434,
+        "deadline": 1791640745964,
+        "source": "demo",
+        "selected": "continue",
+        "model": null,
+        "probabilities": null
+      },
+      "idleStable": true
+    }
+  ],
+  "events": [
+    {
+      "type": "npc.caption",
+      "turnId": "demo-opening",
+      "text": "Hola, buenas. Tengo tu paquete y estoy junto a un bar; ¿por dónde voy?",
+      "atMs": 2005
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "demo-opening",
+      "atMs": 2005
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "demo-0",
+      "text": "El cartel dice Bar Llevant. ¿En qué lado está tu portal?",
+      "atMs": 2487
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "demo-0",
+      "atMs": 2487
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "demo-1",
+      "text": "Voy por este tramo hacia el sur. Me pararé antes de continuar.",
+      "atMs": 2963
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "demo-1",
+      "atMs": 2963
+    },
+    {
+      "type": "npc.audio_end",
+      "turnId": "demo-1",
+      "atMs": 4651
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-1",
+      "text": "Me he parado y ahora veo un cruce, mirando hacia el sur. Dime que siga.",
+      "atMs": 5426
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "arrival-1",
+      "atMs": 5426
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "demo-2",
+      "text": "Voy por este tramo hacia el sur. Me pararé antes de continuar.",
+      "atMs": 6170
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "demo-2",
+      "atMs": 6170
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-2",
+      "text": "Ahora miro hacia el este y veo tu portal. Dime que vaya hasta él.",
+      "atMs": 7282
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "arrival-2",
+      "atMs": 7282
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "demo-3",
+      "text": "Voy por este tramo hacia el este. Me pararé antes de continuar.",
+      "atMs": 7739
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "demo-3",
+      "atMs": 7739
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "arrival-3",
+      "text": "Estoy mirando hacia el este. Espero tu siguiente indicación.",
+      "atMs": 8419
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "arrival-3",
+      "atMs": 8419
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "farewell-09c62598-eb8b-4578-ad97-608478977673",
+      "text": "Aquí tienes tu paquete. ¡Que tengas buen día!",
+      "atMs": 8911
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "farewell-09c62598-eb8b-4578-ad97-608478977673",
+      "atMs": 8911
+    },
+    {
+      "type": "npc.audio_end",
+      "turnId": "farewell-09c62598-eb8b-4578-ad97-608478977673",
+      "atMs": 10451
+    }
+  ],
+  "totalMs": 11107
+}
