@@ -1,7 +1,7 @@
 {
-  "at": "2026-10-10T11:38:35.665Z",
-  "siteVersion": 6,
-  "commitSha": "848547a0416ce00136e50c36c0cd9380896e64ff",
+  "at": "2026-10-10T11:43:27.244Z",
+  "siteVersion": 7,
+  "commitSha": "afb57cb59aac55c825961fb1f5bc613a730ae2be",
   "health": [
     {
       "origin": "https://expatia.world",
@@ -233,7 +233,7 @@
   "missingArtStatus": 404,
   "passed": true,
   "finalBundle": {
-    "path": "/assets/index-B8lQUuyT.js",
+    "path": "/assets/index-jvEY0Rpn.js",
     "byteMatchesFinalLocalBuild": true
   },
   "finalAsset": {

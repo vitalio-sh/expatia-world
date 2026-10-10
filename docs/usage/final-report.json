@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-10-10T11:28:00.129855+00:00",
+  "measuredAt": "2026-10-10T11:46:19.736089+00:00",
   "runtime": {
     "scope": "Disjoint captured request cohorts only. These are lower bounds for available recorded usage, not all work or an invoice. Local per-probe files already included in the persisted local aggregate are not added again. Each Worker scenario final ledger is filtered by session ID. Browser playback events carry timing but no billed provider tokens.",
     "cohorts": [
@@ -129,7 +129,8 @@
           "billingUnitsUnavailable": [
             "ElevenLabs billed credits (key lacks user_read)"
           ]
-        }
+        },
+        "unreportedTokenCalls": 0
       },
       {
         "name": "https://expatia.world synthetic Scribe/TTD probe",
@@ -157,7 +158,8 @@
           "billingUnitsUnavailable": [
             "ElevenLabs billed credits (key lacks user_read)"
           ]
-        }
+        },
+        "unreportedTokenCalls": 0
       },
       {
         "name": "https://expatia.world/ browser round",
@@ -186,7 +188,8 @@
           "billingUnitsUnavailable": [
             "ElevenLabs billed credits (key lacks user_read)"
           ]
-        }
+        },
+        "unreportedTokenCalls": 0
       },
       {
         "name": "https://expatia.world version5 complete outcome QA",
@@ -232,17 +235,55 @@
           "billingUnitsUnavailable": [
             "ElevenLabs billed credits (key lacks user_read)"
           ]
-        }
+        },
+        "boundary": "2026-10-10T11:39:47.388Z",
+        "sessionIds": [
+          "5090e649-39ea-4816-abfa-c4bdbb60c7c3"
+        ],
+        "unreportedTokenCalls": 1
+      },
+      {
+        "name": "Version7 browser handoff during pending response",
+        "file": "docs/usage/browser-session-final.json",
+        "totals": {
+          "calls": 12,
+          "liveCalls": 11,
+          "inputTokens": 10068,
+          "outputTokens": 221,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0,
+          "totalTokens": 10289,
+          "unreportedTokenCalls": 1,
+          "returnedCostUsd": 0.0016583,
+          "estimatedCostUsd": 0.008127144,
+          "voiceCharacters": 198,
+          "audioSeconds": 11.12,
+          "providers": {
+            "jev": 3,
+            "openrouter": 3,
+            "browser": 3,
+            "elevenlabs": 3
+          },
+          "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+          "billingUnitsUnavailable": [
+            "ElevenLabs billed credits (key lacks user_read)"
+          ]
+        },
+        "boundary": "2026-10-10T11:45:18.084Z",
+        "sessionIds": [
+          "39163d2a-3296-4a80-8bfb-d844ecc31c24"
+        ],
+        "unreportedTokenCalls": 1
       }
     ],
     "capturedLowerBounds": {
-      "inputTokens": 159030,
-      "outputTokens": 4236,
-      "returnedOpenRouterCostUsd": 0.0213389,
-      "estimatedJevAndElevenUsd": 0.10092002666666665,
-      "voiceRequestedCharacters": 2393,
-      "unreturnedTokenCalls": 1,
-      "totalReturnedTokens": 163266
+      "inputTokens": 209237,
+      "outputTokens": 5465,
+      "returnedOpenRouterCostUsd": 0.0282774,
+      "estimatedJevAndElevenUsd": 0.12881223066666664,
+      "voiceRequestedCharacters": 3060,
+      "unreturnedTokenCalls": 4,
+      "totalReturnedTokens": 214702
     },
     "unavailable": [
       "Earlier failed Worker sessions before stable accounting and manual browser rounds closed without captured ledgers.",
@@ -267,6 +308,35 @@
   },
   "development": {
     "report": "docs/usage/development-report.json",
-    "method": "Four explicitly registered logs; each latest cumulative counter minus pre-first-request baseline once. Cached input is a subset of input and reasoning is a subset of output. Final response after the checkpoint is excluded."
+    "method": "Four explicitly registered logs; each latest cumulative counter minus pre-first-request baseline once. Cached input is a subset of input and reasoning is a subset of output. Final response after the checkpoint is excluded.",
+    "sumDeltas": {
+      "input_tokens": 75305922,
+      "cached_input_tokens": 73911936,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 313801,
+      "reasoning_output_tokens": 106237,
+      "total_tokens": 75619723
+    },
+    "registeredThreads": 4,
+    "measurementBoundaries": [
+      {
+        "threadId": "01a12542-03e6-7601-b008-109416d4e0a3",
+        "measuredThrough": "2026-10-10T11:48:57.283Z"
+      },
+      {
+        "threadId": "01a12543-908a-7910-b9a6-c7231806eff9",
+        "measuredThrough": "2026-10-10T11:34:10.514Z"
+      },
+      {
+        "threadId": "01a12543-b845-7e63-b24d-94c7c3e68fe0",
+        "measuredThrough": "2026-10-10T11:19:59.158Z"
+      },
+      {
+        "threadId": "01a12543-e1d9-7c70-a19f-15b9b82dc507",
+        "measuredThrough": "2026-10-10T10:23:38.619Z"
+      }
+    ],
+    "actualBilledCostUsd": null,
+    "billingNote": "Actual token counters are measured; development billed dollars and internal image-generation tokens are not exposed."
   }
 }

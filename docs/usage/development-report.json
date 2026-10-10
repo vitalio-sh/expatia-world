@@ -11,22 +11,22 @@
         "total_tokens": 0
       },
       "end": {
-        "input_tokens": 34306707,
-        "cached_input_tokens": 33736320,
+        "input_tokens": 40143039,
+        "cached_input_tokens": 39514880,
         "cache_write_input_tokens": 0,
-        "output_tokens": 100616,
-        "reasoning_output_tokens": 38773,
-        "total_tokens": 34407323
+        "output_tokens": 118552,
+        "reasoning_output_tokens": 48575,
+        "total_tokens": 40261591
       },
       "delta": {
-        "input_tokens": 34306707,
-        "cached_input_tokens": 33736320,
+        "input_tokens": 40143039,
+        "cached_input_tokens": 39514880,
         "cache_write_input_tokens": 0,
-        "output_tokens": 100616,
-        "reasoning_output_tokens": 38773,
-        "total_tokens": 34407323
+        "output_tokens": 118552,
+        "reasoning_output_tokens": 48575,
+        "total_tokens": 40261591
       },
-      "measuredThrough": "2026-10-10T11:35:01.452Z"
+      "measuredThrough": "2026-10-10T11:48:57.283Z"
     },
     {
       "threadId": "01a12543-908a-7910-b9a6-c7231806eff9",
@@ -114,12 +114,12 @@
     }
   ],
   "sumDeltas": {
-    "input_tokens": 69469590,
-    "cached_input_tokens": 68133376,
+    "input_tokens": 75305922,
+    "cached_input_tokens": 73911936,
     "cache_write_input_tokens": 0,
-    "output_tokens": 295865,
-    "reasoning_output_tokens": 96435,
-    "total_tokens": 69765455
+    "output_tokens": 313801,
+    "reasoning_output_tokens": 106237,
+    "total_tokens": 75619723
   },
   "notes": [
     "Each cumulative counter contributes only its last minus start delta.",

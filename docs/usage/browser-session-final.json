@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-10T11:45:18.084Z",
+  "url": "https://expatia.world/",
+  "siteVersion": 7,
+  "sessionId": "39163d2a-3296-4a80-8bfb-d844ecc31c24",
+  "scope": "One actual version7 browser round, session-filtered inspector after handoff. Earlier browser rounds are captured separately and counted once. A JEV request canceled before usage was returned has unknown token/billing units.",
+  "selected": "home:south",
+  "world": {
+    "resident": {
+      "x": 480,
+      "y": 636.2800000000007,
+      "direction": "south",
+      "moving": false
+    },
+    "courier": {
+      "x": 480,
+      "y": 645,
+      "direction": "east",
+      "moving": false
+    },
+    "parcel": "resident",
+    "canHandoff": false
+  },
+  "usage": {
+    "calls": 12,
+    "liveCalls": 11,
+    "inputTokens": 10068,
+    "outputTokens": 221,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 10289,
+    "unreportedTokenCalls": 1,
+    "returnedCostUsd": 0.0016583,
+    "estimatedCostUsd": 0.008127144,
+    "voiceCharacters": 198,
+    "audioSeconds": 11.12,
+    "providers": {
+      "jev": 3,
+      "openrouter": 3,
+      "browser": 3,
+      "elevenlabs": 3
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  }
+}
