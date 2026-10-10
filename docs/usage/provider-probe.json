@@ -1,0 +1,271 @@
+{
+  "at": "2026-10-10T10:19:54.936Z",
+  "scope": "Small authenticated development probes; timings exclude browser playback. No private transcripts or credentials.",
+  "llm": [
+    {
+      "model": "google/gemini-3.5-flash-lite",
+      "firstTextMs": 1150,
+      "totalMs": 1153,
+      "text": "Which bar has the red door, so I can drop off your package?",
+      "usage": {
+        "prompt_tokens": 46,
+        "completion_tokens": 15,
+        "total_tokens": 61,
+        "cost": 0.0000513,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0000513,
+          "upstream_inference_prompt_cost": 0.0000138,
+          "upstream_inference_completions_cost": 0.0000375
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "firstTextMs": null,
+      "totalMs": 1556,
+      "text": "",
+      "usage": {
+        "prompt_tokens": 80,
+        "completion_tokens": 90,
+        "total_tokens": 170,
+        "cost": 0.000053,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000053,
+          "upstream_inference_prompt_cost": 0.000008,
+          "upstream_inference_completions_cost": 0.000045
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 90,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "model": "openai/gpt-5.4-nano",
+      "firstTextMs": 597,
+      "totalMs": 825,
+      "text": "Which bar are you beside—“Bar A” or “Bar B”—so I can deliver the parcel correctly?",
+      "usage": {
+        "prompt_tokens": 54,
+        "completion_tokens": 27,
+        "total_tokens": 81,
+        "cost": 0.00004455,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00004455,
+          "upstream_inference_prompt_cost": 0.0000108,
+          "upstream_inference_completions_cost": 0.00003375
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    }
+  ],
+  "eleven": {
+    "model": "eleven_v4_turbo",
+    "voiceId": "iP95p4xoKVk53GoZ742B",
+    "voiceName": "Chris - Charming, Down-to-Earth",
+    "format": "pcm_24000",
+    "characters": 65,
+    "bytes": 192000,
+    "connectMs": 1242,
+    "firstChunkMs": 188,
+    "totalMs": 3349,
+    "live": true,
+    "secondProbe": {
+      "preparationMs": 265,
+      "live": true,
+      "model": "eleven_v4_turbo",
+      "characters": 40,
+      "audioBytes": 119040,
+      "timings": {
+        "connectMs": 0.02133400000002439,
+        "firstAudioMs": 193.30279199999995,
+        "elapsedMs": 1477.429959
+      }
+    }
+  },
+  "account": {
+    "balance": "unavailable: user_read permission missing"
+  },
+  "initialLlmProbes": [
+    {
+      "model": "openai/gpt-5.4-nano",
+      "error": "fetch failed"
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "error": "fetch failed"
+    },
+    {
+      "model": "google/gemini-3.5-flash-lite",
+      "status": 400
+    }
+  ],
+  "scribe": {
+    "model": "scribe_v2_realtime",
+    "live": true,
+    "text": "Please turn left and meet me by the bar.",
+    "elapsedMs": 523,
+    "connectToTranscriptMs": 763,
+    "audioSeconds": 2.58,
+    "note": "Includes0.1seconds of sent silence after2.48seconds synthetic speech; actual billed credits unavailable."
+  },
+  "selectedDialogueModel": "google/gemini-3.5-flash-lite",
+  "note": "Small development probes, not statistically meaningful p50/p95. Full scoped game prompt Gemini first text346/411ms and complete429/461ms. Earlier generic prompts invented visual details; disclosure guards added before synthesis and grounded prompts tightened. Native IPv4 HTTPS resolves local dual-stack failures. Eleven returned billed units are unavailable; estimates use regular dated rate.",
+  "groundedQualityProbes": [
+    {
+      "model": "openai/gpt-5.4-nano",
+      "scenario": "opening",
+      "firstTextMs": 954,
+      "totalMs": 1271,
+      "text": "Hi! I’ve got your parcel and I’m standing near a bar. Which way should we go from here?",
+      "groundingGuard": true,
+      "usage": {
+        "prompt_tokens": 833,
+        "completion_tokens": 27,
+        "total_tokens": 860,
+        "cost": 0.00020035,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00020035,
+          "upstream_inference_prompt_cost": 0.0001666,
+          "upstream_inference_completions_cost": 0.00003375
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "model": "openai/gpt-5.4-nano",
+      "scenario": "clarification",
+      "firstTextMs": 652,
+      "totalMs": 858,
+      "text": "I’m right beside Bar Llevant, and I can accept parcels there. Can you tell me which way you want to go from here?",
+      "groundingGuard": true,
+      "usage": {
+        "prompt_tokens": 1529,
+        "completion_tokens": 32,
+        "total_tokens": 1561,
+        "cost": 0.0003458,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0003458,
+          "upstream_inference_prompt_cost": 0.0003058,
+          "upstream_inference_completions_cost": 0.00004
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "model": "google/gemini-3.5-flash-lite",
+      "scenario": "opening",
+      "firstTextMs": 346,
+      "totalMs": 429,
+      "text": "I've got your parcel and I'm near a bar right now. Which way should I go?",
+      "groundingGuard": true,
+      "usage": {
+        "prompt_tokens": 870,
+        "completion_tokens": 22,
+        "total_tokens": 892,
+        "cost": 0.000316,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000316,
+          "upstream_inference_prompt_cost": 0.000261,
+          "upstream_inference_completions_cost": 0.000055
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    },
+    {
+      "model": "google/gemini-3.5-flash-lite",
+      "scenario": "clarification",
+      "firstTextMs": 411,
+      "totalMs": 461,
+      "text": "The sign reads Bar Llevant. Which way from here?",
+      "groundingGuard": true,
+      "usage": {
+        "prompt_tokens": 1655,
+        "completion_tokens": 12,
+        "total_tokens": 1667,
+        "cost": 0.0005265,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0005265,
+          "upstream_inference_prompt_cost": 0.0004965,
+          "upstream_inference_completions_cost": 0.00003
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "src": "/art/environment/orange-tree-sheet.webp",
+  "frameWidth": 144,
+  "frameHeight": 176,
+  "columns": 12,
+  "rows": 4,
+  "frames": 48,
+  "fps": 12,
+  "durationMs": 4000,
+  "sourceFrames": 48,
+  "sourceRange": [
+    0,
+    48
+  ],
+  "rawSeamMeanDifference": 1.0631411773989898,
+  "anchorX": 0.5,
+  "anchorY": 0.9545454545454546,
+  "generated": true,
+  "provider": "GMI Cloud Seedance 2.5",
+  "sourceVideo": "art-work/source/orange-tree.mp4",
+  "sourceSha256": "4540016e5912903d230c39bebe3be1523cf9c47d75667f664d3545494382b506",
+  "cropBox": [
+    48,
+    12,
+    582,
+    628
+  ],
+  "scale": 0.23220973782771537,
+  "seamMeanDifference": 1.0631411773989898,
+  "acceptance": "accepted: stable planter, subtle foliage, coherent pixel palette"
+}

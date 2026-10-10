@@ -1,0 +1,161 @@
+{
+  "started": "2026-10-10T10:35:21.855Z",
+  "completed": "2026-10-10T10:35:25.268Z",
+  "url": "http://localhost:3318",
+  "transport": "Connection-owned native Worker WebSocket RPC",
+  "scenarios": [
+    {
+      "name": "Clarification, wrong north entrance, correction, physical handoff",
+      "sessionId": "bbbda0a7-8f5d-4e55-839e-d67d5c3d8d12",
+      "started": "2026-10-10T10:35:21.891Z",
+      "clockUntimed": true,
+      "deadlineExactly60000": true,
+      "opening": [
+        {
+          "role": "courier",
+          "text": "I have your parcel and I am near a bar.",
+          "at": 1791628523907,
+          "turnId": "opening"
+        }
+      ],
+      "clarification": {
+        "id": "3542eece-f21a-42c1-8209-7eca2099e35b",
+        "sequence": 2,
+        "trigger": "directions",
+        "source": "fallback",
+        "model": null,
+        "selected": "reveal:bar-llevant",
+        "action": {
+          "id": "reveal:bar-llevant",
+          "type": "reveal",
+          "targetId": "bar-llevant",
+          "label": "Read the visible Bar Llevant sign",
+          "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+        },
+        "candidates": [
+          {
+            "id": "clarify",
+            "type": "clarify",
+            "label": "Ask for a clearer landmark or entrance side",
+            "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+          },
+          {
+            "id": "wait",
+            "type": "wait",
+            "label": "Stop and wait",
+            "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+          },
+          {
+            "id": "reveal:bar-llevant",
+            "type": "reveal",
+            "targetId": "bar-llevant",
+            "label": "Read the visible Bar Llevant sign",
+            "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+          },
+          {
+            "id": "reveal:bar-ponent",
+            "type": "reveal",
+            "targetId": "bar-ponent",
+            "label": "Read the visible Bar Ponent sign",
+            "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+          },
+          {
+            "id": "reveal:fruita",
+            "type": "reveal",
+            "targetId": "fruita",
+            "label": "Read the visible Fruita Fresca sign",
+            "reason": "Reveal the distinguishing sign of this currently visible fruit shop after a relevant clarification question; no movement."
+          },
+          {
+            "id": "go:bar-llevant",
+            "type": "move",
+            "targetId": "bar-llevant",
+            "target": {
+              "x": 150,
+              "y": 175
+            },
+            "label": "Walk to Bar Llevant",
+            "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:bar-ponent",
+            "type": "move",
+            "targetId": "bar-ponent",
+            "target": {
+              "x": 430,
+              "y": 175
+            },
+            "label": "Walk to Bar Ponent",
+            "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "go:fruita",
+            "type": "move",
+            "targetId": "fruita",
+            "target": {
+              "x": 195,
+              "y": 460
+            },
+            "label": "Walk to Fruita Fresca",
+            "reason": "Navigate to the fruit shop actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+          },
+          {
+            "id": "walk:north",
+            "type": "move",
+            "target": {
+              "x": 210,
+              "y": 170
+            },
+            "label": "Walk north along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:south",
+            "type": "move",
+            "target": {
+              "x": 210,
+              "y": 470
+            },
+            "label": "Walk south along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:east",
+            "type": "move",
+            "target": {
+              "x": 310,
+              "y": 250
+            },
+            "label": "Walk east along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          },
+          {
+            "id": "walk:west",
+            "type": "move",
+            "target": {
+              "x": 30,
+              "y": 250
+            },
+            "label": "Walk west along the clear street",
+            "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+          }
+        ],
+        "probabilities": null,
+        "confidence": null,
+        "evidence": [
+          "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+          "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+          "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+          "Barcelona Sat, 12:35; weather: Overcast (live)."
+        ],
+        "reason": "provider_unavailable",
+        "elapsedMs": 1,
+        "discarded": false,
+        "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+      }
+    }
+  ],
+  "measurementBoundary": "Actual provider-backed typed input and returned PCM transport. This script does not play audio or use a physical microphone; first audible and human STT latency are unavailable.",
+  "pass": false,
+  "failure": "Clarification was not a live JEV decision"
+}

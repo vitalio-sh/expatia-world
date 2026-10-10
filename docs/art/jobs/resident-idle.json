@@ -1,0 +1,50 @@
+{
+  "name": "resident-idle",
+  "provider": "GMI Cloud",
+  "model": "seedance-2-5-260628",
+  "state": "idle",
+  "character": "resident",
+  "source": "art-work/source/resident-chroma.png",
+  "source_sha256": "c1eb59bcb92f991420453a8a94ebe4f2aa73a0bd0316d7a65645c89ac4d1d572",
+  "parameters": {
+    "prompt": "Locked orthographic overhead RPG sprite camera. The reference is FOUR separately spaced directional views of the SAME teal sweater woman resident with cream trousers and phone, in four equal columns. Preserve all four identical costume references, their respective directions (south front, west left, north back, east right), fixed centers, feet baseline, framing and scale. Animate every separate character view simultaneously. Preserve crisp original pixel-art texture and colors. Uniform pure bright green #00FF00 chroma background stays exactly flat, no shadows, no ground, no additional objects. Whole head and feet always remain in each original column. The four figures never approach each other, translate across the image, or change facing. Camera has zero pan, zoom, rotation or parallax. Four-second subtle IDLE loop: 0-1 seconds neutral relaxed breathing; 1-2 seconds one gentle blink and tiny shoulder rise; 2-3 seconds shoulder settles and hair gently follows; 3-4 seconds returns exactly to original pose. Feet stay fully planted at the same baseline. Arms remain in their reference pose. No walking or turning, no exaggerated bouncing. Minimal movement readable on a small phone sprite.",
+    "duration": 4,
+    "resolution": "480p",
+    "ratio": "adaptive",
+    "seed": 4202,
+    "watermark": false,
+    "generate_audio": false,
+    "web_search": false
+  },
+  "status": "success",
+  "request_id": "eff9990b-62cd-4947-965a-eb4c50760707",
+  "submitted_at": 1791626839.319735,
+  "pricing": {
+    "catalogUnitsPerSecond": 231000,
+    "estimatedCatalogUnits": 924000,
+    "currencyConversion": "unavailable",
+    "actualCharge": "unavailable"
+  },
+  "acceptance": "accepted after actual frame review",
+  "submissionResponse": {
+    "request_id": "eff9990b-62cd-4947-965a-eb4c50760707",
+    "model": "seedance-2-5-260628",
+    "status": "dispatched",
+    "created_at": 1791626841,
+    "updated_at": 1791626853,
+    "queued_at": 1791626841
+  },
+  "lastCheckedAt": 1791627282.238847,
+  "returnedMetadata": {
+    "request_id": "eff9990b-62cd-4947-965a-eb4c50760707",
+    "model": "seedance-2-5-260628",
+    "status": "success",
+    "is_public": false,
+    "outcome": {},
+    "created_at": 1791626841,
+    "updated_at": 1791626954,
+    "queued_at": 1791626841
+  },
+  "video": "art-work/source/resident-idle.mp4",
+  "video_sha256": "6ef32435b821199f8bd3617b8d27d3c8d223c92b278fa70fb66e196bc7280147"
+}

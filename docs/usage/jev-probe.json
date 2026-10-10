@@ -1,0 +1,190 @@
+{
+  "checkedAt": "2026-10-10T10:14:11.823Z",
+  "endpoint": "https://api.typesafe.ai/v1/systemone",
+  "officialDocumentation": [
+    "https://docs.typesafe.ai/api",
+    "https://docs.typesafe.ai/models"
+  ],
+  "catalog": {
+    "models": [
+      {
+        "name": "jev-latest",
+        "description": "The latest iteration of TypeSafe's System One Model: Jev",
+        "release_date": "2026-09-10T18:38:01.391457+00:00"
+      },
+      {
+        "name": "jev-preview",
+        "description": "A preview version of `jev-latest`: should be better in most ways",
+        "release_date": "2026-09-10T18:39:06.057655+00:00"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "visible-sign-clarification",
+      "scenarioTime": "2026-10-10T10:00:00.000Z",
+      "phase": "active",
+      "parcel": "courier",
+      "decision": {
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "reveal:bar-llevant",
+        "probabilities": {
+          "clarify": 0.01,
+          "wait": 0,
+          "reveal:bar-llevant": 0.98,
+          "reveal:bar-ponent": 0.01,
+          "reveal:fruita": 0,
+          "go:bar-llevant": 0,
+          "go:bar-ponent": 0,
+          "go:fruita": 0,
+          "walk:north": 0,
+          "walk:south": 0,
+          "walk:east": 0,
+          "walk:west": 0
+        },
+        "confidence": 0.98,
+        "elapsedMs": 281,
+        "reason": "live",
+        "usage": {
+          "inputTokens": 3077,
+          "outputTokens": 145,
+          "estimatedUsd": 0.00012923400000000002
+        },
+        "discarded": false
+      },
+      "routeApplied": false,
+      "routeTarget": null
+    },
+    {
+      "name": "communicated-south-entrance",
+      "scenarioTime": "2026-10-10T10:00:00.000Z",
+      "phase": "active",
+      "parcel": "courier",
+      "decision": {
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "home:south",
+        "probabilities": {
+          "clarify": 0.04,
+          "wait": 0,
+          "reveal:bar-llevant": 0,
+          "reveal:bar-ponent": 0,
+          "reveal:fruita": 0,
+          "go:bar-llevant": 0,
+          "go:bar-ponent": 0,
+          "go:fruita": 0,
+          "home:south": 0.77,
+          "walk:north": 0,
+          "walk:south": 0.19,
+          "walk:east": 0,
+          "walk:west": 0
+        },
+        "confidence": 0.75,
+        "elapsedMs": 244,
+        "reason": "live",
+        "usage": {
+          "inputTokens": 3155,
+          "outputTokens": 150,
+          "estimatedUsd": 0.00013251000000000002
+        },
+        "discarded": false
+      },
+      "routeApplied": true,
+      "routeTarget": "home-south"
+    },
+    {
+      "name": "ambiguous-bar-route",
+      "scenarioTime": "2026-10-10T10:00:00.000Z",
+      "phase": "active",
+      "parcel": "courier",
+      "decision": {
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "go:bar-llevant",
+        "probabilities": {
+          "clarify": 0.08,
+          "wait": 0,
+          "reveal:bar-llevant": 0.23,
+          "reveal:bar-ponent": 0.01,
+          "reveal:fruita": 0,
+          "go:bar-llevant": 0.67,
+          "go:bar-ponent": 0,
+          "go:fruita": 0,
+          "walk:north": 0.01,
+          "walk:south": 0,
+          "walk:east": 0,
+          "walk:west": 0
+        },
+        "confidence": 0.64,
+        "elapsedMs": 253,
+        "reason": "live",
+        "usage": {
+          "inputTokens": 3059,
+          "outputTokens": 144,
+          "estimatedUsd": 0.000128478
+        },
+        "discarded": false
+      },
+      "routeApplied": true,
+      "routeTarget": "bar-llevant"
+    },
+    {
+      "name": "rainy-timeout",
+      "scenarioTime": "2026-10-10T10:00:00.000Z",
+      "phase": "timeout",
+      "parcel": "courier",
+      "decision": {
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "drop:bar-llevant",
+        "probabilities": {
+          "drop:bar-llevant": 0.99,
+          "return": 0.01
+        },
+        "confidence": 0.98,
+        "elapsedMs": 284,
+        "reason": "live",
+        "usage": {
+          "inputTokens": 2504,
+          "outputTokens": 41,
+          "estimatedUsd": 0.00010516800000000001
+        },
+        "discarded": false
+      },
+      "routeApplied": true,
+      "routeTarget": "bar-llevant"
+    },
+    {
+      "name": "all-observed-shops-closed",
+      "scenarioTime": "2026-10-10T02:00:00.000Z",
+      "phase": "resolved",
+      "parcel": "returned",
+      "decision": {
+        "source": "jev",
+        "model": "jev-1.13.0",
+        "selected": "return",
+        "probabilities": {
+          "return": 1
+        },
+        "confidence": 1,
+        "elapsedMs": 229,
+        "reason": "live",
+        "usage": {
+          "inputTokens": 2434,
+          "outputTokens": 24,
+          "estimatedUsd": 0.00010222800000000001
+        },
+        "discarded": false
+      },
+      "routeApplied": false,
+      "routeTarget": null
+    }
+  ],
+  "totals": {
+    "inputTokens": 14229,
+    "outputTokens": 504,
+    "estimatedUsd": 0.0005976180000000001
+  },
+  "accounting": "Actual per-request provider-returned input/output tokens. Estimated cost uses official $0.042 per million input tokens; billed charges were not returned. Fixed Saturday scenario snapshots test authored hours; no live weather assertion."
+}

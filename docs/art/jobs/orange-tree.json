@@ -1,0 +1,47 @@
+{
+  "name": "orange-tree",
+  "provider": "GMI Cloud",
+  "model": "seedance-2-5-260628",
+  "source": "art-work/source/orange-tree-chroma.png",
+  "source_sha256": "9ab002ae62594ea65d254350e6b619a6bfe53d5fb614171506b75ef1c1525973",
+  "parameters": {
+    "prompt": "Locked orthographic camera. One full pixel-art orange tree in terracotta planter stays fixed at its exact reference position, trunk and planter completely motionless. Preserve original crispy pixel texture and colors. Four-second subtle seamless leaf-rustle loop: 0-1 seconds calm, 1-2 seconds a gentle breeze shifts tiny leaf clusters one or two pixels, 2-3 seconds clusters settle in slightly delayed overlapping arcs, 3-4 seconds all returns exactly to starting silhouette. Oranges stay attached. No growth, no falling leaves or fruit, no strong canopy distortion. Background remains perfectly pure bright green #00FF00, uniform flat chroma, zero shadows. Entire tree and planter stay in frame. Camera has zero motion, zero zoom, zero lighting change.",
+    "duration": 4,
+    "resolution": "480p",
+    "ratio": "adaptive",
+    "seed": 4203,
+    "watermark": false,
+    "generate_audio": false,
+    "web_search": false
+  },
+  "status": "success",
+  "request_id": "3a735787-a0ef-4cc2-ba07-f6fe1bf4d399",
+  "submitted_at": 1791627044.0401762,
+  "pricing": {
+    "catalogUnitsPerSecond": 231000,
+    "estimatedCatalogUnits": 924000,
+    "actualCharge": "unavailable"
+  },
+  "acceptance": "accepted after actual frame review",
+  "submissionResponse": {
+    "request_id": "3a735787-a0ef-4cc2-ba07-f6fe1bf4d399",
+    "model": "seedance-2-5-260628",
+    "status": "dispatched",
+    "created_at": 1791627046,
+    "updated_at": 1791627056,
+    "queued_at": 1791627046
+  },
+  "lastCheckedAt": 1791627283.109984,
+  "returnedMetadata": {
+    "request_id": "3a735787-a0ef-4cc2-ba07-f6fe1bf4d399",
+    "model": "seedance-2-5-260628",
+    "status": "success",
+    "is_public": false,
+    "outcome": {},
+    "created_at": 1791627046,
+    "updated_at": 1791627202,
+    "queued_at": 1791627046
+  },
+  "video": "art-work/source/orange-tree.mp4",
+  "video_sha256": "4540016e5912903d230c39bebe3be1523cf9c47d75667f664d3545494382b506"
+}

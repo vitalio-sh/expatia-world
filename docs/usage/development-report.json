@@ -1,0 +1,46 @@
+{
+  "threads": [
+    {
+      "threadId": "01a12542-03e6-7601-b008-109416d4e0a3",
+      "baseline": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 0
+      },
+      "end": {
+        "input_tokens": 424444,
+        "cached_input_tokens": 368896,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4478,
+        "reasoning_output_tokens": 683,
+        "total_tokens": 428922
+      },
+      "delta": {
+        "input_tokens": 424444,
+        "cached_input_tokens": 368896,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4478,
+        "reasoning_output_tokens": 683,
+        "total_tokens": 428922
+      },
+      "measuredThrough": "2026-10-10T10:03:12.346Z"
+    }
+  ],
+  "sumDeltas": {
+    "input_tokens": 424444,
+    "cached_input_tokens": 368896,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 4478,
+    "reasoning_output_tokens": 683,
+    "total_tokens": 428922
+  },
+  "notes": [
+    "Each cumulative counter contributes only its last minus start delta.",
+    "Cached input is included in input; reasoning is included in output.",
+    "Excludes unexposed provider/tool internal tokens and final response after checkpoint.",
+    "Actual development billed costs unavailable; provider ledgers separate."
+  ]
+}

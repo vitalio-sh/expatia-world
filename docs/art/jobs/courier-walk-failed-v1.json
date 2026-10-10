@@ -1,0 +1,46 @@
+{
+  "name": "courier-walk",
+  "provider": "GMI Cloud",
+  "model": "seedance-2-5-260628",
+  "state": "walk",
+  "character": "courier",
+  "source": "art-work/source/courier-chroma-v1.png",
+  "source_sha256": "bce0e37b79d328fb0953ce54bd1a03c295f1342c11e28784902edc2ad6e5ee7b",
+  "parameters": {
+    "prompt": "Locked orthographic overhead RPG sprite camera. The reference is FOUR separately spaced directional views of the SAME coral jacket courier with parcel, tan satchel and dark trousers, in four equal columns. Preserve all four identical costume references, their respective directions (south front, west left, north back, east right), fixed centers, feet baseline, framing and scale. Animate every separate character view simultaneously. Preserve crisp original pixel-art texture and colors. Uniform pure bright green #00FF00 chroma background stays exactly flat, no shadows, no ground, no additional objects. Whole head and feet always remain in each original column. The four figures never approach each other, translate across the image, or change facing. Camera has zero pan, zoom, rotation or parallax. Four-second seamless WALK IN PLACE loop: four complete natural step pairs, alternating planted feet and raised swinging feet, knees bend, hips transfer weight subtly, free arm counter-swings, hair and clothing have tiny follow-through. Each figure marches in its OWN pictured facing direction without changing its screen center. This is visible articulated walking with alternating legs, not a standing sprite bouncing. Courier secures parcel against chest, resident keeps phone low. At 4 seconds all return exactly to reference stance and begin the next cycle seamlessly. No blur, no walking translation, no face or clothing morphing.",
+    "duration": 4,
+    "resolution": "480p",
+    "ratio": "adaptive",
+    "seed": 4201,
+    "watermark": false,
+    "generate_audio": false,
+    "web_search": false
+  },
+  "status": "failed",
+  "request_id": "c1ee5021-c87b-4831-8919-3692666f16ae",
+  "submitted_at": 1791626839.319673,
+  "pricing": {
+    "catalogUnitsPerSecond": 231000,
+    "estimatedCatalogUnits": 924000,
+    "currencyConversion": "unavailable",
+    "actualCharge": "unavailable"
+  },
+  "acceptance": "pending",
+  "errorType": "HTTPError",
+  "reconciledResponse": {
+    "request_id": "c1ee5021-c87b-4831-8919-3692666f16ae",
+    "model": "seedance-2-5-260628",
+    "status": "failed",
+    "is_public": false,
+    "outcome": {
+      "error": {
+        "code": 400,
+        "message": "Error while downloading image, error: expected the aspect ratio to be between 0.39 and 2.50, but received image with aspect ratio: 3.00 instead Request id: 02179162684281629a69b00e37f9b7feeeb938de1ddf73265d247",
+        "status": "InvalidParameter"
+      }
+    },
+    "created_at": 1791626841,
+    "updated_at": 1791626844,
+    "queued_at": 1791626841
+  }
+}

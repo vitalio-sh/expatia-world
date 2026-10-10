@@ -1,0 +1,31 @@
+{
+  "src": "/art/characters/resident-south-walk-sheet.webp",
+  "frameWidth": 128,
+  "frameHeight": 160,
+  "columns": 12,
+  "rows": 2,
+  "frames": 23,
+  "fps": 12,
+  "durationMs": 1917,
+  "sourceFrames": 48,
+  "sourceRange": [
+    6,
+    29
+  ],
+  "rawSeamMeanDifference": 6.8915771484375,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "generated": true,
+  "provider": "GMI Cloud Seedance 2.5",
+  "sourceVideo": "art-work/source/resident-walk.mp4",
+  "sourceSha256": "8d903095b983fd80e66cd665a609a5552454355c5dd0d10a11ed8823649aca7c",
+  "cropBox": [
+    46,
+    68,
+    202,
+    428
+  ],
+  "scale": 0.3888888888888889,
+  "seamMeanDifference": 1.41380615234375,
+  "acceptance": "accepted after frame/contact/alpha review"
+}

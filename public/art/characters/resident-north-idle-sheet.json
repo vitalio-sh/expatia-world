@@ -1,0 +1,31 @@
+{
+  "src": "/art/characters/resident-north-idle-sheet.webp",
+  "frameWidth": 128,
+  "frameHeight": 160,
+  "columns": 12,
+  "rows": 4,
+  "frames": 48,
+  "fps": 12,
+  "durationMs": 4000,
+  "sourceFrames": 48,
+  "sourceRange": [
+    0,
+    48
+  ],
+  "rawSeamMeanDifference": 0.8395263671875,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "generated": true,
+  "provider": "GMI Cloud Seedance 2.5",
+  "sourceVideo": "art-work/source/resident-idle.mp4",
+  "sourceSha256": "6ef32435b821199f8bd3617b8d27d3c8d223c92b278fa70fb66e196bc7280147",
+  "cropBox": [
+    48,
+    72,
+    192,
+    416
+  ],
+  "scale": 0.4069767441860465,
+  "seamMeanDifference": 0.8395263671875,
+  "acceptance": "accepted after frame/contact/alpha review"
+}

@@ -1,0 +1,50 @@
+{
+  "name": "courier-walk",
+  "provider": "GMI Cloud",
+  "model": "seedance-2-5-260628",
+  "state": "walk",
+  "character": "courier",
+  "source": "art-work/source/courier-chroma.png",
+  "source_sha256": "aafbbc586df4c3dcc588c2d706b7efdcbe1d0c5bd7f068425653ef15d861a43c",
+  "parameters": {
+    "prompt": "Locked orthographic overhead RPG sprite camera. The reference is FOUR separately spaced directional views of the SAME coral jacket courier with parcel, tan satchel and dark trousers, in four equal columns. Preserve all four identical costume references, their respective directions (south front, west left, north back, east right), fixed centers, feet baseline, framing and scale. Animate every separate character view simultaneously. Preserve crisp original pixel-art texture and colors. Uniform pure bright green #00FF00 chroma background stays exactly flat, no shadows, no ground, no additional objects. Whole head and feet always remain in each original column. The four figures never approach each other, translate across the image, or change facing. Camera has zero pan, zoom, rotation or parallax. Four-second seamless WALK IN PLACE loop: four complete natural step pairs, alternating planted feet and raised swinging feet, knees bend, hips transfer weight subtly, free arm counter-swings, hair and clothing have tiny follow-through. Each figure marches in its OWN pictured facing direction without changing its screen center. This is visible articulated walking with alternating legs, not a standing sprite bouncing. Courier secures parcel against chest, resident keeps phone low. At 4 seconds all return exactly to reference stance and begin the next cycle seamlessly. No blur, no walking translation, no face or clothing morphing.",
+    "duration": 4,
+    "resolution": "480p",
+    "ratio": "adaptive",
+    "seed": 4201,
+    "watermark": false,
+    "generate_audio": false,
+    "web_search": false
+  },
+  "status": "success",
+  "request_id": "c019b108-f5fc-49fd-a730-255d12481641",
+  "submitted_at": 1791626937.2602391,
+  "pricing": {
+    "catalogUnitsPerSecond": 231000,
+    "estimatedCatalogUnits": 924000,
+    "currencyConversion": "unavailable",
+    "actualCharge": "unavailable"
+  },
+  "acceptance": "accepted after actual frame review",
+  "submissionResponse": {
+    "request_id": "c019b108-f5fc-49fd-a730-255d12481641",
+    "model": "seedance-2-5-260628",
+    "status": "dispatched",
+    "created_at": 1791626941,
+    "updated_at": 1791626952,
+    "queued_at": 1791626941
+  },
+  "lastCheckedAt": 1791627282.237943,
+  "returnedMetadata": {
+    "request_id": "c019b108-f5fc-49fd-a730-255d12481641",
+    "model": "seedance-2-5-260628",
+    "status": "success",
+    "is_public": false,
+    "outcome": {},
+    "created_at": 1791626941,
+    "updated_at": 1791627056,
+    "queued_at": 1791626941
+  },
+  "video": "art-work/source/courier-walk.mp4",
+  "video_sha256": "1f24570eb36dc3f203c2ff3883b1f40877e039b63b10326baea311487c657211"
+}

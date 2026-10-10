@@ -1,0 +1,46 @@
+{
+  "name": "courier-idle",
+  "provider": "GMI Cloud",
+  "model": "seedance-2-5-260628",
+  "state": "idle",
+  "character": "courier",
+  "source": "art-work/source/courier-chroma-v1.png",
+  "source_sha256": "bce0e37b79d328fb0953ce54bd1a03c295f1342c11e28784902edc2ad6e5ee7b",
+  "parameters": {
+    "prompt": "Locked orthographic overhead RPG sprite camera. The reference is FOUR separately spaced directional views of the SAME coral jacket courier with parcel, tan satchel and dark trousers, in four equal columns. Preserve all four identical costume references, their respective directions (south front, west left, north back, east right), fixed centers, feet baseline, framing and scale. Animate every separate character view simultaneously. Preserve crisp original pixel-art texture and colors. Uniform pure bright green #00FF00 chroma background stays exactly flat, no shadows, no ground, no additional objects. Whole head and feet always remain in each original column. The four figures never approach each other, translate across the image, or change facing. Camera has zero pan, zoom, rotation or parallax. Four-second subtle IDLE loop: 0-1 seconds neutral relaxed breathing; 1-2 seconds one gentle blink and tiny shoulder rise; 2-3 seconds shoulder settles and hair gently follows; 3-4 seconds returns exactly to original pose. Feet stay fully planted at the same baseline. Arms remain in their reference pose. No walking or turning, no exaggerated bouncing. Minimal movement readable on a small phone sprite.",
+    "duration": 4,
+    "resolution": "480p",
+    "ratio": "adaptive",
+    "seed": 4201,
+    "watermark": false,
+    "generate_audio": false,
+    "web_search": false
+  },
+  "status": "failed",
+  "request_id": "e7bec510-45a8-4d8b-a10c-19b21f836c1f",
+  "submitted_at": 1791626839.319633,
+  "pricing": {
+    "catalogUnitsPerSecond": 231000,
+    "estimatedCatalogUnits": 924000,
+    "currencyConversion": "unavailable",
+    "actualCharge": "unavailable"
+  },
+  "acceptance": "pending",
+  "errorType": "HTTPError",
+  "reconciledResponse": {
+    "request_id": "e7bec510-45a8-4d8b-a10c-19b21f836c1f",
+    "model": "seedance-2-5-260628",
+    "status": "failed",
+    "is_public": false,
+    "outcome": {
+      "error": {
+        "code": 400,
+        "message": "Error while downloading image, error: expected the aspect ratio to be between 0.39 and 2.50, but received image with aspect ratio: 3.00 instead Request id: 021791626842821ed95513e461b85a83ff8b942ff8c861787e32c",
+        "status": "InvalidParameter"
+      }
+    },
+    "created_at": 1791626841,
+    "updated_at": 1791626844,
+    "queued_at": 1791626841
+  }
+}

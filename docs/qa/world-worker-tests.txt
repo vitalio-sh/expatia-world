@@ -1,0 +1,40 @@
+✔ Worker capabilities bind session, expire, and reject tampering or weak secrets (3.716375ms)
+✔ Worker HTTP origin and signing configuration fail closed; mutations require realtime owner (8.829542ms)
+✔ Worker static asset delegation preserves original request and does not serialize secrets (0.216833ms)
+✔ Worker game belongs to a single connection; no HTTP isolate map is needed (15.574ms)
+✔ duplicate Worker RPC request shares one decision and one exact history entry (7.391ms)
+✔ Worker RPC world and spoken phrase history use one scenario state (15.071417ms)
+✔ Worker deadline backgrounding is authoritative and invalid handoff never grants parcel (14.052792ms)
+✔ Worker valid handoff resolves world state and closes provider voice (2.088291ms)
+✔ Worker player turn cap bounds provider work within one round (64.990459ms)
+✔ Worker microphone is unavailable before answering and cross-session messages cannot act (0.317125ms)
+✔ Worker movement bounds supplied dt by real elapsed time and wrong-path RPC cannot act (0.641209ms)
+✔ Worker interrupt rejects a late direction and disconnect tears down providers (5.740583ms)
+✔ entering never starts clock; Answer starts exactly 60 seconds once (11.258042ms)
+✔ only physical meeting at correct entrance allows handoff (1.3455ms)
+✔ background/deadline cannot extend timer or turn late claims into success (0.515458ms)
+✔ resident foyer has solid walls and a real southern exit (0.775208ms)
+✔ range, cardinal blind spots and home occlusion are independent sight constraints (0.521583ms)
+✔ opening context enforces category-only clue and excludes hidden entrance/map (0.986416ms)
+✔ navigation detours around generated roof footprint and never cuts through buildings (10.216625ms)
+✔ actual JEV probabilities choose a real route and raw instructions cannot choose arbitrary coordinates (12.922458ms)
+✔ vague wrong turn is recoverable with south entrance clarification (17.48925ms)
+✔ a wrong reported north entrance remains a hypothesis with a legal route (5.419125ms)
+✔ multi-step directions do not replace an explicit south entrance with a later right turn (17.47775ms)
+✔ a short answer to an actual courier entrance question shares its remembered meaning (9.750291ms)
+✔ sign clarification reveals only a currently visible sign; full spoken history persists (3.026709ms)
+✔ authored hours use Barcelona weekday, split hours and overnight intervals (0.291959ms)
+✔ timeout selects observed eligible collection site and physically walks there before drop (2.417125ms)
+✔ timeout alternatives honor opening hours, parcel acceptance, perception and rain (0.8265ms)
+✔ a shop that closes while the courier is en route cannot receive a physical drop (9.257917ms)
+✔ late provider response cannot overwrite newer decision or deadline state (5.310084ms)
+✔ timeout ownership avoids duplicate paid calls and replay resets all state (2.346334ms)
+✔ fallback/outage never invents probabilities and stalled timeout returns without teleporting (3.063917ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 259.304084

@@ -1,0 +1,50 @@
+{
+  "name": "courier-idle",
+  "provider": "GMI Cloud",
+  "model": "seedance-2-5-260628",
+  "state": "idle",
+  "character": "courier",
+  "source": "art-work/source/courier-chroma.png",
+  "source_sha256": "aafbbc586df4c3dcc588c2d706b7efdcbe1d0c5bd7f068425653ef15d861a43c",
+  "parameters": {
+    "prompt": "Locked orthographic overhead RPG sprite camera. The reference is FOUR separately spaced directional views of the SAME coral jacket courier with parcel, tan satchel and dark trousers, in four equal columns. Preserve all four identical costume references, their respective directions (south front, west left, north back, east right), fixed centers, feet baseline, framing and scale. Animate every separate character view simultaneously. Preserve crisp original pixel-art texture and colors. Uniform pure bright green #00FF00 chroma background stays exactly flat, no shadows, no ground, no additional objects. Whole head and feet always remain in each original column. The four figures never approach each other, translate across the image, or change facing. Camera has zero pan, zoom, rotation or parallax. Four-second subtle IDLE loop: 0-1 seconds neutral relaxed breathing; 1-2 seconds one gentle blink and tiny shoulder rise; 2-3 seconds shoulder settles and hair gently follows; 3-4 seconds returns exactly to original pose. Feet stay fully planted at the same baseline. Arms remain in their reference pose. No walking or turning, no exaggerated bouncing. Minimal movement readable on a small phone sprite.",
+    "duration": 4,
+    "resolution": "480p",
+    "ratio": "adaptive",
+    "seed": 4201,
+    "watermark": false,
+    "generate_audio": false,
+    "web_search": false
+  },
+  "status": "success",
+  "request_id": "92f4c10b-8a3f-44c4-911c-074ba25057a0",
+  "submitted_at": 1791626937.259914,
+  "pricing": {
+    "catalogUnitsPerSecond": 231000,
+    "estimatedCatalogUnits": 924000,
+    "currencyConversion": "unavailable",
+    "actualCharge": "unavailable"
+  },
+  "acceptance": "accepted after actual frame review",
+  "submissionResponse": {
+    "request_id": "92f4c10b-8a3f-44c4-911c-074ba25057a0",
+    "model": "seedance-2-5-260628",
+    "status": "processing",
+    "created_at": 1791626940,
+    "updated_at": 1791626940,
+    "queued_at": 1791626940
+  },
+  "lastCheckedAt": 1791627282.239489,
+  "returnedMetadata": {
+    "request_id": "92f4c10b-8a3f-44c4-911c-074ba25057a0",
+    "model": "seedance-2-5-260628",
+    "status": "success",
+    "is_public": false,
+    "outcome": {},
+    "created_at": 1791626940,
+    "updated_at": 1791627189,
+    "queued_at": 1791626940
+  },
+  "video": "art-work/source/courier-idle.mp4",
+  "video_sha256": "e3d14e9ba8c8f7ef4d9e4ce7bf35e6db4862c77cea1694db9178da57c88e5358"
+}

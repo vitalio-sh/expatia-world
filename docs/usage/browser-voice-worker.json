@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-10T10:35:00Z",
+  "url": "http://localhost:3318",
+  "browser": "Codex in-app browser, inherited portrait viewport390x844, background tab",
+  "scope": "Real UI Answer and typed clarification through native Worker outbound Eleven TTD. AudioContext first scheduled sample is an approximation of audible onset; no hardware recording or real-device microphone test.",
+  "samples": [
+    { "trigger": "Answer call", "firstScheduledMs": 888.1000001430511, "queuedSeconds": 0.056625000000000036, "playbackDelayMs": 25, "underrunsAtFirstChunk": 0, "jev": "fallback", "jevElapsedMs": 1, "transcript": "I have your parcel and I am near a bar. Which way should I go?" },
+    { "trigger": "Typed sign clarification", "firstScheduledMs": 1140.1000001430511, "queuedSeconds": 0.05662499999999682, "playbackDelayMs": 25.200000047683716, "underrunsAtFirstChunk": 0, "jev": "fallback", "jevElapsedMs": 1, "selected": "reveal:bar-llevant", "transcript": "The sign says Bar Llevant. Which way from here?" }
+  ],
+  "limitations": [
+    "Two samples do not establish p50/p95. These sample Worker JEV decisions were correctly labelled fallback and do not demonstrate live JEV on Worker.",
+    "Initial underruns count is captured at first chunk; not a whole-utterance underrun measurement.",
+    "Native microphone provider tested separately with synthetic speech, not actual human microphone input.",
+    "Worker usage ledger is isolate-local; browser HMR resets it. Signed sessions and secrets were not copied to this report."
+  ]
+}

@@ -1,0 +1,346 @@
+{
+  "started": "2026-10-10T10:20:43.833Z",
+  "completed": "2026-10-10T10:20:57.227Z",
+  "url": "http://localhost:3317",
+  "clockUntimed": true,
+  "deadlineExactly60000": true,
+  "opening": [
+    {
+      "role": "courier",
+      "text": "I've got your parcel here and I'm standing right by a bar. Which way should I go from here?",
+      "at": 1791627646407,
+      "turnId": "opening"
+    }
+  ],
+  "clarification": {
+    "id": "d6b3e23b-801a-4959-a79d-5bf00f4248ff",
+    "sequence": 2,
+    "trigger": "directions",
+    "source": "jev",
+    "model": "jev-1.13.0",
+    "selected": "reveal:bar-llevant",
+    "action": {
+      "id": "reveal:bar-llevant",
+      "type": "reveal",
+      "targetId": "bar-llevant",
+      "label": "Read the visible Bar Llevant sign",
+      "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+    },
+    "candidates": [
+      {
+        "id": "clarify",
+        "type": "clarify",
+        "label": "Ask for a clearer landmark or entrance side",
+        "reason": "Best when the instruction is ambiguous, incomplete, impossible or refers to an unseen place."
+      },
+      {
+        "id": "wait",
+        "type": "wait",
+        "label": "Stop and wait",
+        "reason": "Use for an explicit wait/stop request; do not claim a handoff or parcel receipt."
+      },
+      {
+        "id": "reveal:bar-llevant",
+        "type": "reveal",
+        "targetId": "bar-llevant",
+        "label": "Read the visible Bar Llevant sign",
+        "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+      },
+      {
+        "id": "reveal:bar-ponent",
+        "type": "reveal",
+        "targetId": "bar-ponent",
+        "label": "Read the visible Bar Ponent sign",
+        "reason": "Reveal the distinguishing sign of this currently visible bar after a relevant clarification question; no movement."
+      },
+      {
+        "id": "reveal:fruita",
+        "type": "reveal",
+        "targetId": "fruita",
+        "label": "Read the visible Fruita Fresca sign",
+        "reason": "Reveal the distinguishing sign of this currently visible fruit shop after a relevant clarification question; no movement."
+      },
+      {
+        "id": "go:bar-llevant",
+        "type": "move",
+        "targetId": "bar-llevant",
+        "target": {
+          "x": 150,
+          "y": 175
+        },
+        "label": "Walk to Bar Llevant",
+        "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+      },
+      {
+        "id": "go:bar-ponent",
+        "type": "move",
+        "targetId": "bar-ponent",
+        "target": {
+          "x": 430,
+          "y": 175
+        },
+        "label": "Walk to Bar Ponent",
+        "reason": "Navigate to the bar actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+      },
+      {
+        "id": "go:fruita",
+        "type": "move",
+        "targetId": "fruita",
+        "target": {
+          "x": 195,
+          "y": 460
+        },
+        "label": "Walk to Fruita Fresca",
+        "reason": "Navigate to the fruit shop actually observed and currently visible. May be a plausible interpretation of an ambiguous landmark; do not imply it is the home."
+      },
+      {
+        "id": "walk:north",
+        "type": "move",
+        "target": {
+          "x": 210,
+          "y": 170
+        },
+        "label": "Walk north along the clear street",
+        "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+      },
+      {
+        "id": "walk:south",
+        "type": "move",
+        "target": {
+          "x": 210,
+          "y": 470
+        },
+        "label": "Walk south along the clear street",
+        "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+      },
+      {
+        "id": "walk:east",
+        "type": "move",
+        "target": {
+          "x": 310,
+          "y": 250
+        },
+        "label": "Walk east along the clear street",
+        "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+      },
+      {
+        "id": "walk:west",
+        "type": "move",
+        "target": {
+          "x": 30,
+          "y": 250
+        },
+        "label": "Walk west along the clear street",
+        "reason": "Grounded cardinal movement through currently clear terrain; stop before any solid building."
+      }
+    ],
+    "probabilities": {
+      "clarify": 0,
+      "wait": 0,
+      "reveal:bar-llevant": 0.99,
+      "reveal:bar-ponent": 0.01,
+      "reveal:fruita": 0,
+      "go:bar-llevant": 0,
+      "go:bar-ponent": 0,
+      "go:fruita": 0,
+      "walk:north": 0,
+      "walk:south": 0,
+      "walk:east": 0,
+      "walk:west": 0
+    },
+    "confidence": 0.99,
+    "evidence": [
+      "Currently visible: Bar Llevant (bar), north, 112 units; open.",
+      "Currently visible: Bar Ponent (bar), east, 240 units; open.",
+      "Currently visible: Fruita Fresca (fruit shop), south, 213 units; open.",
+      "Barcelona Sat, 12:20; weather: Overcast (live)."
+    ],
+    "reason": "live",
+    "elapsedMs": 329,
+    "discarded": false,
+    "usage": {
+      "inputTokens": 3149,
+      "outputTokens": 145,
+      "estimatedUsd": 0.000132258
+    },
+    "note": "Model probabilities are scores, not calibrated guarantees. Fallback decisions have no invented probabilities."
+  },
+  "wrongSide": "home:north",
+  "correction": "home:south",
+  "outcome": {
+    "kind": "received",
+    "title": "Parcel received!",
+    "detail": "You met the courier at your home entrance and accepted the parcel.",
+    "feedback": "Asking for the sign removed the ambiguity. Clear directions and meeting at the entrance completed the delivery."
+  },
+  "parcel": "resident",
+  "remainingMs": 47939,
+  "usage": {
+    "calls": 12,
+    "liveCalls": 9,
+    "inputTokens": 18458,
+    "outputTokens": 550,
+    "cachedInputTokens": 0,
+    "reasoningTokens": 0,
+    "totalTokens": 19008,
+    "returnedCostUsd": 0.0023068,
+    "estimatedCostUsd": 0.012642034,
+    "voiceCharacters": 304,
+    "audioSeconds": 4.9208750000000006,
+    "providers": {
+      "jev": 4,
+      "openrouter": 4,
+      "elevenlabs": 4
+    },
+    "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+    "billingUnitsUnavailable": [
+      "ElevenLabs billed credits (key lacks user_read)"
+    ]
+  },
+  "turnTimings": [
+    {
+      "decisionMs": 329,
+      "firstTextMs": 826.5936250000013,
+      "elapsedMs": 977.9601669999975,
+      "dialogueTotalMs": 978.6892919999955,
+      "totalMs": 1310.4799160000039
+    },
+    {
+      "decisionMs": 243,
+      "firstTextMs": 626.742707999998,
+      "elapsedMs": 774.7662500000006,
+      "dialogueTotalMs": 775.4777089999989,
+      "totalMs": 1024.7100419999988
+    },
+    {
+      "decisionMs": 239,
+      "firstTextMs": 784.0415839999987,
+      "elapsedMs": 1362.606875000005,
+      "dialogueTotalMs": 1363.2617079999982,
+      "totalMs": 1631.1904580000046
+    }
+  ],
+  "events": [
+    {
+      "type": "ready"
+    },
+    {
+      "type": "voice.prepared",
+      "live": true
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "opening"
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "opening",
+      "text": "I've got your parcel here and I'm standing right by a bar."
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "opening",
+      "text": "Which way should I go from here?"
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "opening",
+      "live": true
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "opening",
+      "live": false,
+      "timings": {
+        "connectMs": 0.0065420000028098,
+        "elapsedMs": 868.6995420000021
+      }
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "clarify"
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "clarify",
+      "text": "I am right by Bar Llevant."
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "clarify",
+      "text": "Which way should I go from here?"
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "clarify",
+      "live": true
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "clarify",
+      "live": false,
+      "timings": {
+        "connectMs": 0.005540999998629559,
+        "elapsedMs": 980.5036659999969
+      }
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "wrong"
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "wrong",
+      "text": "I am heading over to the north side now."
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "wrong",
+      "text": "I'll let you know as soon as I arrive."
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "wrong",
+      "live": true
+    },
+    {
+      "type": "npc.cancel",
+      "turnId": "wrong",
+      "live": false,
+      "timings": {
+        "connectMs": 0.008416999997280072,
+        "firstAudioMs": 119.32050000000163,
+        "elapsedMs": 2480.5144999999975
+      }
+    },
+    {
+      "type": "npc.audio_begin",
+      "turnId": "correct"
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "correct",
+      "text": "I am heading over to the south side now."
+    },
+    {
+      "type": "npc.caption",
+      "turnId": "correct",
+      "text": "I'll let you know as soon as I arrive."
+    },
+    {
+      "type": "dialogue.status",
+      "turnId": "correct",
+      "live": true
+    },
+    {
+      "type": "npc.audio_end",
+      "turnId": "correct",
+      "live": true,
+      "timings": {
+        "connectMs": 0.008208999999624211,
+        "firstAudioMs": 113.99895899999683,
+        "elapsedMs": 2531.648291999998
+      }
+    }
+  ]
+}

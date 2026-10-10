@@ -1,0 +1,31 @@
+{
+  "src": "/art/characters/resident-east-walk-sheet.webp",
+  "frameWidth": 128,
+  "frameHeight": 160,
+  "columns": 12,
+  "rows": 3,
+  "frames": 29,
+  "fps": 12,
+  "durationMs": 2417,
+  "sourceFrames": 48,
+  "sourceRange": [
+    16,
+    45
+  ],
+  "rawSeamMeanDifference": 7.913134765625,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "generated": true,
+  "provider": "GMI Cloud Seedance 2.5",
+  "sourceVideo": "art-work/source/resident-walk.mp4",
+  "sourceSha256": "8d903095b983fd80e66cd665a609a5552454355c5dd0d10a11ed8823649aca7c",
+  "cropBox": [
+    29,
+    76,
+    202,
+    416
+  ],
+  "scale": 0.4117647058823529,
+  "seamMeanDifference": 1.26015625,
+  "acceptance": "accepted after frame/contact/alpha review"
+}

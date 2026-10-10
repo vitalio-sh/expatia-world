@@ -1,0 +1,31 @@
+{
+  "src": "/art/characters/resident-north-walk-sheet.webp",
+  "frameWidth": 128,
+  "frameHeight": 160,
+  "columns": 12,
+  "rows": 2,
+  "frames": 15,
+  "fps": 12,
+  "durationMs": 1250,
+  "sourceFrames": 48,
+  "sourceRange": [
+    5,
+    20
+  ],
+  "rawSeamMeanDifference": 4.998583984375,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "generated": true,
+  "provider": "GMI Cloud Seedance 2.5",
+  "sourceVideo": "art-work/source/resident-walk.mp4",
+  "sourceSha256": "8d903095b983fd80e66cd665a609a5552454355c5dd0d10a11ed8823649aca7c",
+  "cropBox": [
+    26,
+    76,
+    186,
+    430
+  ],
+  "scale": 0.3954802259887006,
+  "seamMeanDifference": 1.063916015625,
+  "acceptance": "accepted after frame/contact/alpha review"
+}

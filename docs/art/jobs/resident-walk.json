@@ -1,0 +1,50 @@
+{
+  "name": "resident-walk",
+  "provider": "GMI Cloud",
+  "model": "seedance-2-5-260628",
+  "state": "walk",
+  "character": "resident",
+  "source": "art-work/source/resident-chroma.png",
+  "source_sha256": "c1eb59bcb92f991420453a8a94ebe4f2aa73a0bd0316d7a65645c89ac4d1d572",
+  "parameters": {
+    "prompt": "Locked orthographic overhead RPG sprite camera. The reference is FOUR separately spaced directional views of the SAME teal sweater woman resident with cream trousers and phone, in four equal columns. Preserve all four identical costume references, their respective directions (south front, west left, north back, east right), fixed centers, feet baseline, framing and scale. Animate every separate character view simultaneously. Preserve crisp original pixel-art texture and colors. Uniform pure bright green #00FF00 chroma background stays exactly flat, no shadows, no ground, no additional objects. Whole head and feet always remain in each original column. The four figures never approach each other, translate across the image, or change facing. Camera has zero pan, zoom, rotation or parallax. Four-second seamless WALK IN PLACE loop: four complete natural step pairs, alternating planted feet and raised swinging feet, knees bend, hips transfer weight subtly, free arm counter-swings, hair and clothing have tiny follow-through. Each figure marches in its OWN pictured facing direction without changing its screen center. This is visible articulated walking with alternating legs, not a standing sprite bouncing. Courier secures parcel against chest, resident keeps phone low. At 4 seconds all return exactly to reference stance and begin the next cycle seamlessly. No blur, no walking translation, no face or clothing morphing.",
+    "duration": 4,
+    "resolution": "480p",
+    "ratio": "adaptive",
+    "seed": 4202,
+    "watermark": false,
+    "generate_audio": false,
+    "web_search": false
+  },
+  "status": "success",
+  "request_id": "4064f502-8fc4-4b45-a9cc-ff2f93905e4f",
+  "submitted_at": 1791626839.319703,
+  "pricing": {
+    "catalogUnitsPerSecond": 231000,
+    "estimatedCatalogUnits": 924000,
+    "currencyConversion": "unavailable",
+    "actualCharge": "unavailable"
+  },
+  "acceptance": "accepted after actual frame review",
+  "submissionResponse": {
+    "request_id": "4064f502-8fc4-4b45-a9cc-ff2f93905e4f",
+    "model": "seedance-2-5-260628",
+    "status": "dispatched",
+    "created_at": 1791626841,
+    "updated_at": 1791626852,
+    "queued_at": 1791626841
+  },
+  "lastCheckedAt": 1791627282.238427,
+  "returnedMetadata": {
+    "request_id": "4064f502-8fc4-4b45-a9cc-ff2f93905e4f",
+    "model": "seedance-2-5-260628",
+    "status": "success",
+    "is_public": false,
+    "outcome": {},
+    "created_at": 1791626841,
+    "updated_at": 1791627016,
+    "queued_at": 1791626841
+  },
+  "video": "art-work/source/resident-walk.mp4",
+  "video_sha256": "8d903095b983fd80e66cd665a609a5552454355c5dd0d10a11ed8823649aca7c"
+}

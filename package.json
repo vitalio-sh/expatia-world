@@ -1,6 +1,35 @@
 {
-  "name":"expatia-world","version":"0.1.0","private":true,"type":"module",
-  "scripts":{"dev":"tsx watch src/server/index.ts","build":"vite build && tsc --noEmit","start":"tsx src/server/index.ts","test":"tsx --test tests/*.test.ts"},
-  "dependencies":{"react":"^19.2.0","react-dom":"^19.2.0","express":"^5.1.0","ws":"^8.18.3","dotenv":"^17.2.3"},
-  "devDependencies":{"@types/react":"^19.2.0","@types/react-dom":"^19.2.0","@types/express":"^5.0.3","@types/ws":"^8.18.1","@types/node":"^24.0.0","typescript":"^5.9.3","tsx":"^4.20.6","vite":"^7.1.9","@vitejs/plugin-react":"^5.0.4"}
+  "name": "expatia-world",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server/index.ts",
+    "build": "node scripts/build.mjs",
+    "start": "tsx src/server/index.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "build:node": "vite build && tsc --noEmit",
+    "dev:worker": "vite --config vite.hosting.config.ts --host 0.0.0.0 --port 3318"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.63.1",
+    "@cloudflare/workers-types": "^5.20261010.1",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^5.0.4",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9",
+    "wrangler": "^4.149.0"
+  }
 }

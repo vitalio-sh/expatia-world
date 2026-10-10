@@ -13,3 +13,7 @@ test-results/
 
 .runtime/
 art-work/
+
+.wrangler/
+.openai/.site-workflow/
+*.tar.gz

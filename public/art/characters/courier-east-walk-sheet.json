@@ -1,0 +1,25 @@
+{
+  "src": "/art/characters/courier-east-walk-sheet.webp",
+  "frameWidth": 128,
+  "frameHeight": 160,
+  "columns": 12,
+  "rows": 4,
+  "frames": 48,
+  "fps": 12,
+  "durationMs": 4000,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "generated": true,
+  "provider": "GMI Cloud Seedance 2.5",
+  "sourceVideo": "art-work/source/courier-walk.mp4",
+  "sourceSha256": "1f24570eb36dc3f203c2ff3883b1f40877e039b63b10326baea311487c657211",
+  "cropBox": [
+    46,
+    66,
+    186,
+    356
+  ],
+  "scale": 0.4827586206896552,
+  "seamMeanDifference": 0.8661376953125,
+  "acceptance": "accepted after frame/contact/alpha review"
+}

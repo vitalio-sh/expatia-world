@@ -1,0 +1,31 @@
+{
+  "src": "/art/characters/courier-south-idle-sheet.webp",
+  "frameWidth": 128,
+  "frameHeight": 160,
+  "columns": 12,
+  "rows": 4,
+  "frames": 48,
+  "fps": 12,
+  "durationMs": 4000,
+  "sourceFrames": 48,
+  "sourceRange": [
+    0,
+    48
+  ],
+  "rawSeamMeanDifference": 0.7405029296875,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "generated": true,
+  "provider": "GMI Cloud Seedance 2.5",
+  "sourceVideo": "art-work/source/courier-idle.mp4",
+  "sourceSha256": "e3d14e9ba8c8f7ef4d9e4ce7bf35e6db4862c77cea1694db9178da57c88e5358",
+  "cropBox": [
+    84,
+    64,
+    212,
+    354
+  ],
+  "scale": 0.4827586206896552,
+  "seamMeanDifference": 0.7405029296875,
+  "acceptance": "accepted after frame/contact/alpha review"
+}

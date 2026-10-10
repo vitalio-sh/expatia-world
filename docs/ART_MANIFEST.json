@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "createdAt": "2026-10-10T10:07:53Z",
+  "style": "original restrained Barcelona fine pixel art",
+  "geometryReference": "plan.jpg and docs/CONTRACTS.md",
+  "providers": {
+    "image": "builtin imagegen",
+    "animation": "GMI Cloud Seedance 2.5"
+  },
+  "images": [
+    {
+      "asset": "map",
+      "source": "art-work/source/map-reference.png",
+      "sha256": "a6ff53e849a142ea5c1b75793d8e03c9407fb94bc4fe4554df17c3b437594ae1",
+      "provider": "builtin imagegen",
+      "prompts": "docs/art/image-prompts.json",
+      "acceptance": "accepted first reference"
+    },
+    {
+      "asset": "courier",
+      "source": "art-work/source/courier-reference.png",
+      "sha256": "a762382b2619a7e84ca625cb9c5ef6541c93df1c68ef76f989d7d211da2f28d3",
+      "provider": "builtin imagegen",
+      "prompts": "docs/art/image-prompts.json",
+      "acceptance": "accepted first reference"
+    },
+    {
+      "asset": "resident",
+      "source": "art-work/source/resident-reference.png",
+      "sha256": "319c99158ae4895b9a2c25ab4ff434b65fa670fdef3172a4856339fb88e6ec45",
+      "provider": "builtin imagegen",
+      "prompts": "docs/art/image-prompts.json",
+      "acceptance": "accepted first reference"
+    },
+    {
+      "asset": "orange-tree",
+      "source": "art-work/source/orange-tree-reference.png",
+      "sha256": "65578b341024e93512c878687b4b51ba863c5ce80191385a8377493ef6f2fe25",
+      "provider": "builtin imagegen",
+      "prompts": "docs/art/image-prompts.json",
+      "acceptance": "accepted final export"
+    },
+    {
+      "asset": "parcel-clean",
+      "source": "art-work/source/parcel-clean-reference.png",
+      "sha256": "b0a955bb99e927cb9302fe0e90cfe53173084243bb76e5f6037da285744395ea",
+      "provider": "builtin imagegen",
+      "prompts": "docs/art/image-prompts.json",
+      "acceptance": "accepted final export"
+    }
+  ],
+  "animationJobs": "docs/art/jobs",
+  "acceptance": "complete 16 real animated human states, generated map and environment reviewed; lead owns final gameplay/mobile QA",
+  "usage": {
+    "builtinImageGenerationCalls": 6,
+    "builtinCostAndTokens": "unavailable",
+    "gmiSubmittedRequests": 7,
+    "gmiSuccess": 5,
+    "gmiFailed": 2,
+    "gmiSuccessfulRequestedSeconds": 20,
+    "gmiCatalogUnitsPerSecond": 231000,
+    "gmiEstimatedCatalogUnitsSuccess": 4620000,
+    "gmiCurrencyConversion": "not documented; dollars unavailable",
+    "gmiActualReturnedBillingUnits": "not exposed",
+    "gmiActualBilledCost": "unavailable",
+    "developmentThreadId": "01a12543-e1d9-7c70-a19f-15b9b82dc507",
+    "developmentTokens": "lead accounting uses this thread counter; not included in provider figures"
+  },
+  "runtime": "public/art/manifest.json",
+  "coverage": {
+    "courier": {
+      "directions": [
+        "south",
+        "west",
+        "north",
+        "east"
+      ],
+      "states": [
+        "idle",
+        "walk"
+      ]
+    },
+    "resident": {
+      "directions": [
+        "south",
+        "west",
+        "north",
+        "east"
+      ],
+      "states": [
+        "idle",
+        "walk"
+      ]
+    },
+    "environment": [
+      "orange-tree real generated leaf loop"
+    ],
+    "props": [
+      "parcel"
+    ]
+  },
+  "jobs": [
+    {
+      "file": "docs/art/jobs/resident-idle.json",
+      "requestId": "eff9990b-62cd-4947-965a-eb4c50760707",
+      "name": "resident-idle",
+      "status": "success",
+      "model": "seedance-2-5-260628",
+      "durationRequestedSeconds": 4,
+      "actualCharge": "unavailable"
+    },
+    {
+      "file": "docs/art/jobs/courier-idle-failed-v1.json",
+      "requestId": "e7bec510-45a8-4d8b-a10c-19b21f836c1f",
+      "name": "courier-idle",
+      "status": "failed",
+      "model": "seedance-2-5-260628",
+      "durationRequestedSeconds": 4,
+      "actualCharge": "unavailable"
+    },
+    {
+      "file": "docs/art/jobs/resident-walk.json",
+      "requestId": "4064f502-8fc4-4b45-a9cc-ff2f93905e4f",
+      "name": "resident-walk",
+      "status": "success",
+      "model": "seedance-2-5-260628",
+      "durationRequestedSeconds": 4,
+      "actualCharge": "unavailable"
+    },
+    {
+      "file": "docs/art/jobs/courier-walk-failed-v1.json",
+      "requestId": "c1ee5021-c87b-4831-8919-3692666f16ae",
+      "name": "courier-walk",
+      "status": "failed",
+      "model": "seedance-2-5-260628",
+      "durationRequestedSeconds": 4,
+      "actualCharge": "unavailable"
+    },
+    {
+      "file": "docs/art/jobs/courier-walk.json",
+      "requestId": "c019b108-f5fc-49fd-a730-255d12481641",
+      "name": "courier-walk",
+      "status": "success",
+      "model": "seedance-2-5-260628",
+      "durationRequestedSeconds": 4,
+      "actualCharge": "unavailable"
+    },
+    {
+      "file": "docs/art/jobs/orange-tree.json",
+      "requestId": "3a735787-a0ef-4cc2-ba07-f6fe1bf4d399",
+      "name": "orange-tree",
+      "status": "success",
+      "model": "seedance-2-5-260628",
+      "durationRequestedSeconds": 4,
+      "actualCharge": "unavailable"
+    },
+    {
+      "file": "docs/art/jobs/courier-idle.json",
+      "requestId": "92f4c10b-8a3f-44c4-911c-074ba25057a0",
+      "name": "courier-idle",
+      "status": "success",
+      "model": "seedance-2-5-260628",
+      "durationRequestedSeconds": 4,
+      "actualCharge": "unavailable"
+    }
+  ],
+  "runtimeBytes": 3022890,
+  "imageCalls": 6
+}
