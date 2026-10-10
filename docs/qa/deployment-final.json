@@ -1,11 +1,11 @@
 {
   "project_id": "appgprj_6aca0f9dbe04819182b0bdf910ad8cf4",
-  "version": 9,
-  "versionId": "appgprj_6aca0f9dbe04819182b0bdf910ad8cf4~appgver_b0ff12ef743881919c9bf85f39a027ed",
-  "commitSha": "a8bebe4e15de0b0ae4f7e1f760fb2f3e644d512a",
-  "deploymentId": "appgdep_6aca2b58a90c819193adbc9f7115ec43",
+  "version": 11,
+  "versionId": "appgprj_6aca0f9dbe04819182b0bdf910ad8cf4~appgver_15a5ccd064b081919838532434950666",
+  "commitSha": "d6453ed1c9889e4a93fbdf5ad9b48c5cd65212dc",
+  "deploymentId": "appgdep_6aca2d8ece60819188de2baed1333465",
   "status": "succeeded",
-  "updatedAt": "2026-10-10T12:11:23.360100+00:00",
+  "updatedAt": "2026-10-10T12:20:46.436107+00:00",
   "generatedUrl": "https://expatia-world.iviviv.chatgpt.site",
   "customUrls": [
     "https://expatia.world/",

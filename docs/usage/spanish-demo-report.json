@@ -1,0 +1,122 @@
+{
+  "scope": "Additional Spanish demo/projector pass; baseline is the preceding saved development checkpoint. Captured disjoint runtime sessions are reported separately.",
+  "developmentDelta": {
+    "input_tokens": 12247620,
+    "cached_input_tokens": 12121728,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 35125,
+    "reasoning_output_tokens": 8824,
+    "total_tokens": 12282745
+  },
+  "developmentCostUsd": null,
+  "runtimeCohorts": [
+    {
+      "name": "Spanish navigation demo",
+      "usage": {
+        "calls": 16,
+        "liveCalls": 16,
+        "inputTokens": 96528,
+        "outputTokens": 2619,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 99147,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.012573900000000002,
+        "estimatedCostUsd": 0.00233583,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 8,
+          "openrouter": 8
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "name": "Exact UI coaching sequence",
+      "usage": {
+        "calls": 6,
+        "liveCalls": 6,
+        "inputTokens": 31276,
+        "outputTokens": 677,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 31953,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0043197,
+        "estimatedCostUsd": 0.0007277340000000001,
+        "voiceCharacters": 0,
+        "audioSeconds": 0,
+        "providers": {
+          "jev": 3,
+          "openrouter": 3
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    },
+    {
+      "source": "spanish-demo-browser.json",
+      "usage": {
+        "audioSeconds": 22.88,
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ],
+        "cachedInputTokens": 0,
+        "calls": 19,
+        "estimatedCostUsd": 0.0144716,
+        "inputTokens": 41676,
+        "liveCalls": 19,
+        "outputTokens": 734,
+        "providers": {
+          "browser": 5,
+          "elevenlabs": 5,
+          "jev": 4,
+          "openrouter": 5
+        },
+        "reasoningTokens": 0,
+        "returnedCostUsd": 0.0067802999999999995,
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "totalTokens": 42410,
+        "unreportedTokenCalls": 0,
+        "voiceCharacters": 341
+      }
+    },
+    {
+      "source": "spanish-demo-voice.json",
+      "usage": {
+        "calls": 4,
+        "liveCalls": 4,
+        "inputTokens": 3492,
+        "outputTokens": 43,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 3535,
+        "unreportedTokenCalls": 0,
+        "returnedCostUsd": 0.0005296,
+        "estimatedCostUsd": 0.00342192,
+        "voiceCharacters": 70,
+        "audioSeconds": 9.969999999999999,
+        "providers": {
+          "jev": 1,
+          "openrouter": 1,
+          "elevenlabs": 2
+        },
+        "scope": "Requests recorded since this runtime started (isolate-local on Workers). Returned provider costs and estimates are separate; development chat tokens excluded.",
+        "billingUnitsUnavailable": [
+          "ElevenLabs billed credits (key lacks user_read)"
+        ]
+      }
+    }
+  ],
+  "notes": [
+    "Cached input is a subset of input; reasoning output a subset of output.",
+    "Development billing not returned; provider returned costs and estimates are separate.",
+    "Final reporting messages after the checkpoint are excluded."
+  ]
+}

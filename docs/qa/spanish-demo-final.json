@@ -1,0 +1,70 @@
+{
+  "deployment": {
+    "project_id": "appgprj_6aca0f9dbe04819182b0bdf910ad8cf4",
+    "version": 11,
+    "versionId": "appgprj_6aca0f9dbe04819182b0bdf910ad8cf4~appgver_15a5ccd064b081919838532434950666",
+    "commitSha": "d6453ed1c9889e4a93fbdf5ad9b48c5cd65212dc",
+    "deploymentId": "appgdep_6aca2d8ece60819188de2baed1333465",
+    "status": "succeeded",
+    "updatedAt": "2026-10-10T12:20:46.436107+00:00",
+    "generatedUrl": "https://expatia-world.iviviv.chatgpt.site",
+    "customUrls": [
+      "https://expatia.world/",
+      "https://www.expatia.world/"
+    ],
+    "domains": [
+      {
+        "hostname": "expatia.world",
+        "id": "appgdom_6aca179459dc8191aa0e8830a12e9535",
+        "status": "active",
+        "sslStatus": "active",
+        "providerStatus": "active"
+      },
+      {
+        "hostname": "www.expatia.world",
+        "id": "appgdom_6aca182d89fc8191b0ede5b8923b84c6",
+        "status": "active",
+        "sslStatus": "active",
+        "providerStatus": "active"
+      }
+    ]
+  },
+  "tests": 65,
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "liveSpanishDecisions": 11,
+  "providerProbe": "spanish-demo-live.json",
+  "browserFlow": {
+    "version": 10,
+    "steps": [
+      "Toggle demo on/off",
+      "Use text fills input without sending",
+      "Name the bar in Spanish",
+      "Look south in Spanish",
+      "Route around building to south entrance in Spanish",
+      "Receive parcel: succeeded"
+    ],
+    "mobileWidth": 360,
+    "inputBottomPx": 737.1875,
+    "source": "../usage/spanish-demo-browser.json"
+  },
+  "finalLayout": {
+    "version": 11,
+    "changeSinceGameplayCheck": "CSS-only desktop map height cap",
+    "width": 1366,
+    "height": 768,
+    "mapFits": true,
+    "noHorizontalOverflow": true,
+    "source": "spanish-demo-projector-layout.json"
+  },
+  "voice": {
+    "source": "../usage/spanish-demo-voice.json",
+    "spanishSynthesis": true,
+    "automaticSttWordMatch": true,
+    "syntheticPcmInput": true
+  },
+  "limits": [
+    "No hardware projector or human microphone/speaker test.",
+    "Voice timings are single observed samples, not latency percentiles."
+  ]
+}
